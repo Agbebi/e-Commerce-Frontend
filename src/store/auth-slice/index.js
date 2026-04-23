@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios';
 
+
+axios.defaults.baseURL = 'https://e-commerce-backend-8j28.onrender.com';
 const initialState = {
     isAuthenticated: false,
     isLoading: true,
