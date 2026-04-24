@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios';
 
 
-axios.defaults.baseURL = 'https://e-commerce-backend-8j28.onrender.com';
+axios.defaults.baseURL = window.location.origin;
 const initialState = {
     isAuthenticated: false,
     isLoading: true,
