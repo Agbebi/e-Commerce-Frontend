@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios';
 
 
-axios.defaults.baseURL = window.location.origin;
 const initialState = {
     isAuthenticated: false,
     isLoading: true,
