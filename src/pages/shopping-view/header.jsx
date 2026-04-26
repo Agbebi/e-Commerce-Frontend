@@ -165,7 +165,7 @@ function ShoppingHeader() {
             </Button>
           </SheetTrigger>
 
-          <SheetContent side='top' className='p-4 bg-white justify-around w-full h-screen flex flex-col space-y-2.5 transition-opacity duration-1000'>
+          <SheetContent side='top' className='p-4 bg-white justify-around w-full h-[80vh] flex flex-col space-y-2.5 transition-opacity duration-1000'>
             <SheetHeader className='mt-4'>
               <div className='flex flex-row w-full justify-between items-center'>
                 <span onClick={() => {
