@@ -155,7 +155,6 @@ function ShoppingHeader() {
   }
 
 
-
   return (
     <header className='fixed bg-neutral-100 w-full top-0 z-50 border-b border-gray-200'>
       <div className='flex h-16 items-center justify-between px-4 md:px-6'>
