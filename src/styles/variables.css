@@ -1,0 +1,25 @@
+/* Base color variables (single theme) */
+:root {
+  /* Brand / semantic colors */
+  --color-primary: #2d2d2d;
+  --color-primary-600: #1f1f1f;
+  --color-secondary: #10b981;
+  --color-secondary-600: #059669;
+
+  /* Foreground / background */
+  --color-foreground: #111827;
+  --color-background: #ffffff;
+
+  /* Surfaces */
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f5f9;
+
+  /* Borders & muted */
+  --color-border: #e6edf3;
+  --color-muted: #6b7280;
+
+  /* Elevation shadows (optional) */
+  --shadow-sm: 0 1px 2px rgba(16,24,40,0.05);
+  --shadow-md: 0 4px 12px rgba(16,24,40,0.08);
+}
+
