@@ -21,6 +21,8 @@ import { useEffect } from 'react'
 import { checkAuth } from './store/auth-slice'
 import { Skeleton } from './components/ui/skeleton'
 import PaymentSuccess from './pages/shopping-view/payment-success'
+import ShoppingOrdersPage from './pages/shopping-view/orders'
+import ShoppingAddressPage from './pages/shopping-view/address-page'
 
 const App = () => {
   const { user, isAuthenticated, isLoading } = useSelector(state => state.auth)
@@ -32,7 +34,7 @@ const App = () => {
 
   if (isLoading) {
     return <div className='grid grid-cols-2 w-full bg-black h-full'>
-      <Skeleton className="h-full w-full bg-gray-800 rounded-full" />
+      <Skeleton className="h-full w-full rounded-full" />
       <div><Skeleton className="h-full w-full bg-gray-800 rounded-full"/></div>
     </div>
   }
@@ -42,7 +44,7 @@ const App = () => {
   return (
     <>
       <main>
-        <div className='flex flex-col overflow-hidden bg-white'>
+        <div className='flex flex-col'>
           <Routes>
             <Route path='/auth' element={
               <CheckAuth isAuthenticated={isAuthenticated} user={user}>
@@ -74,6 +76,8 @@ const App = () => {
               <Route path='listing' element={<ShoppingListing />} />
               <Route path='checkout' element={<ShoppingCheckout />} />
               <Route path='payment' element={<PaymentSuccess />} />
+              <Route path='orders' element={<ShoppingOrdersPage />} />
+              <Route path='address' element={<ShoppingAddressPage />} />
             </Route>
             <Route path='/unauth-page' element={<UnauthPage />} />
             <Route path='*' element={<CheckAuth />} />

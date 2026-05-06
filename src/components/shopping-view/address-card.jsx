@@ -2,24 +2,29 @@ import React from 'react'
 import { Card, CardContent, CardFooter } from '../ui/card'
 import { Label } from '../ui/label'
 import { Button } from '../ui/button'
+import { MdOutlineEdit } from 'react-icons/md'
+import { AiOutlineDelete } from 'react-icons/ai'
+import { IoAdd } from 'react-icons/io5'
+import { useLocation } from 'react-router-dom'
 
-function AddressCard({address, handleDeleteAddress, handleEditAddress, currentSelectedAddress , setCurrentSelectedAddress}) {
+function AddressCard({ address, handleDeleteAddress, handleEditAddress, currentSelectedAddress, setCurrentSelectedAddress }) {
+  
+      const location = useLocation()
+
   return (
-    <Card onClick={setCurrentSelectedAddress ?  () =>( setCurrentSelectedAddress(address)
-    ) : null} className={`shadow-sm ${currentSelectedAddress == address ? 'border-orange-200' : 'border-gray-50'}`}>
-        <CardContent className='grid gap-4 text-gray-700'>
-            <Label>Address : {address.address}</Label>
-            <Label>City : {address.city}</Label>
-            <Label>State : {address.state}</Label>
-            <Label>Postal Code : {address.postalCode}</Label>
-            <Label>Phone Number : {address.phoneNumber}</Label>
-            <Label>Notes : {address.notes}</Label>
-        </CardContent>
+    <Card onClick={setCurrentSelectedAddress ? () => (setCurrentSelectedAddress(address)
+    ) : null} className={`flex justify-between shadow-sm rounded-lg items-center px-3 space-x-0 py-1 flex-row text-sm ${currentSelectedAddress == address ? 'border-green-200 ' : 'border-gray-200'}`}>
+      <CardContent className='px-0 items-center'>
+        <div className=''>
+          <p>{address.state}, {address.country}</p>
+          <span className='text-gray-500 text-xs'>{address.address}, {address.city}</span>
+        </div>
+      </CardContent>
 
-        <CardFooter className='flex justify-between'>
-            <Button onClick={() => {handleEditAddress(address)}} className='bg-black text-white text-sm'>Edit</Button>
-            <Button onClick={() => {handleDeleteAddress(address)}} className='bg-black text-white text-sm'>Delete</Button>
-        </CardFooter>
+     { location.pathname.includes('checkout') ? null : <CardFooter className='flex p-1  gap-2'>
+        <Button onClick={() => { handleEditAddress(address) }} className=' p-1 cursor-pointer  text-xs text-gray-600'>Edit</Button>
+        <Button onClick={() => { handleDeleteAddress(address) }} className='p-1 cursor-pointer text-xs text-red-600'>Delete</Button>
+      </CardFooter>}
     </Card>
   )
 }

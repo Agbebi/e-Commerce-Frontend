@@ -6,29 +6,25 @@ import { useSelector } from 'react-redux'
 
 
 function ShoppingOrderDetails() {
-
-
- const {orderDetails} = useSelector(state => state.shopOrder)
-  
-    
+ const {orderDetails} = useSelector(state => state.shopOrder)    
   return (
      <DialogContent className='sm:max-w-[600px] bg-white border-none rounded-lg shadow-lg p-6'>
             <div className='grid gap-6 mt-6'>
                 <div className='grid gap-2'>
                     <div className='flex items-center justify-between'>
-                        <p className='text-sm font-medium'>Order ID</p>
+                        <p className='text-sm text-gray-700 font-medium'>Order ID</p>
                         <Label>{orderDetails._id}</Label>
                     </div>
                     <div className='flex items-center justify-between'>
-                        <p className='text-sm font-medium'>Order Date</p>
+                        <p className='text-sm text-gray-700 font-medium'>Order Date</p>
                         <Label>{orderDetails.orderDate}</Label>
                     </div>
                     <div className='flex items-center justify-between'>
-                        <p className='text-sm font-medium'>Order Status</p>
+                        <p className='text-sm text-gray-700 font-medium'>Order Status</p>
                         <Label>{orderDetails.orderStatus}</Label>
                     </div>
                     <div className='flex items-center justify-between'>
-                        <p className='text-sm font-medium'>Price</p>
+                        <p className='text-sm text-gray-700 font-medium'>Price</p>
                         <Label>${orderDetails.totalAmount}</Label>
                     </div>
                 </div>
@@ -37,7 +33,7 @@ function ShoppingOrderDetails() {
 
                 <div className='grid gap-4'>
                     <div className='grid gap-2'>
-                        <p className='text-sm font-medium'>Order Details</p>
+                        <p className='text-sm font-medium text-gray-500'>Order Details</p>
                         <ul className='grid gap-3'>
 
                         {
@@ -61,8 +57,8 @@ function ShoppingOrderDetails() {
                 
                 <div className='grid gap-4'>
                     <div className='grid gap-2'>
-                        <p className='text-sm font-medium'>Shipping Info</p>
-                        <div className='grid gap-0.5 text-gray-600'>
+                        <p className='text-sm font-medium text-gray-600'>Shipping Info</p>
+                        <div className='grid gap-0.5'>
                             <span className='text-sm'>{orderDetails.addressInfo.address}</span>
                             <span className='text-sm'>{orderDetails.addressInfo.city}</span>
                             <span className='text-sm'>{orderDetails.addressInfo.state}, {orderDetails.addressInfo.country}</span>

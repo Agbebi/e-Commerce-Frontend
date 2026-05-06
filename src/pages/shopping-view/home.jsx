@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Book, ChevronLeftCircleIcon, ChevronRightCircleIcon, LampFloor, Microchip } from 'lucide-react'
+import { ChevronLeftCircleIcon, ChevronRightCircleIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,13 +11,14 @@ import { toast } from 'sonner'
 import ProductDetailsDialog from '@/components/product-details'
 import { GrHp } from 'react-icons/gr'
 import { SiAdidas, SiLenovo, SiNike } from 'react-icons/si'
-import { FaShoppingBag } from 'react-icons/fa'
+import { PiHandbagLight, PiLampPendantLight } from 'react-icons/pi'
+import { GiBlackBook, GiMicrochip } from 'react-icons/gi'
 
 const categoriesWithIcons = [
-  { id: 'electronics', value: 'electronics', label: 'Electronics', icon: Microchip },
-  { id: 'fashion', value: 'fashion', label: 'Fashion', icon: FaShoppingBag },
-  { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances', icon: LampFloor },
-  { id: 'books', value: 'books', label: 'Books', icon: Book },
+  { id: 'electronics', value: 'electronics', label: 'Electronics', icon: GiMicrochip },
+  { id: 'fashion', value: 'fashion', label: 'Fashion', icon: PiHandbagLight },
+  { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances', icon: PiLampPendantLight },
+  { id: 'books', value: 'books', label: 'Books', icon: GiBlackBook },
 
 ]
 
@@ -98,8 +99,8 @@ function ShoppingHome() {
 
 
   return (
-    <div className='flex flex-col min-h-screen'>
-      <div className='relative w-full h-[600px] overflow-hidden'>
+    <div className='flex flex-col min-h-screen p-4 py-2'>
+      <div className='relative w-full h-[50vh] md:h-[70vh] rounded-lg overflow-hidden'>
         {
           slides.map((slide, index) => (
             <img
@@ -120,15 +121,15 @@ function ShoppingHome() {
         </Button>
       </div>
 
-      <section className='py-2 bg-gray-50'>
+      <section className='py-2'>
         <div className='container mx-auto px-4 py-4'>
           <h2 className='text-2xl font-bold text-center mb-8'>Browse by Category</h2>
 
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6'>
             {
-              categoriesWithIcons.map(category => (<Card onClick={() => handleNavigateToCategory(category, 'Category')} className='cursor-pointer border-gray-200 hover:shadow-lg transition-shadow' key={category.id} icon={category.icon}>
+              categoriesWithIcons.map(category => (<Card onClick={() => handleNavigateToCategory(category, 'Category')} className='cursor-pointer bg-white border-gray-200 hover:shadow-lg transition-shadow' key={category.id} icon={category.icon}>
                 <CardContent className='flex items-center justify-center p-6 flex-col'>
-                  <category.icon className='w-12 h-12 mb-4 text-gray-600' />
+                  <category.icon className='w-12 h-12 mb-4 text-gray-500' />
                   <span className='text-md text-center font-medium text-gray-800'>{category.label}</span>
                 </CardContent>
               </Card>))
@@ -137,13 +138,13 @@ function ShoppingHome() {
         </div>
       </section>
 
-      <section className='py-2 bg-gray-50'>
+      <section className='py-2'>
         <div className='container mx-auto px-4 py-4'>
           <h2 className='text-2xl font-bold text-center mb-8'>Browse by Brands</h2>
 
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6'>
             {
-              BrandWithIcons.map(brand => (<Card onClick={() => handleNavigateToCategory(brand, 'Brand')} className='cursor-pointer border-gray-200 hover:shadow-lg transition-shadow' key={brand.id} icon={brand.icon}>
+              BrandWithIcons.map(brand => (<Card onClick={() => handleNavigateToCategory(brand, 'Brand')} className='cursor-pointer bg-white border-gray-200 hover:shadow-lg transition-shadow' key={brand.id} icon={brand.icon}>
                 <CardContent className='flex items-center justify-center p-6 flex-col'>
                   <brand.icon className='w-12 h-12 mb-4 text-gray-600' />
                   <span className='text-md text-center font-medium text-gray-800'>{brand.label}</span>
@@ -155,7 +156,7 @@ function ShoppingHome() {
       </section>
 
 
-      <section className='py-12 '>
+      <section className='bg-white p-1'>
         <div className='container mx-auto px-4'>
           <h2 className='text-2xl font-bold text-center mb-8'>Featured Products</h2>
 

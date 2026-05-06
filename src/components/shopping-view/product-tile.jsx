@@ -10,7 +10,7 @@ function ShoppingProductTile({
     handleAddToCart,
 }) {
     return (
-        <Card className="w-full max-w-sm mx-auto py-0 rounded-lg shadow-sm border-gray-200 pb-4">
+        <Card className="w-full bg-white max-w-sm mx-auto py-0 rounded-lg shadow-sm border-gray-200 pb-4">
             <div
                 onClick={() => handleGetProductDetails(product._id)}
                 className="cursor-pointer"

@@ -1,7 +1,7 @@
 
 export const registerFormControls = [
    { name : 'userName',
-    label : 'User name',
+    label : 'Username *',
     placeholder : 'Enter your User Name',
     componentType : 'input',
     type : 'text',
@@ -11,13 +11,13 @@ export const registerFormControls = [
 },
 
     { name : 'email',
-    label : 'E-mail',
+    label : 'E-mail *',
     placeholder : 'Enter your E-mail',
     componentType : 'input',
     type : 'email'},
 
     { name : 'password',
-    label : 'Password',
+    label : 'Password *',
     placeholder : 'Enter your passsword',
     componentType : 'input',
     type : 'password'},
@@ -25,13 +25,13 @@ export const registerFormControls = [
 
 export const LoginFormControls = [
       { name : 'email',
-    label : 'E-mail',
+    label : 'E-mail *',
     placeholder : 'Enter your E-mail',
     componentType : 'input',
     type : 'email'},
 
     { name : 'password',
-    label : 'Password',
+    label : 'Password *',
     placeholder : 'Enter your password',
     componentType : 'input',
     type : 'password'},
@@ -111,6 +111,15 @@ export const shoppingViewCategories = [
     { id : 'home-appliances', value : 'home-appliances', label : 'Home Appliances', path : '/shop/listing'},
     { id : 'toys', value : 'toys', label : 'Toys', path : '/shop/listing'},
 ]
+
+
+export const menuLinks = [
+    { id : 'home', value : 'home', label : 'Home', path : '/shop/home', active : 'border-b border' },
+    { id : 'shop', value: 'shop', label : 'Shop', path : '/shop/listing', active : 'border-b border'},
+    { id : 'orders', value : 'orders', label : 'View Orders', path : '/shop/orders', active : 'border-b border'},
+    { id : 'contact', value : 'contact', label : 'Contact Us', path : '/shop/contact', active : 'border-b border'},
+]
+
 
 export const filterOptions = {
     Category : [

@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addNewAddress, deleteAddress, editAddress, fetchAllAddresses } from '@/store/shop/address-slice'
 import AddressCard from './address-card'
 import { toast } from 'sonner'
+import { Button } from '../ui/button'
+import { IoAdd } from 'react-icons/io5'
+import { useLocation } from 'react-router-dom'
 
 
 
@@ -26,6 +29,7 @@ function Address({currentSelectedAddress, setCurrentSelectedAddress}) {
 
     const [formData, setFormData] = useState(initialFormData)
     const [currentEditedId, setCurrentEditedId] = useState(null)
+    const [addAddress, setAddAddress] = useState(false)
     const { user } = useSelector(state => state.auth)
     const { addressList } = useSelector(state => state.shopAddress)
 
@@ -102,8 +106,8 @@ function Address({currentSelectedAddress, setCurrentSelectedAddress}) {
     }, [dispatch])
 
     return (
-        <Card className=' border-none shadow-none gap-4'>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5'>
+        <Card className=' border-none shadow-none gap-4 py-2'>
+            <div className='grid grid-cols-1 p-4 sm:grid-cols-1 md:grid-cols-2 gap-4'>
                 {
                     addressList && addressList.length > 0 ? addressList.map((address) => (
                         <AddressCard
@@ -111,17 +115,22 @@ function Address({currentSelectedAddress, setCurrentSelectedAddress}) {
                             setCurrentSelectedAddress={setCurrentSelectedAddress}
                             handleDeleteAddress={handleDeleteAddress}
                             handleEditAddress={handleEditAddress}
+                            setAddAddress={setAddAddress}
                             address={address}
                         />
-                    )) : <p className='text-center text-gray-400 col-span-full'>No address found. Please add a new address.</p>
+                    )) : <div className='flex flex-col justify-center gap-2 items-center'>
+                    <p className='text-center text-sm outline-gray-200 outline-dashed h-20 flex items-center p-4 rounded-lg text-gray-400 col-span-full'>No address found! <br /> Go to Menu and select Manage address to add an address </p>
+                    </div>
                 }
             </div>
 
-            <CardHeader>
-                <CardTitle className='mb-4 text-center sm:text-left'>{currentEditedId ? 'Edit Address' : 'Add New Address'}</CardTitle>
+          
+           {location.pathname.includes('account') || location.pathname.includes('address')  ?  <>
+             <CardHeader className='p-1 m-0 mb-0 gap-0'>
+                <CardTitle className='text-center sm:text-left'>{currentEditedId ? 'Edit Address' : 'Add New Address'}</CardTitle>
             </CardHeader>
 
-            <CardContent className='space-y-6 shadow p-6 rounded-lg border-none'>
+            <CardContent className='p-4 border-none'>
                 <CommonForm
                     formControls={addressFormControls}
                     formData={formData}
@@ -131,6 +140,7 @@ function Address({currentSelectedAddress, setCurrentSelectedAddress}) {
                     buttonDisabled={!isFormValid()}
                 />
             </CardContent>
+            </> : null }
         </Card>
     )
 }

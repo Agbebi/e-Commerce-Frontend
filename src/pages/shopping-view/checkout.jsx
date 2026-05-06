@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import accImg from '../../assets/accImg.jpg'
+import checkoutImg from '../../assets/checkoutImg.jpg'
 import Address from '@/components/shopping-view/address';
 import { useDispatch, useSelector } from 'react-redux';
 import CartItemsContent from '@/components/shopping-view/cart-items-content';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { createNewOrder } from '@/store/shop/order-slice';
+import { TbCurrencyNaira } from 'react-icons/tb';
+import { Separator } from '@/components/ui/separator';
 
 
 function ShoppingCheckout() {
@@ -78,27 +80,31 @@ function ShoppingCheckout() {
 
   return (
     <div className='flex flex-col'>
-      <div className='relative h-[300px] overflow-hidden w-full'>
+      <div className='relative h-[200px] overflow-hidden w-full'>
         <img
-          src={accImg}
+          src={checkoutImg}
           className='w-full h-full object-cover'
         />
       </div>
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mt-5 p-4'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 lg:mt-5 p-4'>
         <Address currentSelectedAddress={currentSelectedAddress} setCurrentSelectedAddress={setCurrentSelectedAddress} />
+
+        <div className='mx-auto border-b text-sm font-normal border-red-400'>Cart Items</div>
 
         <div className='flex flex-col gap-4 p-4'>
           {
             cartItems && cartItems.items && cartItems.items.length > 0 ?
-              cartItems.items.map((item) => (
+              cartItems.items.map((item) => (<>
                 <CartItemsContent cartItem={item} />
+                <Separator className='border-b border-gray-100'/>
+                </>
               ))
               : null
           }
           <div className='mt-8 space-y-4'>
             <div className='flex justify-between'>
-              <span className='font-bold'>Total</span>
-              <span className='font-bold'>${totalPrice.toFixed(2)}</span>
+              <span className='font-sm text-gray-600'>Total</span>
+              <span className='font-bold flex items-center'><TbCurrencyNaira className='w-5 h-5' />{totalPrice.toFixed(2)}</span>
             </div>
           </div>
           <div>

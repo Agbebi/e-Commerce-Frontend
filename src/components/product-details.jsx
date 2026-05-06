@@ -45,10 +45,10 @@ function handleDialogClose() {
 
 
     return (
-        <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogContent className='grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw] bg-white border-gray-200'>
+        <Dialog open={open} onOpenChange={handleDialogClose} className='p-2'>
+            <DialogContent className='grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-8 p-4 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw] bg-white border-gray-200'>
                 <div className='relative overflow-hidden rounded-lg'>
-                    <img src={productDetails.image} alt={productDetails.name} className='aspect-square w-full object-cover' width={600} height={600} />
+                    <img src={productDetails.image} alt={productDetails.name} className='md:aspect-square w-full object-cover' width={400} height={200} />
                 </div>
                 <div className=''>
                     <div>

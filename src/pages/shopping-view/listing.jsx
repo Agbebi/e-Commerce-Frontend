@@ -143,13 +143,13 @@ function ShoppingListing() {
   }, [productDetails]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 md:p-6 p-4">
+    <div className="grid grid-cols-1 bg-gray-50 md:grid-cols-[300px_1fr] gap-6 md:p-6 p-4">
       <ProductFilter filters={filters} handleFilters={handleFilters} />
-      <div className="w-full rounded-lg shadow-sm">
+      <div className="w-full rounded-lg shadow-sm bg-white">
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-lg font-bold hidden sm:block">All Products</h2>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-400">
               {productList.length} products
             </span>
             <DropdownMenu>
@@ -164,7 +164,7 @@ function ShoppingListing() {
 
               <DropdownMenuContent
                 align="end"
-                className="w-[200px] bg-white rounded-md shadow-lg p-1 border-gray-200"
+                className="w-[200px] bg-white rounded-md shadow-lg p-1 border-gray-100"
               >
                 <DropdownMenuRadioGroup sort={sort} onValueChange={handleSort}>
                   {sortOptions.map((option) => (
