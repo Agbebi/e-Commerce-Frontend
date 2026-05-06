@@ -3,8 +3,9 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { FileIcon, UploadCloudIcon, XIcon } from 'lucide-react';
 import { Button } from '../ui/button';
-import axios from 'axios';
+import API from '../../api/axios';
 import { Skeleton } from '../ui/skeleton';
+
 
 function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUploadedImgUrl, imageLoadingState,  setImageLoadingState, isEditMode }) {
 
@@ -45,7 +46,7 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUpload
         const data = new FormData()
         data.append('my_file', imageFile)
 
-        const response = await axios.post('/api/admin/products/upload-image', data)       
+        const response = await API.post('/api/admin/products/upload-image', data)       
     
         if (response.status === 200){
             setUploadedImgUrl(response.data.data.url)            
