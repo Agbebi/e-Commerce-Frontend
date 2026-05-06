@@ -27,7 +27,7 @@ function PaymentSuccess() {
         console.log(data),
         dispatch(fetchCartItems({ userId: user.id })).then((data) => {
           if (data.error) {
-            navigate('/shop/account')
+            navigate('/shop/orders')
           }
         })
       })
