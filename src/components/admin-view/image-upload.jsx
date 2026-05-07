@@ -14,6 +14,8 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUpload
     function handleImageFileChange(event) {
 
         const selectedFile = event.target.files[0]
+        console.log(selectedFile);
+        
         if (selectedFile) {
             setImageFile(selectedFile)
         }
