@@ -48,6 +48,9 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUpload
         const data = new FormData()
         data.append('my_file', imageFile)
 
+        console.log(data, 'Data posted to API');
+        
+
         const response = await API.post('/api/admin/products/upload-image', data)       
     
         if (response.status === 200){
