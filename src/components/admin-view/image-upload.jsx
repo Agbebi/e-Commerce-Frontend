@@ -5,7 +5,6 @@ import { FileIcon, UploadCloudIcon, XIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import API from '../../api/axios';
 import { Skeleton } from '../ui/skeleton';
-import { File } from 'buffer';
 
 
 function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUploadedImgUrl, imageLoadingState,  setImageLoadingState, isEditMode }) {
