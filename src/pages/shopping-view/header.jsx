@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 import UserCartWrapper from '../../components/shopping-view/cart-wrapper'
 import { fetchCartItems } from '@/store/shop/cart-slice'
 import { Label } from '@/components/ui/label'
-import { CiHome, CiMenuBurger } from 'react-icons/ci'
+import { CiHome, CiMenuBurger, CiSearch } from 'react-icons/ci'
 import { IoBasket, IoCall, IoCallOutline } from 'react-icons/io5'
 import { FaAddressCard, FaHome } from 'react-icons/fa'
 import { SlLogout } from 'react-icons/sl'
@@ -50,7 +50,7 @@ function MenuItems() {
         menuLinks.map((category) => (
           <Label key={category.value}
             className={`cursor-pointer text-sm font-medium text-gray-900 transition-colors duration-200`}
-            onClick={() => {navigate(category.path); }}
+            onClick={() => { navigate(category.path); }}
           >
             {category.label}
           </Label>
@@ -77,6 +77,9 @@ function HeaderRightContent() {
 
   return (
     <div className='flex lg:items-center lg:flex-row flex-col gap-4'>
+
+      <Button size='sm' onClick={() => navigate('/shop/search')} className='rounded-full border border-gray-200'><CiSearch size='sm' className='w-6 h-7' /></Button>
+
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button onClick={() => setOpenCartSheet(true)} className='rounded-full border border-gray-200' size='icon'>
           <ShoppingCart className='w-6 h-6' />
@@ -165,58 +168,61 @@ function ShoppingHeader() {
 
           <DropdownMenu className=''>
             <DropdownMenuTrigger className=' p-2'>
-                <CiMenuBurger className=''/>
+              <CiMenuBurger className='' />
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className='border-gray-100 shadow-sm bg-white p-2 mx-2 rounded-lg'>
               <DropdownMenuGroup className='flex flex-col gap-2'>
                 <DropdownMenuLabel className='text-xs font-light text-gray-500'>Links</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => navigate('/shop/home')}  className='w-full text-gray-800' ><FaHome /><span className=''> Home</span></DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/shop/home')} className='w-full text-gray-800' ><FaHome /><span className=''> Home</span></DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/shop/listing')} className='w-full text-gray-800' ><FaShopify /><span className=''> Shop</span></DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/shop/orders')} className='w-full text-gray-800'><IoBasket /><span>View Orders</span> </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/shop/address')} className='w-full text-gray-800' ><FaAddressCard /><span>Manage Addresses</span> </DropdownMenuItem>
                 <DropdownMenuItem className='w-full text-gray-800' ><IoCall /><span className=''> Contact Us</span></DropdownMenuItem>
               </DropdownMenuGroup>
 
-            
-              <DropdownMenuSeparator className='border-b border-gray-200 w-3/4 mx-auto py-0 inset-0.5'/>
+
+              <DropdownMenuSeparator className='border-b border-gray-200 w-3/4 mx-auto py-0 inset-0.5' />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-          <Link to="/shop/home" className='flex items-center gap-2'>
-            <span className='font-light text-black'>Tim Marketplace</span>
-          </Link>
+        <Link to="/shop/home" className='flex items-center gap-2'>
+          <span className='font-light text-black'>Tim Marketplace</span>
+        </Link>
 
         <div className='lg:hidden flex gap-2 justify-center items-center'>
-          {isAuthenticated ? <DropdownMenu>
-            <DropdownMenuTrigger className='cursor-pointer' asChild>
-              <Button
-                className='rounded-full border border-gray-200' size='icon'>
-                <User className='w-8 h-8' />
-              </Button>
-            </DropdownMenuTrigger>
+          <Button size='sm' onClick={() => navigate('/shop/search')} className='rounded-full border border-gray-200'><CiSearch size='sm' className='w-6 h-7' /></Button>
+          {isAuthenticated ?
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className='cursor-pointer' asChild>
+                <Button
+                  className='rounded-full border border-gray-200' size='icon'>
+                  <User className='w-8 h-8' />
+                </Button>
+              </DropdownMenuTrigger>
 
 
-            <DropdownMenuContent side='bottom' className='bg-white mr-4 text-black w-48 border border-gray-200 shadow-sm'>
-              <DropdownMenuLabel className='flex flex-col items-center justify-center gap-2 w-full'>
+              <DropdownMenuContent side='bottom' className='bg-white mr-4 text-black w-48 border border-gray-200 shadow-sm'>
+                <DropdownMenuLabel className='flex flex-col items-center justify-center gap-2 w-full'>
                   <Avatar className='w-6 h-6' size='10'>
-                     <AvatarFallback className=' bg-black text-white text-lg'>T</AvatarFallback>
+                    <AvatarFallback className=' bg-black text-white text-lg'>T</AvatarFallback>
                   </Avatar>
-                <span className='w-full text-center'>Welcome back, {user.userName}!</span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className='border-b border-gray-200' />
-              <DropdownMenuItem onClick={() => navigate('/shop/orders')} className='hover:bg-gray-800 cursor-pointer hover:text-white'>
-                <BiBasket className=' h-6 w-6' />
-                <span>Order History?</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className='hover:bg-gray-800 cursor-pointer hover:text-white'>
-                <SlLogout />
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> : null}
+                  <span className='w-full text-center'>Welcome back, {user.userName}!</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className='border-b border-gray-200' />
+                <DropdownMenuItem onClick={() => navigate('/shop/orders')} className='hover:bg-gray-800 cursor-pointer hover:text-white'>
+                  <BiBasket className=' h-6 w-6' />
+                  <span>Order History?</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className='hover:bg-gray-800 cursor-pointer hover:text-white'>
+                  <SlLogout />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> : null}
 
 
           <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>

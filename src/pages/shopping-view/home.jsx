@@ -55,12 +55,18 @@ function ShoppingHome() {
     sessionStorage.setItem('filters', JSON.stringify(currentFilter))
   }
 
-  function handleAddToCart(getCurrentProductId) {
+  function handleAddToCart(getCurrentProduct) {
+
     dispatch(
       addToCart({
         userId: user.id,
-        productId: getCurrentProductId,
+        productId: getCurrentProduct._id,
         quantity: 1,
+        description: getCurrentProduct.description,
+        name: getCurrentProduct.name,
+        imageUrl: getCurrentProduct.image,
+        price: getCurrentProduct.salesPrice > 0 ? getCurrentProduct.salesPrice : getCurrentProduct.price,
+        vendorId: getCurrentProduct.vendorId
       }),
     ).then((data) => {
       if (data?.payload?.success) {

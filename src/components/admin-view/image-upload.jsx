@@ -5,7 +5,6 @@ import { FileIcon, UploadCloudIcon, XIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import API from '../../api/axios';
 import { Skeleton } from '../ui/skeleton';
-import { File } from 'buffer';
 
 
 function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUploadedImgUrl, imageLoadingState,  setImageLoadingState, isEditMode }) {
@@ -47,14 +46,11 @@ function ProductImageUpload({ imageFile, setImageFile, uploadedImgUrl, setUpload
     async function uploadImageToCloudinary(){
         setImageLoadingState(true)
 
-        console.log(imageFile, 'Image file before sent data.append');
-        
         const data = new FormData()
         data.append('my_file', imageFile)
 
         console.log(data.get('my_file'), 'Data posted to API');
         
-
         const response = await API.post('/api/admin/products/upload-image', data)       
     
         if (response.status === 200){

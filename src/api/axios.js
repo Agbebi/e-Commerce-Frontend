@@ -12,5 +12,13 @@ const API = axios.create({
     },
 })
 
+// Remove default Content-Type for FormData requests
+API.interceptors.request.use((config) => {
+    if (config.data instanceof FormData) {
+        delete config.headers['Content-Type'];
+    }
+    return config;
+});
+
 
 export default API

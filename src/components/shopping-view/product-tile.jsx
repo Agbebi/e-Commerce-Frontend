@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { DollarSign, Icon } from "lucide-react";
+import { TbCurrencyNaira } from "react-icons/tb";
 
 function ShoppingProductTile({
     product,
@@ -44,13 +45,13 @@ function ShoppingProductTile({
                                     : "font-bold"
                                 } items-center justify-around flex`}
                         >
-                            ${product.price}
+                            <TbCurrencyNaira />{product.price}
                         </span>
                         <span
-                            className={`${product.salesPrice > 0 ? "text-lg font-bold" : "hidden"
+                            className={`flex items-center ${product.salesPrice > 0 ? "text-lg font-bold" : "hidden"
                                 }`}
                         >
-                            ${product.salesPrice}
+                            <TbCurrencyNaira />{product.salesPrice}
                         </span>
                     </div>
                 </CardContent>
@@ -58,7 +59,7 @@ function ShoppingProductTile({
             <CardFooter>
                 <Button
                     onClick={() => {
-                        handleAddToCart(product._id);
+                        handleAddToCart(product);
                     }}
                     className="w-full bg-black text-white"
                 >

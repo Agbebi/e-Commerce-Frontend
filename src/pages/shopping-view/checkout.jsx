@@ -25,58 +25,66 @@ function ShoppingCheckout() {
   }, 0) : 0;
 
 
-  function handlePaypalPayment() {
+  function handleOpayPayment() {
 
-    if(currentSelectedAddress === null){
+    if (currentSelectedAddress === null) {
       toast.error('Address is required!', {
-        description : <span className="text-red-700">Click on an address card to select it.</span>
+        description: <span className="text-red-700">Click on an address card to select it.</span>
       })
       return
 
     }
 
+    console.log(cartItems, 'Cart items before order creation');
+
 
     const orderData = {
-      userId: user.id,
-      cartId : cartItems._id,
-      cartItems: cartItems.items.map(item => ({
-        productId: item.productId,
-        title: item.name,
-        image: item.image,
-        price: item.salesPrice > 0 ? item.salesPrice : item.price,
-        quantity: item.quantity
-      })),
-      addressInfo : {
-        addressId : currentSelectedAddress._id,
-        address : currentSelectedAddress.address,
-        city : currentSelectedAddress.city,
-        postalCode : currentSelectedAddress.postalCode,
-        phoneNumber : currentSelectedAddress.phoneNumber,
-        notes : currentSelectedAddress.notes,
-        country : currentSelectedAddress.country,
-        state : currentSelectedAddress.state,
-      }, 
-      orderStatus : 'pending', 
-      paymentMethod : 'PayPal', 
-      paymentStatus : 'pending', 
-      totalAmount : totalPrice, 
-      orderDate : new Date(), 
-      orderUpdateDate : new Date(), 
-      paymentId : '', 
-      payerId : ''
+      userInfo: {
+        userEmail: user.email,
+        userId: user.id,
+        userMobile: "+201088889999",
+        userName: user.userName
+      },
+      cartId: cartItems._id,
+      productList: cartItems.items.map(item => (
+        {
+          productId: item.productId,
+          name: item.name,
+          description: item.description,
+          imageUrl: item.image,
+          price: item.salesPrice > 0 ? item.salesPrice : item.price,
+          quantity: item.quantity,
+          vendorId: item.vendorId
+        }
+      )),
+      addressInfo: {
+        addressId: currentSelectedAddress._id,
+        address: currentSelectedAddress.address,
+        city: currentSelectedAddress.city,
+        postalCode: currentSelectedAddress.postalCode,
+        phoneNumber: currentSelectedAddress.phoneNumber,
+        notes: currentSelectedAddress.notes,
+        country: currentSelectedAddress.country,
+        state: currentSelectedAddress.state,
+      },
+      orderStatus: 'pending',
+      paymentMethod: 'Opay',
+      paymentStatus: 'pending',
+      totalAmount: totalPrice,
+      orderDate: new Date(),
+      orderUpdateDate: new Date(),
+      paymentId: '',
+      payerId: '',
+      deliveryStatus: 'pending'
     }
-    
 
-     dispatch(createNewOrder(orderData))
 
-     console.log(approvalUrl, 'Approval Url');
-     
+    dispatch(createNewOrder(orderData))
+  }
+  if (approvalUrl) {
+    window.location.href = approvalUrl
+  }
 
-    }
-    if(approvalUrl){
-         window.location.href = approvalUrl.href
-       }
-  
 
   return (
     <div className='flex flex-col'>
@@ -96,8 +104,8 @@ function ShoppingCheckout() {
             cartItems && cartItems.items && cartItems.items.length > 0 ?
               cartItems.items.map((item) => (<>
                 <CartItemsContent cartItem={item} />
-                <Separator className='border-b border-gray-100'/>
-                </>
+                <Separator className='border-b border-gray-100' />
+              </>
               ))
               : null
           }
@@ -108,7 +116,7 @@ function ShoppingCheckout() {
             </div>
           </div>
           <div>
-            <Button onClick={handlePaypalPayment} className='w-full mt-4 bg-black text-white hover:bg-gray-800'>Checkout with paypal</Button>
+            <Button onClick={handleOpayPayment} className='w-full mt-4 bg-black text-white hover:bg-gray-800'>Checkout with paypal</Button>
           </div>
         </div>
       </div>

@@ -23,6 +23,7 @@ import { Skeleton } from './components/ui/skeleton'
 import PaymentSuccess from './pages/shopping-view/payment-success'
 import ShoppingOrdersPage from './pages/shopping-view/orders'
 import ShoppingAddressPage from './pages/shopping-view/address-page'
+import SearchPage from './pages/shopping-view/search'
 
 const App = () => {
   const { user, isAuthenticated, isLoading } = useSelector(state => state.auth)
@@ -78,6 +79,7 @@ const App = () => {
               <Route path='payment' element={<PaymentSuccess />} />
               <Route path='orders' element={<ShoppingOrdersPage />} />
               <Route path='address' element={<ShoppingAddressPage />} />
+              <Route path='search' element={<SearchPage />} />
             </Route>
             <Route path='/unauth-page' element={<UnauthPage />} />
             <Route path='*' element={<CheckAuth />} />

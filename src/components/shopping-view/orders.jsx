@@ -33,6 +33,8 @@ function ShoppingOrders() {
     })
 
   }
+  console.log(orderList, 'Order List');
+
 
   return (
     <Card className='border-none rounded-none gap-1 w-full'>
@@ -41,13 +43,14 @@ function ShoppingOrders() {
       </CardHeader>
 
       <CardContent className='py-4'>
-      <Separator className='border-b mb-4 mt-0 border-gray-100' />
+        <Separator className='border-b mb-4 mt-0 border-gray-100' />
         <Table className=''>
           <TableHeader className='bg-orange-300 text-sm font-light'>
             <TableRow className='border-none font-light text-sm p-2 shadow'>
               <TableHead className='text-sm font-light'>Order ID</TableHead>
               <TableHead className='text-sm font-light'>Payment Date</TableHead>
               <TableHead className='text-sm font-light'>Payment Status</TableHead>
+              <TableHead className='text-sm font-light'>Delivery Status</TableHead>
               <TableHead className='text-sm font-light'>Total Payment</TableHead>
               <TableHead>
                 <span className="sr-only">View Details</span>
@@ -63,10 +66,23 @@ function ShoppingOrders() {
                   <TableCell>{order.orderDate.split('T')[0]}</TableCell>
                   <TableCell>
                     <Badge className={
-                      `${order.orderStatus == 'pending' ? 'bg-amber-400' : 'bg-green-400'
+                      `${order.paymentStatus == 'pending' ? 'bg-amber-400' : 'bg-green-400'
                       }`
                     }>
-                      {order.orderStatus}
+                      {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={
+                      {
+                        pending: 'bg-amber-400',
+                        processing: 'bg-blue-400',
+                        shipped: 'bg-purple-400',
+                        delivered: 'bg-green-400',
+                        cancelled: 'bg-red-400',
+                      }[order.orderStatus] || 'bg-gray-400'
+                    }>
+                      {order.deliveryStatus.charAt(0).toUpperCase() + order.deliveryStatus.slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell>${order.totalAmount}</TableCell>

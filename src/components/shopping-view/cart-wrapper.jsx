@@ -29,7 +29,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
                     cartItems.items.map((item) => (                    
                             <CartItemsContent cartItem={item} />
                     )) : <div
-                        className='text-sm text-center outline w-full flex items-center justify-center h-20 opacity-50 outline-gray-200'>
+                        className='text-sm text-center p-4 outline w-full flex items-center justify-center h-20 opacity-50 outline-gray-200'>
                         Your cart seems empty, start adding some items!
                     </div>
                 }

@@ -25,8 +25,8 @@ export const addNewProduct = createAsyncThunk(
 
 export const fetchAllProducts = createAsyncThunk(
     '/products/fetchAllProducts',
-   async () => {    
-        const result = await API.get('/api/admin/products/get', {
+   async (vendorId) => {    
+        const result = await API.get(`/api/admin/products/get/${vendorId}`, {
             headers : {
                 "Content-Type" : 'application/json'
             }

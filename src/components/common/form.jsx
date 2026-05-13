@@ -47,14 +47,14 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                         ...formData,
                         [getControlItem.name] : value
                     })} value={value} className='' >
-                        <SelectTrigger className='w-full border-gray-300'>
+                        <SelectTrigger className='w-full text-xs border-gray-300'>
                             <SelectValue placeholder={getControlItem.placeholder} />
                         </SelectTrigger>
-                        <SelectContent className='w-full bg-white px-0 py-0 border border-gray-300'>
+                        <SelectContent className='w-full bg-white px-0 py-0 border text-xs border-gray-300'>
                             {
                                 getControlItem.options &&
                                     getControlItem.options.length > 0 ?
-                                    getControlItem.options.map(optionItem => <SelectItem  className='hover:bg-gray-200 px-4 w-full' key={optionItem.id} value={optionItem.value}>{optionItem.label}</SelectItem>) : null
+                                    getControlItem.options.map(optionItem => <SelectItem  className='hover:bg-gray-200 text-xs px-4 w-full' key={optionItem.id} value={optionItem.value}>{optionItem.label}</SelectItem>) : null
                             }
                         </SelectContent>
                     </Select>
@@ -96,7 +96,7 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                         </div>
                         ))}
             </div>
-            <Button disabled={buttonDisabled} type='submit' className='mt-2 w-full bg-black text-white shadow cursor-pointer'>{buttonText || 'Submit'}</Button>
+            <Button disabled={buttonDisabled} type='submit' size='' className='mt-2 text-xs w-full bg-black text-white shadow cursor-pointer'>{buttonText || 'Submit'}</Button>
         </form>
     )
 }

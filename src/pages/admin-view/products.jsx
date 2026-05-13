@@ -11,7 +11,10 @@ import AdminProductTile from './product-tile'
 
 
 
+
 function AdminProducts() {
+
+  const { user } = useSelector((state) => state.auth)  
 
   const initialFormData = {
     image: null,
@@ -21,8 +24,10 @@ function AdminProducts() {
     brand: '',
     price: '',
     salesPrice: '',
-    totalStock: ''
+    totalStock: '',
+    vendorId: user.id
   }
+  
 
   const [openProductSheet, setOpenProductSheet] = useState(false)
   const [formData, setFormData] = useState(initialFormData)
@@ -40,8 +45,6 @@ function AdminProducts() {
   }
 
   function handleDelete(productId) {
-
-    console.log(productId, 'product id');
     
     dispatch(deleteProduct(productId)).then((data) => {
       if (data.payload.success) {
@@ -86,8 +89,8 @@ function AdminProducts() {
   }
 
   useEffect(() => {
-    dispatch(fetchAllProducts())
-  }, [dispatch])
+    dispatch(fetchAllProducts(user.id))
+  }, [dispatch,user.id])
 
   return (
     <Fragment>

@@ -13,17 +13,16 @@ function PaymentSuccess() {
   const { cartItems } = useSelector(state => state.shopCart)
   const { user } = useSelector(state => state.auth)
   // const [cartId, setCartId] = useState('')
-  const params = new URLSearchParams(location.search)
 
 
 
-  const paypalToken = params.get('token')
-  const orderID = paypalToken
+  const opayReference = sessionStorage.getItem('orderID')
   const cartId = cartItems._id
   
+  
   useEffect(() => {
-    if (orderID) {
-      dispatch(capturePayment({ orderID: orderID, cartId: cartId })).then((data) => {
+    if (opayReference) {
+      dispatch(capturePayment({ opayReference: opayReference, cartId: cartId })).then((data) => {
         console.log(data),
         dispatch(fetchCartItems({ userId: user.id })).then((data) => {
           if (data.error) {
@@ -34,7 +33,7 @@ function PaymentSuccess() {
     }
 
 
-  }, [cartId, dispatch, orderID, user.id, navigate])
+  }, [cartId, dispatch, opayReference, navigate, user.id])
 
   return (
     <Card className='mt-4 border-gray-100 bg-green-50 mx-4 shadow-stone-50'>
