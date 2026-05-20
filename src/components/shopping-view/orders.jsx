@@ -33,11 +33,10 @@ function ShoppingOrders() {
     })
 
   }
-  console.log(orderList, 'Order List');
 
 
   return (
-    <Card className='border-none rounded-none gap-1 w-full'>
+    <Card className='border-none rounded-none grid gap-1 w-full'>
       <CardHeader className='flex justify-between items-center text-sm'>
         <div>Orders</div>
       </CardHeader>

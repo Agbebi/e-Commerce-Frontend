@@ -35,7 +35,7 @@ function handleDetailsView(order) {
 }
 
   return (
-    <Card className='border-none'>
+    <Card className='border-none gap-1 w-full'>
       <CardHeader>
         <CardTitle>All Orders</CardTitle>
       </CardHeader>

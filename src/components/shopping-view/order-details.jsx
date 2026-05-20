@@ -155,7 +155,7 @@ function ShoppingOrderDetails() {
 
 
       <div ref={printRef} className='grid gap-6'>
-      <QRCodeGenerator url={`https://timscommerce.netlify.app/admin/orders/deliver/${orderDetails?._id}`} />
+      <QRCodeGenerator url={`https://e-commerce-backend-8j28.onrender.com/admin/orders/deliver/${orderDetails?._id}`} />
         <div className='grid gap-2'>
           <div className='flex items-center justify-between'>
             <p className='text-sm text-gray-600 font-light'>Order ID</p>
