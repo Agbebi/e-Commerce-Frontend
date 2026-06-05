@@ -17,13 +17,13 @@ function PaymentSuccess() {
 
 
   const opayReference = sessionStorage.getItem('orderID')
-  const cartId = cartItems._id
+  const cartId = cartItems._id  
   
   
   useEffect(() => {
-    if (opayReference) {
+    if (opayReference) {   
       dispatch(capturePayment({ opayReference: opayReference, cartId: cartId })).then((data) => {
-        console.log(data),
+        console.log('Payment capture response:', data);
         dispatch(fetchCartItems({ userId: user.id })).then((data) => {
           if (data.error) {
             navigate('/shop/orders')

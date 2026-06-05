@@ -21,7 +21,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
         <SheetContent  className='bg-white sm:max-w-md w-80 p-4 first:gap-1 justify-center pt-10'>
         <SheetHeader style={{backgroundImage : cart}} className='outline-orange-200  flex flex-col items-center justify-center p-1'>
                 <SlBasket className='w-6 rounded-full h-6' />
-               <span className='text-lg font-light text-orange-600'> Your Cart</span>
+               <span className='text-lg  text-orange-600'> Your Cart</span>
                 
             </SheetHeader> 
             <div className='flex flex-col overscroll-y-auto overscroll-x-hidden rounded-lg p-2 gap-2 mt-2'>
@@ -40,18 +40,18 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
                 {/* <Separator className='border border-gray-100' /> */}
                 <div className='flex flex-col gap-2'>
                     <div className='flex justify-between items-center'>
-                        <span className='font-sm text-gray-800 font-light text-sm'>Subtotal</span>
-                        <span className='font-bold flex'><TbCurrencyNaira className='w-6 h-6 font-light text-gray-800' />{totalPrice.toFixed(2)}</span>
+                        <span className='text-sm text-gray-800'>Subtotal</span>
+                        <span className='font-bold flex'><TbCurrencyNaira className='w-6 h-6  text-gray-800' />{totalPrice.toFixed(2)}</span>
                     </div>
                     <div className='flex justify-between items-center'>
-                        <span className='font-sm text-gray-800 font-light text-sm'>Shipping</span>
+                        <span className='text-sm text-gray-800'>Shipping</span>
                         <span className='font-bold flex'>--</span>
                     </div>
                 </div>
                 <Separator className='border border-gray-100' />
                 <div className='flex justify-between items-center'>
                     <span className='font-medium'>Total</span>
-                    <span className='font-bold flex'><TbCurrencyNaira className='w-6 h-6 font-light text-gray-800' />{totalPrice.toFixed(2)}</span>
+                    <span className='font-bold flex'><TbCurrencyNaira className='w-6 h-6  text-gray-800' />{totalPrice.toFixed(2)}</span>
                 </div>
                 <Button
                     onClick={() => {

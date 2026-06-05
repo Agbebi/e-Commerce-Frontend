@@ -100,11 +100,11 @@ function HeaderRightContent() {
 
 
         <DropdownMenuContent side='right' className='bg-white w-48 border border-gray-100'>
-          <DropdownMenuLabel className='text-gray-600 font-light'>Logged in as {user.userName}</DropdownMenuLabel>
+          <DropdownMenuLabel className='text-gray-600s'>Logged in as {user.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator className='' />
           <DropdownMenuItem onClick={() => navigate('/shop/account')} className='hover:bg-gray-800 cursor-pointer hover:text-white'>
             <CircleUserRound className='mr-2 h-6 w-6' />
-            <span className='font-light'>Profile</span>
+            <span className=''>Profile</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout} className='hover:bg-gray-800 cursor-pointer hover:text-white'>
@@ -188,7 +188,7 @@ function ShoppingHeader() {
         </div>
 
         <Link to="/shop/home" className='flex items-center gap-2'>
-          <span className='font-light text-black'>Tim Marketplace</span>
+          <span className='text-shadow'>Tim Marketplace</span>
         </Link>
 
         <div className='lg:hidden flex gap-2 justify-center items-center'>

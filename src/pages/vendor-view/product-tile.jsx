@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import React from 'react'
 
-function AdminProductTile({product, setFormData, setOpenProductSheet, setCurrentEditedId, handleDelete}) {        
+function VendorProductTile({product, setFormData, setOpenProductSheet, setCurrentEditedId, handleDelete}) {        
 
   return (
     <Card className='w-full max-w-sm mx-auto py-0 overflow-hidden border-gray-300 shadow'>
@@ -38,4 +38,4 @@ function AdminProductTile({product, setFormData, setOpenProductSheet, setCurrent
 
 }
 
-export default AdminProductTile
+export default VendorProductTile

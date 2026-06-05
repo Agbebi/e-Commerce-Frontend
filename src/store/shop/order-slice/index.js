@@ -24,6 +24,14 @@ export const capturePayment = createAsyncThunk('order/capturePayment', async ({o
     return response.data
 })
 
+
+export const queryPaymentStatus = createAsyncThunk('order/queryPaymentStatus', async ({opayReference, cartId, productList}) => { 
+    const response = await API.post(`/api/shop/order/payment-status/${opayReference}`, {cartID : cartId, productList})
+
+    return response.data
+})
+
+
 export const getAllOrders = createAsyncThunk('order/getAllOrders', async (userID) => {  
     const response = await API.get(`/api/shop/order/list/${userID}`)
 
@@ -75,19 +83,27 @@ const shoppingOrderSlice = createSlice({
         }).addCase(getAllOrders.pending, (state) =>{
             state.isLoading = true
         }).addCase(getAllOrders.fulfilled, (state, action) =>{
-            state.isLoading = false,
-            state.orderList = action.payload.data
+            state.isLoading = false
+            state.orderList = action.payload?.data || []
         }).addCase(getAllOrders.rejected, (state) =>{
-            state.isLoading = false,
+            state.isLoading = false
             state.orderList = []
         }).addCase(getOrderDetails.pending, (state) =>{
             state.isLoading = true
         }).addCase(getOrderDetails.fulfilled, (state, action) =>{
-            state.isLoading = false,
-            state.orderDetails = action.payload.data
+            state.isLoading = false
+            state.orderDetails = action.payload?.data || null
         }).addCase(getOrderDetails.rejected, (state) =>{
-            state.isLoading = false,
+            state.isLoading = false
             state.orderDetails = null
+        }).addCase(queryPaymentStatus.pending, (state) =>{
+            state.isLoading = true
+        }).addCase(queryPaymentStatus.fulfilled, (state, action) =>{
+            state.isLoading = false
+            toast.success(action.payload.message || 'Payment captured successfully!')
+        }).addCase(queryPaymentStatus.rejected, (state) =>{
+            state.isLoading = false
+            toast.error('Failed to query payment status!')
         })
     }
 })

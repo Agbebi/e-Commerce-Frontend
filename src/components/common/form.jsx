@@ -35,7 +35,7 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                             ...formData,
                             [getControlItem.name]: event.target.value
                         })}
-                        className='border-gray-200 rounded-none text-sm'
+                        className='border-gray-200 rounded-none text-xs placeholder:text-xs '
 
                     />
                 )
@@ -72,7 +72,7 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                             ...formData,
                             [getControlItem.name]: event.target.value
                         })}
-                        className='border-gray-300'
+                        className='border-gray-300 placeholder:text-xs'
                     />
                 )
                 break;

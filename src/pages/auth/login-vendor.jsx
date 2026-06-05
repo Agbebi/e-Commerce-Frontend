@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import CommonForm from '../../components/common/form'
 import { useDispatch } from 'react-redux'
-import { loginUser } from '@/store/auth-slice'
+import { loginVendor } from '@/store/auth-slice'
 import { toast } from 'sonner'
 import { CiShop, CiUser } from 'react-icons/ci'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -15,7 +15,7 @@ const initialState = {
   password: ''
 }
 
-function AuthLogin() {
+function VendorAuthLogin() {
 
   const [formData, setFormData] = useState(initialState)
   const dispatch = useDispatch()
@@ -23,7 +23,7 @@ function AuthLogin() {
   function onSubmit(event) {
     event.preventDefault()
 
-    dispatch(loginUser(formData)).then((data) => {
+    dispatch(loginVendor(formData)).then((data) => {
       if (data?.payload?.success) {
         toast.success(`${data?.payload?.message}`)
       } else {
@@ -35,14 +35,14 @@ function AuthLogin() {
 
   return (
     <div className='mx-auto w-full bg-white p-8 rounded-lg max-w-md space-y-6'>
-      <div className='text-orange text-shadow-2xs flex items-center justify-between w-full  sm:flex-row gap-1'>
-              <span className='flex items-center gap-2'>
-                {/* <CiShop size={30} /> */}
-                Tim Marketplace.
-              </span>
-              <span className='text-gray-500 text-sm flex items-center gap-2'><CiUser /> Customer Login</span>
-            </div>
-      <div className='text-center  mb-4'>
+      <div className='text-orange flex items-center justify-between w-full  sm:flex-row gap-1'>
+        <span className='flex items-center gap-2'>
+          {/* <CiShop size={30} /> */}
+          Tim Marketplace.
+        </span>
+        <span className='text-gray-500 text-sm flex items-center gap-2'><CiUser /> Vendor Login</span>
+      </div>
+      <div className='text-center mb-8'>
         <h1 className='text-2xl tracking-tight font-semibold text-gray-800 my-2'>Welcome back!</h1>
         <p className='text-gray-500 text-xs'>Please enter your details.</p>
 
@@ -54,7 +54,7 @@ function AuthLogin() {
         setFormData={setFormData}
         onSubmit={onSubmit}
       />
-      <div className='flex flex-row px-6 text-xs justify-between p-1'>
+      <div className='flex flex-row px-6 text-sm justify-between p-1'>
         <div className='flex items-center gap-2 justify-around'>
           <Checkbox />
           <span>Remember me</span>
@@ -66,18 +66,18 @@ function AuthLogin() {
         <p>Doesn't have an account?</p>
         <Link
           className='font-medium underline text-gray-800 hover:underline'
-          to='/auth/register'>
+          to='/auth/register-vendor'>
           Sign up
         </Link>
       </div>
 
       <Link
-          className='font-medium underline text-center mx-auto text-gray-800 text-xs hover:underline'
-          to='/'>
-          Not a customer?
-        </Link>
+                className='font-medium underline text-center mx-auto text-gray-800 text-xs hover:underline'
+                to='/'>
+                Not a vendor?
+              </Link>
     </div>
   )
 }
 
-export default AuthLogin
+export default VendorAuthLogin

@@ -1,10 +1,14 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import img from '../../../assets/authImg.jpg'
 
 function AuthLayout() {    
     return (
-        <div className={`flex bg-gray-500 min-h-screen max-h-screen w-full`}>
+        <div className={`flex min-h-screen max-h-screen w-full`} style={{
+            backgroundImage: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),  url('https://picsum.photos/seed/picsum/800/600')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+        }}>
             <div className="hidden  lg:flex items-center py-4 justify-center w-1/2">
 
 

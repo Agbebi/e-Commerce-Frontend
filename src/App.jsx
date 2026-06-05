@@ -3,11 +3,11 @@ import { Routes, Route } from 'react-router-dom'
 import AuthLayout from './components/ui/auth/layout'
 import AuthRegister from './pages/auth/register'
 import AuthLogin from './pages/auth/login'
-import AdminLayout from './components/admin-view/layout'
-import AdminDashboard from './pages/admin-view/dashboard'
-import AdminFeatures from './pages/admin-view/features'
-import AdminOrders from './pages/admin-view/orders'
-import AdminProducts from './pages/admin-view/products'
+import VendorLayout from './components/vendor-view/layout'
+import VendorDashboard from './pages/vendor-view/dashboard'
+import VendorFeatures from './pages/vendor-view/features'
+import VendorOrders from './pages/vendor-view/orders'
+import VendorProducts from './pages/vendor-view/products'
 import ShoppingLayout from './pages/shopping-view/layout'
 import NotFound from './pages/not-found'
 import ShoppingAccount from './pages/shopping-view/account'
@@ -24,6 +24,16 @@ import PaymentSuccess from './pages/shopping-view/payment-success'
 import ShoppingOrdersPage from './pages/shopping-view/orders'
 import ShoppingAddressPage from './pages/shopping-view/address-page'
 import SearchPage from './pages/shopping-view/search'
+import VendorDeliveryPage from './pages/dispatch/deliver'
+import DispatchDashboard from './pages/dispatch/dashboard'
+import DispatchDeliveryPage from './pages/dispatch/deliver'
+import DispatchLayout from './components/dispatch/layout'
+import DispatchOrdersPage from './pages/dispatch/orders'
+import VendorAuthRegister from './pages/auth/register-vendor'
+import FirstPage from './pages/first-page'
+import DispatcherAuthRegister from './pages/auth/register-dispatch'
+import VendorAuthLogin from './pages/auth/login-vendor'
+import DispatcherAuthLogin from './pages/auth/login-dispatcher'
 
 const App = () => {
   const { user, isAuthenticated, isLoading } = useSelector(state => state.auth)
@@ -36,7 +46,7 @@ const App = () => {
   if (isLoading) {
     return <div className='grid grid-cols-2 w-full bg-black h-full'>
       <Skeleton className="h-full w-full rounded-full" />
-      <div><Skeleton className="h-full w-full bg-gray-800 rounded-full"/></div>
+      <div><Skeleton className="h-full w-full bg-gray-800 rounded-full" /></div>
     </div>
   }
 
@@ -52,19 +62,37 @@ const App = () => {
                 <AuthLayout />
               </CheckAuth>
             } >
+            
               <Route path='login' element={<AuthLogin />} />
+              <Route path='login-vendor' element={<VendorAuthLogin />} />
+              <Route path='login-dispatch' element={<DispatcherAuthLogin />} />
+
               <Route path='register' element={<AuthRegister />} />
+              <Route path='register-vendor' element={<VendorAuthRegister />} />
+              <Route path='register-dispatcher' element={<DispatcherAuthRegister />} />
             </Route>
 
-            <Route path='/admin' element={
+            <Route path='/vendor' element={
               <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-                <AdminLayout />
+                <VendorLayout />
               </CheckAuth>
             } >
-              <Route path='dashboard' element={<AdminDashboard />} />
-              <Route path='features' element={<AdminFeatures />} />
-              <Route path='orders' element={<AdminOrders />} />
-              <Route path='products' element={<AdminProducts />} />
+              <Route path='dashboard' element={<VendorDashboard />} />
+              <Route path='features' element={<VendorFeatures />} />
+              <Route path='orders' element={<VendorOrders />} />
+              <Route path='products' element={<VendorProducts />} />
+              <Route path='deliver' element={<VendorDeliveryPage />} />
+            </Route>
+
+
+            <Route path='/dispatch' element={
+              <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+                <DispatchLayout />
+              </CheckAuth>
+            } >
+              <Route path='dashboard' element={<DispatchDashboard />} />
+              <Route path='orders' element={<DispatchOrdersPage />} />
+              <Route path='deliver' element={<DispatchDeliveryPage />} />
             </Route>
 
             <Route path='/shop' element={
@@ -83,6 +111,7 @@ const App = () => {
             </Route>
             <Route path='/unauth-page' element={<UnauthPage />} />
             <Route path='*' element={<CheckAuth />} />
+             <Route path='/' element={<FirstPage />} />
           </Routes>
         </div>
       </main>

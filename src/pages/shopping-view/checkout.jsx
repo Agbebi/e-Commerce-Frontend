@@ -35,9 +35,6 @@ function ShoppingCheckout() {
 
     }
 
-    console.log(cartItems, 'Cart items before order creation');
-
-
     const orderData = {
       userInfo: {
         userEmail: user.email,
@@ -116,7 +113,7 @@ function ShoppingCheckout() {
             </div>
           </div>
           <div>
-            <Button onClick={handleOpayPayment} className='w-full mt-4 bg-black text-white hover:bg-gray-800'>Checkout with paypal</Button>
+            <Button onClick={handleOpayPayment} className='w-full mt-4 bg-black text-white hover:bg-gray-800'>Checkout</Button>
           </div>
         </div>
       </div>

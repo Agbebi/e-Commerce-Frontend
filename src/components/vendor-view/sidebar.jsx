@@ -5,23 +5,23 @@ import { LayoutDashboard, ShoppingBasket, ShoppingCart } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
 
 
-const adminSidebarMenuItems = [
+const vendorSidebarMenuItems = [
   {
     id : 'dashboard',
     label : 'Dashboard',
-    href : '/admin/dashboard',
+    href : '/vendor/dashboard',
     icon : <LayoutDashboard />
 },
 {
     id : 'products',
     label : 'Products',
-    href : '/admin/products',
+    href : '/vendor/products',
     icon : <ShoppingBasket />
 },
 {
     id : 'orders',
     label : 'Orders',
-    href : '/admin/orders',
+    href : '/vendor/orders',
     icon : <ShoppingCart />
 },
 ]
@@ -33,7 +33,7 @@ const MenuItems = ({setOpen}) => {
   const navigate = useNavigate()
   return <nav className='cursor-pointer mt-8 flex-col flex gap-2'>
   {
-    adminSidebarMenuItems.map(menuItem => <div key={menuItem.id} onClick={() => {navigate(`${menuItem.href}`); setOpen ? setOpen(false) : null}} className='flex items-center px-3 py-2 rounded-md gap-2 hover:bg-gray-700 hover:text-white'>
+    vendorSidebarMenuItems.map(menuItem => <div key={menuItem.id} onClick={() => {navigate(`${menuItem.href}`); setOpen ? setOpen(false) : null}} className='flex items-center px-3 py-2 rounded-md gap-2 hover:bg-gray-700 hover:text-white'>
       {menuItem.icon}
       <span>{menuItem.label}</span>
     </div>)
@@ -41,7 +41,7 @@ const MenuItems = ({setOpen}) => {
   </nav>
 }
 
-function AdminSidebar({open, setOpen}) {
+function VendorSidebar({open, setOpen}) {
   const navigate = useNavigate()
   
   return (
@@ -52,16 +52,16 @@ function AdminSidebar({open, setOpen}) {
           <SheetHeader className='border-b pb-4 mb-4'>
             <SheetTitle className='flex gap-2 justify-baseline'>
             <House />
-            <span>Admin Panel</span></SheetTitle>
+            <span>vendor Panel</span></SheetTitle>
           </SheetHeader>
           <MenuItems setOpen={setOpen} />
         </div>
       </SheetContent>
     </Sheet>
       <aside className='w-64 hidden border-r border-gray-200 p-6 lg:flex flex-col'>
-        <div onClick={() => {navigate('/admin/dashboard')}} className='flex cursor-pointer items-center gap-2'>
+        <div onClick={() => {navigate('/vendor/dashboard')}} className='flex cursor-pointer items-center gap-2'>
         <House />
-           <h1 className='text-xl font-bold'>Admin Panel</h1>
+           <h1 className='text-xl font-bold'>vendor Panel</h1>
         </div>
         <MenuItems setOpen={setOpen} />
       </aside>
@@ -69,4 +69,4 @@ function AdminSidebar({open, setOpen}) {
   )
 }
 
-export default AdminSidebar
+export default VendorSidebar

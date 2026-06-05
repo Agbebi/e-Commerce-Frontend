@@ -3,16 +3,16 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import React, { Fragment, useState, useEffect } from 'react'
 import CommonForm from '../../components/common/form'
 import { addProductFormElements } from '../../config/index'
-import ProductImageUpload from '../../components/admin-view/image-upload'
+import ProductImageUpload from '../../components/vendor-view/image-upload'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchAllProducts, addNewProduct, editProduct, deleteProduct } from '../../store/admin/product-slice'
+import { fetchAllProducts, addNewProduct, editProduct, deleteProduct } from '../../store/vendor/product-slice'
 import { toast } from 'sonner'
-import AdminProductTile from './product-tile'
+import VendorProductTile from './product-tile'
 
 
 
 
-function AdminProducts() {
+function VendorProducts() {
 
   const { user } = useSelector((state) => state.auth)  
 
@@ -36,7 +36,7 @@ function AdminProducts() {
   const [imageLoadingState, setImageLoadingState] = useState(false)
   const [currentEditedId, setCurrentEditedId] = useState(null)
 
-  const productList = useSelector((state) => state.AdminProducts.productList)
+  const productList = useSelector((state) => state.vendorProducts.productList)
 
   const dispatch = useDispatch()
 
@@ -101,7 +101,7 @@ function AdminProducts() {
         {
           productList.length > 0 ?
             productList.map((product) => {
-              return <AdminProductTile
+              return <VendorProductTile
                 setOpenProductSheet={setOpenProductSheet}
                 setCurrentEditedId={setCurrentEditedId}
                 handleDelete={handleDelete}
@@ -152,4 +152,4 @@ function AdminProducts() {
   )
 }
 
-export default AdminProducts
+export default VendorProducts

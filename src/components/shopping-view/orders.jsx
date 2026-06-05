@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { Button } from '../ui/button'
-import { Dialog, DialogContent } from '../ui/dialog'
+import { Dialog } from '../ui/dialog'
 import ShoppingOrderDetails from './order-details'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllOrders, getOrderDetails } from '@/store/shop/order-slice'
 import { Badge } from '../ui/badge'
-import { Label } from '../ui/label'
-import { Select } from '../ui/select'
 import { Separator } from '../ui/separator'
+import { TbCurrencyNaira } from 'react-icons/tb'
 
 function ShoppingOrders() {
 
@@ -20,20 +19,18 @@ function ShoppingOrders() {
   const { orderList, orderDetails } = useSelector(state => state.shopOrder)
 
 
-  useEffect(() => {
+ useEffect(() => {
+  if (user?.id) {
     dispatch(getAllOrders(user.id))
-  }, [dispatch, user])
+  }
+}, [dispatch, user?.id])
 
   function handleFetchOrderDetails(orderId) {
     dispatch(getOrderDetails(orderId)).then((data) => {
       console.log(data);
-
       setOpenDetailsDialog(true)
-
     })
-
   }
-
 
   return (
     <Card className='border-none rounded-none grid gap-1 w-full'>
@@ -41,28 +38,27 @@ function ShoppingOrders() {
         <div>Orders</div>
       </CardHeader>
 
-      <CardContent className='py-4'>
+      <CardContent className='py-4 overflow-auto'>
         <Separator className='border-b mb-4 mt-0 border-gray-100' />
-        <Table className=''>
-          <TableHeader className='bg-orange-300 text-sm font-light'>
-            <TableRow className='border-none font-light text-sm p-2 shadow'>
-              <TableHead className='text-sm font-light'>Order ID</TableHead>
-              <TableHead className='text-sm font-light'>Payment Date</TableHead>
-              <TableHead className='text-sm font-light'>Payment Status</TableHead>
-              <TableHead className='text-sm font-light'>Delivery Status</TableHead>
-              <TableHead className='text-sm font-light'>Total Payment</TableHead>
+        <Table className='w-full'>
+          <TableHeader className='bg-orange-300 text-sm '>
+            <TableRow className='border-none text-sm p-2 shadow'>
+              <TableHead className='text-sm text-center'>Order ID</TableHead>
+              <TableHead className='text-sm text-center'>Payment Date</TableHead>
+              <TableHead className='text-sm text-center'>Payment Status</TableHead>
+              <TableHead className='text-sm text-center'>Total Payment (NG)</TableHead>
               <TableHead>
                 <span className="sr-only">View Details</span>
               </TableHead>
             </TableRow>
           </TableHeader>
 
-          <TableBody>
+          <TableBody className='text-xs'>
             {
               orderList && orderList.length > 0 ? orderList.map(order =>
-                <TableRow className='border-none shadow'>
+                <TableRow className='border-none shadow text-center'>
                   <TableCell>{order._id}</TableCell>
-                  <TableCell>{order.orderDate.split('T')[0]}</TableCell>
+                  <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
                   <TableCell>
                     <Badge className={
                       `${order.paymentStatus == 'pending' ? 'bg-amber-400' : 'bg-green-400'
@@ -71,20 +67,7 @@ function ShoppingOrders() {
                       {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Badge className={
-                      {
-                        pending: 'bg-amber-400',
-                        processing: 'bg-blue-400',
-                        shipped: 'bg-purple-400',
-                        delivered: 'bg-green-400',
-                        cancelled: 'bg-red-400',
-                      }[order.orderStatus] || 'bg-gray-400'
-                    }>
-                      {order.deliveryStatus.charAt(0).toUpperCase() + order.deliveryStatus.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>${order.totalAmount}</TableCell>
+                  <TableCell>{Number(order.totalAmount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</TableCell>
                   <TableCell>
                     <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog} >
                       <Button onClick={() => handleFetchOrderDetails(order._id)} className="bg-gray-500 text-white px-2 py-0 rounded hover:bg-gray-600">
@@ -93,7 +76,7 @@ function ShoppingOrders() {
 
                       {
                         orderDetails && orderDetails !== null ?
-                          <ShoppingOrderDetails /> : null
+                          <ShoppingOrderDetails setOpenDetailsDialog={setOpenDetailsDialog} /> : null
                       }
                     </Dialog>
 
@@ -101,12 +84,9 @@ function ShoppingOrders() {
 
                 </TableRow>
 
-              ) : null
+              ) : <p>No orders found.</p>
             }
-
-
           </TableBody>
-          {/* <Separator className='border w-full' /> */}
         </Table>
       </CardContent>
     </Card>

@@ -11,32 +11,32 @@ const initialState = {
 }
 
 export const getAllOrders = createAsyncThunk('order/getAllOrders', async (userId) => {  
-    const response = await API.get(`/api/admin/orders/${userId}/all`)
+    const response = await API.get(`/api/dispatch/orders/${userId}/all`)
 
     return response.data
 })
 
-export const getOrderDetails = createAsyncThunk('orders/getOrderDetails', async (id) => {  
-    
-    const response = await API.get(`/api/admin/orders/details/${id}`)
+export const getOrderDetails = createAsyncThunk('orders/getOrderDetails', async ({ id, childOrders }) => {
+
+    const response = await API.post(`/api/dispatch/orders/details/${id}`, { childOrders })
 
     return response.data
 })
 
 export const updateOrderStatus = createAsyncThunk('orders/updateOrderStatus', async ({ orderId, updatedStatus }) => {
-    const response = await API.put(`/api/admin/orders/update-status/${orderId}`, { updatedStatus })
+    const response = await API.put(`/api/dispatch/orders/update-status/${orderId}`, { updatedStatus })
 
     return response.data
 })
 
 export const deliverOrder = createAsyncThunk('orders/deliverOrder', async (orderId) => {
-    const response = await API.put(`/api/admin/orders/deliver/${orderId}`)
+    const response = await API.put(`/api/dispatch/orders/deliver/${orderId}`)
     return response.data
 })
 
 
-const adminOrderSlice = createSlice({
-    name : 'adminOrderSlice',
+const dispatchOrderSlice = createSlice({
+    name : 'dispatchOrderSlice',
     initialState,
     reducers : {},
     extraReducers : (builder) => {
@@ -76,4 +76,4 @@ const adminOrderSlice = createSlice({
     }
 })
 
-export default adminOrderSlice.reducer;
+export default dispatchOrderSlice.reducer;

@@ -78,6 +78,7 @@ function SearchPage() {
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
                         name={keyword}
+                        autoFocus
                     />
                 </div>
             </div>
