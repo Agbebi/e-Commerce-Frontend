@@ -6,11 +6,10 @@ import { deleteCartItem, updateCartItems } from '@/store/shop/cart-slice';
 import { toast } from 'sonner';
 import { TbCurrencyNaira } from 'react-icons/tb';
 import { AiOutlineDelete } from 'react-icons/ai';
-import NumberSpinner from './NumberSpinner';
 import { Input } from '../ui/input';
 import { IoAddCircle, IoAddCircleOutline, IoRemoveCircleOutline } from 'react-icons/io5';
 import { CiCircleRemove } from 'react-icons/ci';
-import { fetchProductDetails } from '@/store/shop/product-slice';
+
 
 
 function CartItemsContent({ cartItem }) {
