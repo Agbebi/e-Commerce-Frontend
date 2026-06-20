@@ -45,7 +45,7 @@ function SearchPage() {
                 quantity: 1,
                 description: getCurrentProduct.description,
                 name: getCurrentProduct.name,
-                imageUrl: getCurrentProduct.image,
+                imageUrl: getCurrentProduct.images?.[0] || getCurrentProduct.image,
                 price: getCurrentProduct.salesPrice > 0 ? getCurrentProduct.salesPrice : getCurrentProduct.price,
                 vendorId: getCurrentProduct.vendorId
             }),
@@ -85,7 +85,7 @@ function SearchPage() {
 
             {
                 searchResults.length > 0 ? (
-                    <div className='grid grid-cols-1 border border-gray-200 p-2 shadow-sm bg-white rounded-2xl sm:grid-cols-2 md:grid-cols-3 gap-6'>
+                    <div className='grid grid-cols-2 border w-full border-gray-200 p-4 shadow-sm bg-white rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-2'>
                         {searchResults.map((product) => (
                             <ShoppingProductTile key={product._id} product={product} handleGetProductDetails={handleGetProductDetails} handleAddToCart={handleAddToCart} />
                         ))}
@@ -99,13 +99,13 @@ function SearchPage() {
                     </div>)
             }
 
-
-            <ProductDetailsDialog
-                productDetails={productDetails}
-                open={openDetailsDialog}
-                setOpen={setOpenDetailsDialog}
-            />
-
+            {productDetails &&
+                <ProductDetailsDialog
+                    productDetails={productDetails}
+                    open={openDetailsDialog}
+                    setOpen={setOpenDetailsDialog}
+                />
+            }
         </div>
     )
 }

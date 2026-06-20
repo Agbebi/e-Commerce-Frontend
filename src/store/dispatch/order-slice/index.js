@@ -10,8 +10,25 @@ const initialState = {
     orderDetails : null
 }
 
-export const getAllOrders = createAsyncThunk('order/getAllOrders', async (userId) => {  
-    const response = await API.get(`/api/dispatch/orders/${userId}/all`)
+export const getAllOrders = createAsyncThunk('order/getAllOrders', async (payload) => {  
+    const { userId, filterParams, sortParams } = typeof payload === 'object' && payload !== null
+        ? payload
+        : { userId: payload }
+
+    const params = {
+        ...(filterParams || {})
+    }
+
+    if (sortParams) {
+        params.sortBy = sortParams
+    }
+
+    const queryString = new URLSearchParams(params).toString()
+    const response = await API.get(`/api/dispatch/orders/${userId}/all${queryString ? `?${queryString}` : ''}`, {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
 
     return response.data
 })
@@ -31,6 +48,11 @@ export const updateOrderStatus = createAsyncThunk('orders/updateOrderStatus', as
 
 export const deliverOrder = createAsyncThunk('orders/deliverOrder', async (orderId) => {
     const response = await API.put(`/api/dispatch/orders/deliver/${orderId}`)
+    return response.data
+})
+
+export const deliverOrderConfirmed = createAsyncThunk('orders/deliverOrder', async (orderId) => {
+    const response = await API.put(`/api/dispatch/orders/deliver/${orderId}/confirmed`)
     return response.data
 })
 
@@ -73,6 +95,16 @@ const dispatchOrderSlice = createSlice({
             state.isLoading = false,
             toast.error('Failed to mark order as delivered')
         })
+        // .addCase(deliverOrderConfirmed.pending, (state) =>{
+        //     state.isLoading = true
+        // // })
+        // .addCase(deliverOrderConfirmed.fulfilled, (state, action) =>{
+        //     state.isLoading = false,
+        //     state.orderDetails = action.payload.data
+        // }).addCase(deliverOrderConfirmed.rejected, (state) =>{
+        //     state.isLoading = false,
+        //     toast.error('Failed to mark order as delivered')
+        // })
     }
 })
 

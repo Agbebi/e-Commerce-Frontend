@@ -1,28 +1,28 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { fetchCartItems } from '@/store/shop/cart-slice'
 import { capturePayment } from '@/store/shop/order-slice'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function PaymentSuccess() {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const location = useLocation()
   const { cartItems } = useSelector(state => state.shopCart)
   const { user } = useSelector(state => state.auth)
-  // const [cartId, setCartId] = useState('')
+
 
 
 
   const opayReference = sessionStorage.getItem('orderID')
-  const cartId = cartItems._id  
-  
-  
+  const cartId = cartItems?._id
+  const hasCaptured = useRef(false)
+
   useEffect(() => {
-    if (opayReference) {   
-      dispatch(capturePayment({ opayReference: opayReference, cartId: cartId })).then((data) => {
+    if (opayReference && cartId && !hasCaptured.current) {
+      hasCaptured.current = true
+      dispatch(capturePayment({ opayReference, cartId })).then((data) => {
         console.log('Payment capture response:', data);
         dispatch(fetchCartItems({ userId: user.id })).then((data) => {
           if (data.error) {
@@ -31,8 +31,6 @@ function PaymentSuccess() {
         })
       })
     }
-
-
   }, [cartId, dispatch, opayReference, navigate, user.id])
 
   return (

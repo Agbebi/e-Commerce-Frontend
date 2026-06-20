@@ -165,7 +165,7 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
         productId: item.productId,
         name: item.name,
         description: item.description,
-        imageUrl: item.image,
+        imageUrl: item.images?.[0] || item.image,
         price: item.salesPrice > 0 ? item.salesPrice : item.price,
         quantity: item.quantity,
         vendorId: item.vendorId

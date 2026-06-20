@@ -40,7 +40,8 @@ function ShoppingCheckout() {
         userEmail: user.email,
         userId: user.id,
         userMobile: "+201088889999",
-        userName: user.userName
+        userName: user.userName,
+        name: user.name
       },
       cartId: cartItems._id,
       productList: cartItems.items.map(item => (
@@ -48,7 +49,7 @@ function ShoppingCheckout() {
           productId: item.productId,
           name: item.name,
           description: item.description,
-          imageUrl: item.image,
+          imageUrl: item.images?.[0] || item.image,
           price: item.salesPrice > 0 ? item.salesPrice : item.price,
           quantity: item.quantity,
           vendorId: item.vendorId

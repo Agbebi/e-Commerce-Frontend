@@ -64,7 +64,7 @@ function ShoppingHome() {
         quantity: 1,
         description: getCurrentProduct.description,
         name: getCurrentProduct.name,
-        imageUrl: getCurrentProduct.image,
+        imageUrl: getCurrentProduct.images?.[0] || getCurrentProduct.image,
         price: getCurrentProduct.salesPrice > 0 ? getCurrentProduct.salesPrice : getCurrentProduct.price,
         vendorId: getCurrentProduct.vendorId
       }),
@@ -101,8 +101,7 @@ function ShoppingHome() {
       if (productDetails !== null) {
         setOpenDetailsDialog(true);
       }
-    }, [productDetails]);
-
+    }, [productDetails]);        
 
   return (
     <div className='flex flex-col min-h-screen p-4 py-2'>
@@ -166,9 +165,9 @@ function ShoppingHome() {
         <div className='container mx-auto px-1'>
           <h2 className='text-2xl font-bold text-center mb-8'>Featured Products</h2>
 
-          <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6'>
+          <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6'>
             {
-              productList && productList.length > 0 ? productList.map((product) => (
+              productList && productList.length > 0 ? productList.slice(0, 4).map((product) => (
                 <ShoppingProductTile
                   handleAddToCart={handleAddToCart}
                   product={product}
@@ -176,11 +175,11 @@ function ShoppingHome() {
                   key={product.id}/>
               )) : null
             }
-       <ProductDetailsDialog
+       {productDetails && <ProductDetailsDialog
         productDetails={productDetails}
         open={openDetailsDialog}
         setOpen={setOpenDetailsDialog}
-      />
+      />}
           </div>
         </div>
       </section>

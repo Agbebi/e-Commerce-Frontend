@@ -104,15 +104,15 @@ function ShoppingListing() {
         quantity: 1,
         description: getCurrentProduct.description,
         name: getCurrentProduct.name,
-        imageUrl: getCurrentProduct.image,
+        imageUrl: getCurrentProduct.images?.[0] || getCurrentProduct.image,
         price: getCurrentProduct.salesPrice > 0 ? getCurrentProduct.salesPrice : getCurrentProduct.price,
-        vendorId : getCurrentProduct.vendorId
+        vendorId: getCurrentProduct.vendorId
       }),
     ).then((data) => {
-      if(data?.payload?.success){
+      if (data?.payload?.success) {
         // show success toast
-         toast.success("Product added to cart successfully")
-         dispatch(fetchCartItems({userId : user.id}))
+        toast.success("Product added to cart successfully")
+        dispatch(fetchCartItems({ userId: user.id }))
       }
     }).catch((error) => {
       toast.error("An error occurred while adding to cart");
@@ -202,12 +202,13 @@ function ShoppingListing() {
             </p>
           )}
         </div>
-      </div>
-      <ProductDetailsDialog
-        productDetails={productDetails}
-        open={openDetailsDialog}
-        setOpen={setOpenDetailsDialog}
-      />
+      </div>{
+        productDetails && <ProductDetailsDialog
+          productDetails={productDetails}
+          open={openDetailsDialog}
+          setOpen={setOpenDetailsDialog}
+        />
+      }
     </div>
   );
 }

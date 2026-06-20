@@ -18,7 +18,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
     }, 0) : 0;
 
     return (
-        <SheetContent  className='bg-white sm:max-w-md w-80 p-4 first:gap-1 justify-center pt-10'>
+        <SheetContent  className='bg-white sm:max-w-md w-80 p-4 first:gap-1 justify-start pt-10 overflow-y-auto'>
         <SheetHeader style={{backgroundImage : cart}} className='outline-orange-200  flex flex-col items-center justify-center p-1'>
                 <SlBasket className='w-6 rounded-full h-6' />
                <span className='text-lg  text-orange-600'> Your Cart</span>

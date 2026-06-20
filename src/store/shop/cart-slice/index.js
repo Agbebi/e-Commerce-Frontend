@@ -1,3 +1,4 @@
+import { toast } from 'sonner'
 import API from '../../../api/axios'
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
@@ -5,8 +6,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
 const initialState = {
     cartItems: [],
-    isLoading: false
+    isLoading: false,
 }
+
+
 
 export const addToCart = createAsyncThunk('cart/addToCart', async ({ userId, productId, quantity, description, name, imageUrl, price, vendorId }) => {
 
@@ -76,10 +79,24 @@ const shoppingCartSlice = createSlice({
             state.isLoading = true
         }).addCase(updateCartItems.fulfilled, (state, action) => {
             state.isLoading = false,
-                state.cartItems = action.payload.data
+            state.cartItems = action.payload.data
+
+            if(action.payload.message.includes('updated successfully')){
+                toast.success(action.payload.message, {
+                style: {
+                    background: 'white',
+                }
+            })
+            }else{
+                toast.error(action.payload.message, {
+                style: {
+                    background: 'white',
+                }})
+            }
+            
+            
         }).addCase(updateCartItems.rejected, (state, action) => {
-            state.isLoading = false,
-                state.cartItems = []
+            state.isLoading = false
         })
 
         builder.addCase(deleteCartItem.pending, (state) => {

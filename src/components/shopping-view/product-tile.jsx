@@ -2,29 +2,39 @@ import React from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { DollarSign, Icon } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
+import { CiBellOn } from "react-icons/ci";
 
 function ShoppingProductTile({
     product,
     handleGetProductDetails,
     handleAddToCart,
 }) {
+    const isOut = product.totalStock === 0;
     return (
-        <Card className="w-full bg-white max-w-sm mx-auto gap-4 py-0 rounded-lg shadow-sm border-gray-200">
+        <Card className="w-full h-fit bg-white max-w-sm mx-auto gap-4 py-0 rounded-lg shadow-sm border-gray-200">
             <div
                 onClick={() => handleGetProductDetails(product._id)}
                 className="cursor-pointer"
             >
                 <div className="relative">
                     <img
-                        src={product.image}
+                        src={product.images?.[0] || product.image}
                         alt={product.title}
                         className="w-full h-[150px] md:h-[200px] object-cover rounded-t-lg"
                     />
-                    {product.salesPrice > 0 ? (
-                        <Badge className="absolute top-2 left-2 bg-amber-500 hover:bg-amber-600">
-                            Sale
+                    {product.salesPrice > 0 || product.totalStock <= 5 ? (
+                        <Badge className={`absolute top-2 left-2 flex justify-between items-center bg-amber-400  hover:bg-amber-600`}>
+                            {product.totalStock === 0 ? (
+                                'Out of Stock'
+                            ) : (
+                                <>
+                                    <CiBellOn className="" />
+                                    <span>
+                                        {product.totalStock <= 5 ? ` ${product.totalStock} items left ` : 'Sale'}
+                                    </span>
+                                </>
+                            )}
                         </Badge>
                     ) : null}
                 </div>
@@ -41,8 +51,8 @@ function ShoppingProductTile({
                     <div className="flex justify-between items-center">
                         <span
                             className={`${product.salesPrice > 0
-                                    ? "line-through font-normal text-sm text-gray-600"
-                                    : "font-bold"
+                                ? "line-through font-normal text-sm text-gray-600"
+                                : "font-bold"
                                 } items-center justify-around flex`}
                         >
                             <TbCurrencyNaira />{product.price}
@@ -59,11 +69,12 @@ function ShoppingProductTile({
             <CardFooter className='p-2 mb-0'>
                 <Button
                     onClick={() => {
-                        handleAddToCart(product);
+                        if (!isOut) handleAddToCart(product);
                     }}
-                    className="w-full h-8 text-xs bg-black text-white"
+                    disabled={isOut}
+                    className={`w-full h-8 text-xs ${isOut ? 'bg-gray-400 text-gray-700' : 'bg-black text-white'}`}
                 >
-                    Add to Cart
+                    {isOut ? 'Out of Stock' : 'Add to Cart'}
                 </Button>
             </CardFooter>
         </Card>

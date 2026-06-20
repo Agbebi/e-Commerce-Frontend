@@ -16,9 +16,9 @@ const Toaster = ({
   return (
     <Sonner
       theme={theme}
-      className="toaster group z-50 bg-white "
+      className="toaster group z-9990 bg-white "
       icons={{
-        success: <CircleCheckIcon className="size-4" />,
+        success: <CircleCheckIcon className="size-4 z-9999" />,
         info: <InfoIcon className="size-4" />,
         warning: <TriangleAlertIcon className="size-4" />,
         error: <OctagonXIcon className="size-4" />,

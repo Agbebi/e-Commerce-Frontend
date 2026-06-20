@@ -52,7 +52,7 @@ function VendorSidebar({open, setOpen}) {
           <SheetHeader className='border-b pb-4 mb-4'>
             <SheetTitle className='flex gap-2 justify-baseline'>
             <House />
-            <span>vendor Panel</span></SheetTitle>
+            <span>Vendor Panel</span></SheetTitle>
           </SheetHeader>
           <MenuItems setOpen={setOpen} />
         </div>
@@ -61,7 +61,7 @@ function VendorSidebar({open, setOpen}) {
       <aside className='w-64 hidden border-r border-gray-200 p-6 lg:flex flex-col'>
         <div onClick={() => {navigate('/vendor/dashboard')}} className='flex cursor-pointer items-center gap-2'>
         <House />
-           <h1 className='text-xl font-bold'>vendor Panel</h1>
+           <h1 className='text-xl font-bold'>Vendor Panel</h1>
         </div>
         <MenuItems setOpen={setOpen} />
       </aside>

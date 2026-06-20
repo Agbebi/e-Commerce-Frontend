@@ -32,8 +32,21 @@ export const queryPaymentStatus = createAsyncThunk('order/queryPaymentStatus', a
 })
 
 
-export const getAllOrders = createAsyncThunk('order/getAllOrders', async (userID) => {  
-    const response = await API.get(`/api/shop/order/list/${userID}`)
+export const getAllOrders = createAsyncThunk('order/getAllOrders', async (payload) => {
+    const { userID, filterParams, sortParams } = typeof payload === 'object' && payload !== null
+        ? payload
+        : { userID: payload }
+
+    const params = {
+        ...(filterParams || {})
+    }
+
+    if (sortParams) {
+        params.sortBy = sortParams
+    }
+
+    const queryString = new URLSearchParams(params).toString()
+    const response = await API.get(`/api/shop/order/list/${userID}${queryString ? `?${queryString}` : ''}`)
 
     return response.data
 })

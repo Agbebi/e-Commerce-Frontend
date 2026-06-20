@@ -42,7 +42,7 @@ function VendorOrderDetailsView({ selectedOrder, setOpenDetailsDialog }) {
     return (
 
         selectedOrder ? (
-            <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto  bg-white border-none rounded-lg shadow-lg p-6' >
+            <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto bg-white border-none rounded-lg shadow-lg p-6' >
                 <div className='grid gap-6 mt-6 text-xs'>
                     <div className='grid gap-2'>
                         <div className='flex items-center justify-between'>

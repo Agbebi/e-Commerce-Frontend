@@ -10,8 +10,21 @@ const initialState = {
     orderDetails : null
 }
 
-export const getAllOrders = createAsyncThunk('order/getAllOrders', async (userId) => {  
-    const response = await API.get(`/api/admin/orders/${userId}/all`)
+export const getAllOrders = createAsyncThunk('order/getAllOrders', async (payload) => {  
+    const { userId, filterParams, sortParams } = typeof payload === 'object' && payload !== null
+        ? payload
+        : { userId: payload }
+
+    const params = {
+        ...(filterParams || {})
+    }
+
+    if (sortParams) {
+        params.sortBy = sortParams
+    }
+
+    const queryString = new URLSearchParams(params).toString()
+    const response = await API.get(`/api/admin/orders/${userId}/all${queryString ? `?${queryString}` : ''}`)
 
     return response.data
 })

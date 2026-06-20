@@ -11,19 +11,26 @@ import { Separator } from '../ui/separator'
 import { TbCurrencyNaira } from 'react-icons/tb'
 
 function ShoppingOrders() {
-
-
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [sortOrder, setSortOrder] = useState('newest')
+
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const { orderList, orderDetails } = useSelector(state => state.shopOrder)
 
+  const userId = user?.id || user?._id
+  const filterOptions = ['all', 'pending', 'completed', 'failed']
 
- useEffect(() => {
-  if (user?.id) {
-    dispatch(getAllOrders(user.id))
-  }
-}, [dispatch, user?.id])
+  useEffect(() => {
+    if (userId) {
+      dispatch(getAllOrders({
+        userID: userId,
+        filterParams: statusFilter !== 'all' ? { status: statusFilter } : {},
+        sortParams: sortOrder
+      }))
+    }
+  }, [dispatch, userId, statusFilter, sortOrder])
 
   function handleFetchOrderDetails(orderId) {
     dispatch(getOrderDetails(orderId)).then((data) => {
@@ -39,6 +46,33 @@ function ShoppingOrders() {
       </CardHeader>
 
       <CardContent className='py-4 overflow-auto'>
+        <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4'>
+          <div className='flex flex-wrap items-center gap-2 text-sm text-slate-600'>
+            {filterOptions.map((option) => (
+              <button
+                key={option}
+                type='button'
+                onClick={() => setStatusFilter(option)}
+                className={`rounded-full border px-3 py-1 text-xs transition ${statusFilter === option ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}
+              >
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          <div className='flex items-center gap-2 text-sm text-slate-600'>
+            <label htmlFor='shop-order-sort' className='font-medium'>Sort:</label>
+            <select
+              id='shop-order-sort'
+              className='rounded border border-slate-300 bg-white px-3 py-1 text-xs'
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+            >
+              <option value='newest'>Newest first</option>
+              <option value='oldest'>Oldest first</option>
+            </select>
+          </div>
+        </div>
         <Separator className='border-b mb-4 mt-0 border-gray-100' />
         <Table className='w-full'>
           <TableHeader className='bg-orange-300 text-sm '>
