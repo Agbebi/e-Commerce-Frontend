@@ -167,7 +167,7 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                         }
                     </div>
 
-                    <div className='flex my-2 w-full h-[150px] max-h-[300px]'>
+                    <div className='flex my-2 w-full h-[150px] overflow-y-auto max-h[400px]'>
                         {tab === 'description' && <div className='min-h-20 p-2 w-full flex items-start text-left'> <p className='text-gray-600 text-sm w-full'>{productDetails.description}</p></div>}
                         {tab === 'reviews' && <div className='min-h-20 p-2 w-full  flex items-center justify-center text-center'> <p className='text-gray-600 text-sm w-full'>No Reviews yet.</p></div>}
                         {tab === 'How to Use' && <div className='min-h-20 p-8 w-full flex flex-col items-center justify-center text-center'><MdErrorOutline /> <p className='text-gray-800 text-sm w-full'>We are still working on this section... Coming soon</p></div>}
