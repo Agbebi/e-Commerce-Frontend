@@ -12,14 +12,21 @@ const initialState = {
 export const fetchAllFilteredProducts = createAsyncThunk(
     '/products/fetchAllProducts',
     async ({ filterParams, sortParams }) => {
+        const query = new URLSearchParams();
 
-        const query = new URLSearchParams({
-            ...filterParams,
-            sortBy: sortParams
+        Object.entries(filterParams || {}).forEach(([key, value]) => {
+            if (Array.isArray(value) && value.length > 0) {
+                query.set(key, value.join(','));
+            } else if (value != null && value !== '') {
+                query.set(key, value.toString());
+            }
         });
 
+        if (sortParams) {
+            query.set('sortBy', sortParams);
+        }
 
-        const result = await API.get(`/api/shop/products/get?${query}`, {
+        const result = await API.get(`/api/shop/products/get?${query.toString()}`, {
             headers: {
                 "Content-Type": 'application/json'
             }

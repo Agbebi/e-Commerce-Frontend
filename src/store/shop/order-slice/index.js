@@ -18,7 +18,7 @@ export const createNewOrder = createAsyncThunk('/order/createNewOrder', async (o
     return response.data
 })
 
-export const capturePayment = createAsyncThunk('order/capturePayment', async ({opayReference, cartId}) => {      
+export const capturePayment = createAsyncThunk('order/capturePayment', async ({opayReference, cartId}) => {         
     const response = await API.post(`/api/shop/order/capture-order/${opayReference}`, {cartID : cartId})
 
     return response.data

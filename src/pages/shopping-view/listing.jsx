@@ -1,6 +1,7 @@
 import ProductDetailsDialog from "@/components/product-details";
 import ProductFilter from "@/components/shopping-view/filter";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,12 +29,12 @@ function ShoppingListing() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { productList, productDetails } = useSelector((state) => state.shopProducts);
-  const [filters, setFilters] = useState(null);
-  const [sort, setSort] = useState(null);
+  const [filters, setFilters] = useState({});
+  const [sort, setSort] = useState('price:low-to-high');
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
-  const categorySearchParams = searchParams.get('category')
+  const categorySearchParams = searchParams.get('category');
 
   function handleSort(value) {
     setSort(value);
@@ -50,41 +51,42 @@ function ShoppingListing() {
     if (indexOfCurrentSection === -1) {
       cpyFilters = {
         ...cpyFilters,
-        // Dynamically set the section as a key in the filters object and assign the current option as its value in an array
         [getSectionId]: [getCurrentOptions],
       };
     } else {
-      // If the section already exists in the filters object, check if the current option is already present in the section's array of options.
-      const indexOfCurrentOption =
-        cpyFilters[getSectionId].indexOf(getCurrentOptions);
-      // If the current option is not present in the section's array of options, add it to the array. Otherwise, remove it from the array.
+      const indexOfCurrentOption = cpyFilters[getSectionId].indexOf(getCurrentOptions);
       if (indexOfCurrentOption === -1) {
         cpyFilters = {
           ...cpyFilters,
           [getSectionId]: [...cpyFilters[getSectionId], getCurrentOptions],
         };
       } else {
-        cpyFilters = {
-          ...cpyFilters,
-          [getSectionId]: cpyFilters[getSectionId].filter(
-            (option) => option !== getCurrentOptions,
-          ),
-        };
+        const updatedSectionOptions = cpyFilters[getSectionId].filter(
+          (option) => option !== getCurrentOptions,
+        );
+
+        if (updatedSectionOptions.length > 0) {
+          cpyFilters = {
+            ...cpyFilters,
+            [getSectionId]: updatedSectionOptions,
+          };
+        } else {
+          const { [getSectionId]: removed, ...rest } = cpyFilters;
+          cpyFilters = rest;
+        }
       }
     }
 
     setFilters(cpyFilters);
-
     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
 
   function createSearchParamsHelper(filterParams) {
     const queryParams = [];
 
-    for (const [keys, values] of Object.entries(filterParams)) {
+    for (const [keys, values] of Object.entries(filterParams || {})) {
       if (Array.isArray(values) && values.length > 0) {
         const paramValue = values.join(",");
-
         queryParams.push(`${keys}=${encodeURIComponent(paramValue)}`);
       }
     }
@@ -106,29 +108,47 @@ function ShoppingListing() {
         name: getCurrentProduct.name,
         imageUrl: getCurrentProduct.images?.[0] || getCurrentProduct.image,
         price: getCurrentProduct.salesPrice > 0 ? getCurrentProduct.salesPrice : getCurrentProduct.price,
-        vendorId: getCurrentProduct.vendorId
+        vendorId: getCurrentProduct.vendorId,
       }),
-    ).then((data) => {
-      if (data?.payload?.success) {
-        // show success toast
-        toast.success("Product added to cart successfully")
-        dispatch(fetchCartItems({ userId: user.id }))
-      }
-    }).catch((error) => {
-      toast.error("An error occurred while adding to cart");
-      console.error(error);
-    });
+    )
+      .then((data) => {
+        if (data?.payload?.success) {
+          toast.success("Product added to cart successfully");
+          dispatch(fetchCartItems({ userId: user.id }));
+        }
+      })
+      .catch((error) => {
+        toast.error("An error occurred while adding to cart");
+        console.error(error);
+      });
+  }
+
+  function handleClearFilters() {
+    setFilters({});
+    setSearchParams("");
+    sessionStorage.removeItem("filters");
   }
 
   useEffect(() => {
-    setSort("price:Low-To-High");
-    setFilters(JSON.parse(sessionStorage.getItem("filters")) || null);
+    const currentFilters = JSON.parse(sessionStorage.getItem("filters"));
+
+    if (currentFilters && Object.keys(currentFilters).length > 0) {
+      setFilters(currentFilters);
+    } else if (categorySearchParams) {
+      setFilters({ Category: [categorySearchParams] });
+      sessionStorage.setItem("filters", JSON.stringify({ Category: [categorySearchParams] }));
+    } else {
+      setFilters({});
+    }
   }, [categorySearchParams]);
 
   useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
       const queryString = createSearchParamsHelper(filters);
       setSearchParams(new URLSearchParams(queryString).toString());
+    } else {
+      setSearchParams('');
+      sessionStorage.removeItem('filters');
     }
   }, [filters]);
 
@@ -149,15 +169,21 @@ function ShoppingListing() {
 
   return (
     <div className="grid grid-cols-1 bg-gray-50 md:grid-cols-[300px_1fr] gap-6 md:p-6 p-4">
-      <ProductFilter filters={filters} handleFilters={handleFilters} />
-      <div className="w-full rounded-lg shadow-sm bg-white">
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-lg font-bold hidden sm:block">All Products</h2>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-400">
-              {productList.length} products
-            </span>
-            <DropdownMenu>
+      <div className="flex flex-col gap-4 md:sticky md:top-6">
+        <ProductFilter filters={filters} handleFilters={handleFilters} clearFilters={handleClearFilters} />
+      </div>
+      <div className="w-full rounded-lg shadow-sm bg-white overflow-hidden">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-bold">All Products</h2>
+              <p className="text-sm text-gray-500">
+                Browse products and refine your list using the filter panel.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm text-gray-500">{productList.length} products</span>
+              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="border-gray-200">
                   <ArrowUpDown className="mr-1 h-4 w-4" />
@@ -186,29 +212,33 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
-          {productList ? (
+        <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
+          {productList && productList.length > 0 ? (
             productList.map((product) => (
               <ShoppingProductTile
+                key={product._id}
                 handleAddToCart={handleAddToCart}
                 product={product}
                 handleGetProductDetails={handleGetProductDetails}
               />
             ))
           ) : (
-            <p className="text-center text-gray-500 col-span-full">
-              No products found
-            </p>
+            <div className="col-span-full rounded-3xl border border-dashed border-gray-300 bg-slate-50 p-12 text-center">
+              <p className="text-lg font-semibold text-slate-700">No products found</p>
+              <p className="mt-2 text-sm text-gray-500">Try clearing filters or selecting a different category.</p>
+            </div>
           )}
         </div>
-      </div>{
-        productDetails && <ProductDetailsDialog
+      </div>
+      {productDetails && (
+        <ProductDetailsDialog
           productDetails={productDetails}
           open={openDetailsDialog}
           setOpen={setOpenDetailsDialog}
         />
-      }
+      )}
     </div>
   );
 }

@@ -42,7 +42,7 @@ function ShoppingProductTile({
                     <h2 className="text-md font-bold mb-1">{product.name}</h2>
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-xs text-gray-500 capitalize">
-                            {product.category}
+                            {product.subcategory ? `${product.subcategory} • ${product.category}` : product.category}
                         </span>
                         <span className="text-xs text-gray-500 capitalize">
                             {product.brand}

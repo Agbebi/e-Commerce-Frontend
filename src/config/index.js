@@ -230,13 +230,34 @@ export const addProductFormElements = [
         placeholder: 'Category',
         componentType: 'select',
         options: [
-            { name: 'electronics', value: 'electronics', label: 'Electronics' },
-            { id: 'fashion', value: 'fashion', label: 'Fashion' },
-            { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances' },
-            { id: 'toys', value: 'toys', label: 'Toys' },
+            { value: 'electronics', id: 'electronics', label: 'Electronics' },
+            { value: 'fashion', id: 'fashion', label: 'Fashion' },
+            { value: 'home-appliances', id: 'home-appliances', label: 'Home Appliances' },
+            { value: 'beauty', id: 'beauty', label: 'Beauty & Personal Care' },
+            { value: 'baby', id: 'baby', label: 'Baby & Toys' },
+            { value: 'computers', id: 'computers', label: 'Computers' },
+            { value: 'phones-tablets', id: 'phones-tablets', label: 'Phones & Tablets' },
+            { value: 'sports', id: 'sports', label: 'Sports & Outdoors' },
+            { value: 'groceries', id: 'groceries', label: 'Groceries' },
+            { value: 'accessories', id: 'accessories', label: 'Accessories' },
         ]
     },
 
+    {
+        name: 'subcategory',
+        label: 'Subcategory',
+        placeholder: 'Select a category first',
+        componentType: 'select',
+        options: [],
+        disabled: true
+    },
+
+    {
+        name: 'keyFeatures',
+        label: 'Key Features',
+        componentType: 'textarea',
+        placeholder: 'Add key features, one per line'
+    },
 
     {
         name: 'brand',
@@ -276,6 +297,38 @@ export const addProductFormElements = [
     }
 ]
 
+export const categorySubcategoryMap = {
+    electronics: [
+        { value: 'smartphones', id: 'smartphones', label: 'Smartphones' },
+        { value: 'televisions', id: 'televisions', label: 'Televisions' }
+    ],
+    computers: [
+        { value: 'laptops', id: 'laptops', label: 'Laptops' }
+    ],
+    'phones-tablets': [
+        { value: 'smartphones', id: 'smartphones', label: 'Smartphones' }
+    ],
+    'home-appliances': [
+        { value: 'kitchen-appliances', id: 'kitchen-appliances', label: 'Kitchen Appliances' }
+    ],
+    fashion: [
+        { value: 'men-clothing', id: 'men-clothing', label: 'Men Clothing' },
+        { value: 'women-clothing', id: 'women-clothing', label: 'Women Clothing' },
+        { value: 'accessories', id: 'accessories', label: 'Accessories' }
+    ],
+    beauty: [
+        { value: 'skincare', id: 'skincare', label: 'Skin Care' }
+    ],
+    baby: [
+        { value: 'baby-care', id: 'baby-care', label: 'Baby Care' }
+    ],
+    sports: [
+        { value: 'sports-equipment', id: 'sports-equipment', label: 'Sports Equipment' }
+    ],
+    groceries: [],
+    accessories: []
+}
+
 export const shoppingViewCategories = [
     { id: 'home', value: 'home', label: 'Home', path: '/shop/home' },
     { id: 'electronics', value: 'electronics', label: 'Electronics', path: '/shop/listing' },
@@ -295,18 +348,18 @@ export const menuLinks = [
 
 
 export const filterOptions = {
+    Brand: [
+        { value: 'nike', id: 'nike', label: 'Nike' },
+        { value: 'hp', id: 'hp', label: 'HP' },
+        { value: 'adidas', id: 'adidas', label: 'Adidas' },
+        { value: 'lenovo', id: 'lenovo', label: 'Lenovo' },
+    ],
     Category: [
         { id: 'electronics', value: 'electronics', label: 'Electronics' },
         { id: 'fashion', value: 'fashion', label: 'Fashion' },
         { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances' },
         { id: 'toys', value: 'toys', label: 'Toys' },
     ],
-    Brand: [
-        { value: 'nike', id: 'nike', label: 'Nike' },
-        { value: 'hp', id: 'hp', label: 'HP' },
-        { value: 'adidas', id: 'adidas', label: 'Adidas' },
-        { value: 'lenovo', id: 'lenovo', label: 'Lenovo' },
-    ]
 }
 
 export const addressFormControls = [

@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import React, { Fragment, useState, useEffect } from 'react'
 import CommonForm from '../../components/common/form'
-import { addProductFormElements } from '../../config/index'
+import { addProductFormElements, categorySubcategoryMap } from '../../config/index'
 import ProductImageUpload from '../../components/vendor-view/image-upload'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllProducts, addNewProduct, editProduct, deleteProduct } from '../../store/vendor/product-slice'
@@ -10,7 +12,7 @@ import { toast } from 'sonner'
 import VendorProductTile from './product-tile'
 import { IoIosAddCircleOutline } from 'react-icons/io'
 import { IoAddSharp } from 'react-icons/io5'
-import { Separator } from 'radix-ui'
+import { CiSearch } from 'react-icons/ci'
 
 
 
@@ -24,6 +26,8 @@ function VendorProducts() {
     name: '',
     description: '',
     category: '',
+    subcategory: '',
+    keyFeatures: '',
     brand: '',
     price: '',
     salesPrice: '',
@@ -38,10 +42,63 @@ function VendorProducts() {
   const [uploadedImgUrls, setUploadedImgUrls] = useState([])
   const [imageLoadingState, setImageLoadingState] = useState(false)
   const [currentEditedId, setCurrentEditedId] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
 
   const productList = useSelector((state) => state.vendorProducts.productList)
 
   const dispatch = useDispatch()
+
+  const categoryOptions = React.useMemo(() => {
+    const control = addProductFormElements.find((item) => item.name === 'category')
+    return control?.options || []
+  }, [])
+
+  const filteredProducts = React.useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase()
+    return productList.filter((product) => {
+      const matchesCategory = categoryFilter && categoryFilter !== 'all' ? product.category === categoryFilter : true
+      const matchesSearch = normalizedSearch === '' ? true : [
+        product.name,
+        product.description,
+        product.brand,
+        product.category,
+        product.subcategory
+      ]
+        .filter(Boolean)
+        .some((value) => value.toString().toLowerCase().includes(normalizedSearch))
+      return matchesCategory && matchesSearch
+    })
+  }, [productList, categoryFilter, searchQuery])
+
+  const formControls = React.useMemo(() => {
+    return addProductFormElements.map((control) => {
+      if (control.name !== 'subcategory') {
+        if (control.name === 'category') {
+          return {
+            ...control,
+            customOnChange: (value) => {
+              setFormData((prev) => ({
+                ...prev,
+                category: value,
+                subcategory: ''
+              }))
+            }
+          }
+        }
+
+        return control
+      }
+
+      const options = categorySubcategoryMap[formData.category] || []
+      return {
+        ...control,
+        options,
+        disabled: !formData.category || options.length === 0,
+        placeholder: formData.category ? 'Select a subcategory' : 'Select a category first'
+      }
+    })
+  }, [formData.category])
 
   function isFormValid() {
     return Object.keys(formData).map((key) => formData[key] !== '').every((value) => value === true) 
@@ -114,9 +171,53 @@ function VendorProducts() {
           </div>
         </div>
       </div>
-      {productList.length > 0 ? (
+      <div className='mb-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm'>
+        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
+          <div className='space-y-3'>
+            <div className='relative'>
+              <CiSearch className='pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400' />
+              <Input
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder='Search your products'
+                className='rounded-full border-gray-300 pl-12 text-xs focus:border-black focus:ring-black'
+              />
+            </div>
+            <div className='grid gap-3 sm:grid-cols-[1fr_auto]'>
+              <div>
+                <Select value={categoryFilter || undefined} onValueChange={(value) => setCategoryFilter(value)}>
+                  <SelectTrigger className='w-full rounded-full border-gray-300 text-xs'>
+                    <SelectValue placeholder='Filter by category' />
+                  </SelectTrigger>
+                  <SelectContent className='w-full bg-white px-0 py-0 border text-xs border-gray-300'>
+                    <SelectItem key='all' value='all'>All Categories</SelectItem>
+                    {categoryOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.value}>{option.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                variant='outline'
+                size='sm'
+                className='rounded-full border-gray-300 text-xs text-gray-700'
+                onClick={() => {
+                  setSearchQuery('')
+                  setCategoryFilter('')
+                }}
+              >
+                Clear filters
+              </Button>
+            </div>
+          </div>
+          <div className='rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-medium text-slate-700'>
+            Showing {filteredProducts.length} of {productList.length} products
+          </div>
+        </div>
+      </div>
+      {filteredProducts.length > 0 ? (
         <div className='grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-          {productList.map((product) => (
+          {filteredProducts.map((product) => (
             <VendorProductTile
               setOpenProductSheet={setOpenProductSheet}
               setCurrentEditedId={setCurrentEditedId}
@@ -158,7 +259,7 @@ function VendorProducts() {
 
           <div className='py-4 px-2'>
             <CommonForm
-              formControls={addProductFormElements}
+              formControls={formControls}
               formData={formData}
               setFormData={setFormData}
               onSubmit={onSubmit}

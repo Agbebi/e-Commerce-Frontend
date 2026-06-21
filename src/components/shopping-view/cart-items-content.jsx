@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 import { TbCurrencyNaira } from 'react-icons/tb';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { Input } from '../ui/input';
-import { IoAddCircle, IoAddCircleOutline, IoRemoveCircleOutline } from 'react-icons/io5';
+import { IoAddCircle, IoAddCircleOutline, IoAddOutline, IoRemoveCircleOutline, IoRemoveOutline } from 'react-icons/io5';
 import { CiCircleRemove } from 'react-icons/ci';
+import { MdDelete, MdDeleteOutline } from 'react-icons/md';
 
 
 
@@ -16,60 +17,75 @@ function CartItemsContent({ cartItem }) {
 
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
+  const [quantity, setQuantity] = useState(cartItem.quantity)
+
+  useEffect(() => {
+    setQuantity(cartItem.quantity)
+  }, [cartItem.quantity])
 
   function handleCartItemDelete(cartItem) {
-    console.log(user);
     dispatch(deleteCartItem({ userId: user.id, productId: cartItem.productId })).then((data) => {
       if (data.payload.success) {
-        toast.success('Cart item deleted successfully',{
-                style: {
-                    background: 'white',
-                }
-            })
+        toast.success('Cart item deleted successfully', {
+          style: {
+            background: 'white',
+          },
+        })
       } else {
-        toast.error('Failed to delete cart item',{
-                style: {
-                    background: 'white',
-                }
-            })
+        toast.error('Failed to delete cart item', {
+          style: {
+            background: 'white',
+          },
+        })
       }
     })
   }
 
   function handleQuantityChange(cartItem, action) {
-    dispatch(updateCartItems({ userId: user.id, productId: cartItem.productId, quantity: action === 'plus' ? cartItem.quantity + 1 : cartItem.quantity - 1 }))
+    const nextQuantity = action === 'plus' ? quantity + 1 : quantity - 1
+    if (nextQuantity < 1) return
+
+    setQuantity(nextQuantity)
+    dispatch(updateCartItems({
+      userId: user.id,
+      productId: cartItem.productId,
+      quantity: nextQuantity,
+      description: cartItem.description,
+      name: cartItem.name,
+      imageUrl: cartItem.images?.[0] || cartItem.image,
+      price: cartItem.salesPrice > 0 ? cartItem.salesPrice : cartItem.price,
+    }))
   }
 
   return (
-    <div className='text-xs flex bg-white rounded-lg shadow items-center  gap-4 justify-around'>
-      <div className='h-18 w-15 '>
-
-        <img src={cartItem.images?.[0] || cartItem.image} alt={cartItem.name} className='w-full rounded-l h-full object-cover' />
+    <div className='text-xs flex items-center border border-slate-200 gap-3 rounded-xl bg-white pr-3 shadow-xs'>
+      <div className='min-w-[60px] h-full max-h-[100px] w-fit overflow-hidden rounded-l-xl border-none border-slate-100 '>
+        <img src={cartItem.images?.[0] || cartItem.image} alt={cartItem.name} className='h-full max-h-[70px] w-full max-w-40 object-cover' />
       </div>
-      <div className='flex-1 flex flex-col justify-center h-full w-full text-justify px-2'>
-        <h3 className='font-normal'>{cartItem.name}</h3>
-        <span className='font-light text-[11px] text-gray-600 italic mb-2'>{cartItem.productId.substring(0, 6) + '...'}</span>
-        <p className='font-semibold flex items-center'>
-          <TbCurrencyNaira className='w-5 h-5' />
-          {((cartItem.salesPrice > 0 ? cartItem.salesPrice : cartItem.price) * cartItem.quantity).toFixed(2)}
+      <div className='flex-1 flex flex-col justify-center gap-1 py-1 text-left'>
+        <h3 className='text-sm font-semibold leading-5 text-slate-900'>{cartItem.name}</h3>
+        <span className='text-[11px] text-gray-500 italic'>{cartItem.productId.substring(0, 6) + '...'}</span>
+        <p className='flex items-center gap-1 text-sm font-semibold text-slate-900'>
+          <TbCurrencyNaira className='h-4 w-4' />
+          {((cartItem.salesPrice > 0 ? cartItem.salesPrice : cartItem.price) * quantity).toFixed(2)}
         </p>
       </div>
-      <div className='flex flex-col gap-1 pr-2 justify-around h-full items-center'>
-        <div className='flex h-4 items-center p-0 bg-white'>
-          <Button disabled={cartItem.quantity <= 1} onClick={() => { handleQuantityChange(cartItem, 'minus') }} size='icon' className=' h-full w-4 p-0'>
-            <IoRemoveCircleOutline className='text-orange-500 opacity-60' />
+      <div className='flex flex-col items-center gap-2'>
+        <div className='flex items-center gap-1 rounded border border-slate-200 '>
+          <Button disabled={quantity <= 1} onClick={() => { handleQuantityChange(cartItem, 'minus') }} size='icon' className='h-6 w-6 p-0 text-slate-600 bg-slate-100 rounded-none transition-transform duration-150 active:scale-95'>
+            <IoRemoveOutline className={`h-4 w-4 ${quantity <= 1 ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`} />
             <span className='sr-only'>Decrease</span>
           </Button>
-          <input className='w-8 h-5 rounded-sm text-center' 
-            value={cartItem.quantity}
+          <input className='w-10 bg-white text-center text-xs font-semibold text-slate-900' 
+            value={quantity}
             disabled
-              />
-          <Button onClick={() => { handleQuantityChange(cartItem, 'plus') }} size='icon' className='rounded h-full w-4 p-2 shadow'>
-            <IoAddCircleOutline className='text-green-500 opacity-60' />
+          />
+          <Button onClick={() => { handleQuantityChange(cartItem, 'plus') }} size='icon' className='h-6 w-6 p-0 bg-slate-100 rounded-none text-slate-600 transition-transform duration-150 active:scale-95'>
+            <IoAddOutline className='h-4 w-4 opacity-80 hover:opacity-100 text-green-600' />
             <span className='sr-only'>Increase</span>
           </Button>
         </div>
-        <CiCircleRemove onClick={() => handleCartItemDelete(cartItem)} className='w-4 h-4 text-red-400 cursor-pointer' />
+        <MdDeleteOutline onClick={() => handleCartItemDelete(cartItem)} className='h-5 w-5 text-red-400 cursor-pointer opacity-80 transition hover:opacity-100' />
       </div>
 
     </div>

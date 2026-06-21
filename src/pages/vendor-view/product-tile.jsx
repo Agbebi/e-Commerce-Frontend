@@ -42,6 +42,10 @@ function VendorProductTile({product, setFormData, setOpenProductSheet, setCurren
 
             <CardContent className='px-4 py-1 rounded-tl-lg rounded-tr-lg'>
                 <h2 className='text-md font-bold mb-2 text-justify'>{product.name}</h2>
+                <div className='flex justify-between items-center gap-2 mb-2 text-xs text-gray-500'>
+                    <span className='capitalize'>{product.subcategory ? `${product.subcategory}` : ''}</span>
+                    <span className='capitalize'>{product.category}</span>
+                </div>
                 <div className='flex justify-between item-center mb-2'>
                     <span className={`${product.salesPrice > 0 ? 'line-through font-medium text-black opacity-70' : ''} text-sm flex items-center text-black font-bold`}><TbCurrencyNaira /> {formatAmount(product.price)}</span>
                     <span className={`${!product.salesPrice || product.salesPrice == 0 ? 'hidden' : 'text-sm font-bold'} flex items-center `}><TbCurrencyNaira />{formatAmount(product.salesPrice)}</span>
@@ -52,7 +56,11 @@ function VendorProductTile({product, setFormData, setOpenProductSheet, setCurren
                     onClick={() => {
                         setOpenProductSheet(true)
                         setCurrentEditedId(product._id)
-                        setFormData(product)
+                        setFormData({
+                            ...product,
+                            keyFeatures: Array.isArray(product.keyFeatures) ? product.keyFeatures.join('\n') : product.keyFeatures || '',
+                            subcategory: product.subcategory || ''
+                        })
                     }}
                     className='w-full rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-100'
                     size='sm'

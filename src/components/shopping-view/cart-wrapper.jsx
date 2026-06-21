@@ -18,49 +18,59 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
     }, 0) : 0;
 
     return (
-        <SheetContent  className='bg-white sm:max-w-md w-80 p-4 first:gap-1 justify-start pt-10 overflow-y-auto'>
-        <SheetHeader style={{backgroundImage : cart}} className='outline-orange-200  flex flex-col items-center justify-center p-1'>
-                <SlBasket className='w-6 rounded-full h-6' />
-               <span className='text-lg  text-orange-600'> Your Cart</span>
-                
-            </SheetHeader> 
-            <div className='flex flex-col overscroll-y-auto overscroll-x-hidden rounded-lg p-2 gap-2 mt-2'>
-                {cartItems && cartItems.items && cartItems.items.length > 0 ?
-                    cartItems.items.map((item) => (                    
-                            <CartItemsContent cartItem={item} />
-                    )) : <div
-                        className='text-sm text-center p-4 outline w-full flex items-center justify-center h-20 opacity-50 outline-gray-200'>
-                        Your cart seems empty, start adding some items!
+        <SheetContent className='bg-white sm:max-w-md w-full max-w-xs p-4 gap-4 pt-6 overflow-y-auto'>
+            <SheetHeader className='rounded-xl  px-4 py-5 text-orange-700'>
+                <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-orange-700'>
+                    <SlBasket className='h-6 w-6' />
+                </div>
+                <div className='mt-3 text-center'>
+                    <h2 className='text-lg font-semibold'>Your Cart</h2>
+                    <p className='text-sm text-gray-600/80'>Review the items before checkout.</p>
+                </div>
+            </SheetHeader>
+
+            <div className='rounded-lg flex flex-col  py-3 sm:px2 gap-3 mt-4'>
+                {cartItems?.items?.length > 0 ? (
+                    cartItems.items.map((item) => (
+                        <CartItemsContent key={item.productId} cartItem={item} />
+                    ))
+                ) : (
+                    <div className='rounded-2xl border border-dashed border-gray-200 bg-white p-5 text-center text-sm text-gray-500'>
+                        Your cart seems empty — add a few items to get started.
                     </div>
-                }
+                )}
             </div>
 
-
-            <SheetFooter className='p-1'>
-                {/* <Separator className='border border-gray-100' /> */}
-                <div className='flex flex-col gap-2'>
-                    <div className='flex justify-between items-center'>
-                        <span className='text-sm text-gray-800'>Subtotal</span>
-                        <span className='font-bold flex'><TbCurrencyNaira className='w-6 h-6  text-gray-800' />{totalPrice.toFixed(2)}</span>
+            <SheetFooter className='rounded-2xl border border-gray-100 bg-white p-4 shadow-sm'>
+                <div className='space-y-3'>
+                    <div className='flex justify-between text-sm text-slate-600'>
+                        <span>Subtotal</span>
+                        <span className='font-semibold flex items-center gap-1'>
+                            <TbCurrencyNaira className='h-4 w-4 text-slate-700' />
+                            {totalPrice.toFixed(2)}
+                        </span>
                     </div>
-                    <div className='flex justify-between items-center'>
-                        <span className='text-sm text-gray-800'>Shipping</span>
-                        <span className='font-bold flex'>--</span>
+                    <div className='flex justify-between text-sm text-slate-600'>
+                        <span>Shipping</span>
+                        <span className='font-semibold text-slate-500'>Calculated at checkout</span>
                     </div>
                 </div>
-                <Separator className='border border-gray-100' />
-                <div className='flex justify-between items-center'>
-                    <span className='font-medium'>Total</span>
-                    <span className='font-bold flex'><TbCurrencyNaira className='w-6 h-6  text-gray-800' />{totalPrice.toFixed(2)}</span>
+                <Separator className='my-4 border-gray-100' />
+                <div className='flex justify-between items-center text-base font-semibold'>
+                    <span>Total</span>
+                    <span className='flex items-center gap-1 text-slate-900'>
+                        <TbCurrencyNaira className='h-4 w-4' />
+                        {totalPrice.toFixed(2)}
+                    </span>
                 </div>
                 <Button
                     onClick={() => {
                         navigate('/shop/checkout')
                         setOpenCartSheet(false)
                         setOpenSheet(false)
-
                     }}
-                    className='w-full text-sm mt-6 border shadow bg-black text-white'>
+                    className='w-full rounded-full bg-black py-3 text-sm text-white hover:bg-slate-900'
+                >
                     Confirm Order
                 </Button>
             </SheetFooter>

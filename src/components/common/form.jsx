@@ -31,10 +31,18 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                         type={getControlItem.type}
                         id={getControlItem.name}
                         value={value}
-                        onChange={event => setFormData({
-                            ...formData,
-                            [getControlItem.name]: event.target.value
-                        })}
+                        disabled={getControlItem.disabled}
+                        onChange={event => {
+                            const nextValue = event.target.value
+                            if (typeof getControlItem.customOnChange === 'function') {
+                                getControlItem.customOnChange(nextValue)
+                            } else {
+                                setFormData({
+                                    ...formData,
+                                    [getControlItem.name]: nextValue
+                                })
+                            }
+                        }}
                         className='border-gray-200 rounded-none text-xs placeholder:text-xs '
 
                     />
@@ -43,10 +51,21 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
 
             case (types.SELECT):
                 element = (
-                    <Select onValueChange={(value)=> setFormData({
-                        ...formData,
-                        [getControlItem.name] : value
-                    })} value={value} className='' >
+                    <Select
+                        onValueChange={(value)=> {
+                            if (typeof getControlItem.customOnChange === 'function') {
+                                getControlItem.customOnChange(value)
+                            } else {
+                                setFormData({
+                                    ...formData,
+                                    [getControlItem.name] : value
+                                })
+                            }
+                        }}
+                        value={value}
+                        className=''
+                        disabled={getControlItem.disabled}
+                    >
                         <SelectTrigger className='w-full text-xs border-gray-300'>
                             <SelectValue placeholder={getControlItem.placeholder} />
                         </SelectTrigger>

@@ -229,10 +229,10 @@ function ShoppingHeader() {
             <Button onClick={() => {
               setOpenCartSheet(true)
             }} className='rounded-full border border-gray-200' size='icon'>
-              <ShoppingCart className='w-6 h-6' />
+             <ShoppingCart className='w-6 h-6' />
               <span className='sr-only'>View Cart</span>
             </Button>
-            <UserCartWrapper setOpenSheet={setOpenSheet} setOpenCartSheet={setOpenCartSheet} cartItems={cartItems} />
+            {openCartSheet && <UserCartWrapper setOpenSheet={setOpenSheet} setOpenCartSheet={setOpenCartSheet} cartItems={cartItems} />}
           </Sheet>
         </div>
 

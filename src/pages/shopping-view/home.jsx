@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ChevronLeftCircleIcon, ChevronRightCircleIcon } from 'lucide-react'
+import { ArrowRight, Activity, Baby, Cpu, Gift, Home, ShoppingCart, Smartphone, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,10 +16,16 @@ import { GiBlackBook, GiMicrochip } from 'react-icons/gi'
 
 const categoriesWithIcons = [
   { id: 'electronics', value: 'electronics', label: 'Electronics', icon: GiMicrochip },
+  { id: 'computers', value: 'computers', label: 'Computers', icon: Cpu },
+  { id: 'phones-tablets', value: 'phones-tablets', label: 'Phones & Tablets', icon: Smartphone },
+  { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances', icon: Home },
   { id: 'fashion', value: 'fashion', label: 'Fashion', icon: PiHandbagLight },
-  { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances', icon: PiLampPendantLight },
+  { id: 'beauty', value: 'beauty', label: 'Beauty', icon: Gift },
+  { id: 'baby', value: 'baby', label: 'Baby', icon: Baby },
+  { id: 'sports', value: 'sports', label: 'Sports', icon: Activity },
+  { id: 'groceries', value: 'groceries', label: 'Groceries', icon: ShoppingCart },
   { id: 'books', value: 'books', label: 'Books', icon: GiBlackBook },
-
+  { id: 'accessories', value: 'accessories', label: 'Accessories', icon: Gift },
 ]
 
 const BrandWithIcons = [
@@ -117,48 +123,81 @@ function ShoppingHome() {
           ))
         }
 
-        <Button onClick={() => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))} variant='' size='icon' className='absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/50 hover:bg-white/70'>
-          <ChevronLeftCircleIcon className='w-4 h-4' />
-        </Button>
-
-        <Button onClick={() => setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))} variant='' size='icon' className='absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/50 hover:bg-white/70'>
-          <ChevronRightCircleIcon size={20} className='w-4 h-4' />
-        </Button>
+        <div className='absolute py-6 inset-0 bg-black/65' />
+        <div className='absolute inset-0 flex flex-col justify-center items-center sm:items-start px-6 md:px-16 lg:px-24 text-white'>
+          {/* <div className='mb-8 inline-flex items-center justify-center rounded-full border border-orange-300/30 bg-orange-500/10 p-3 text-orange-200 shadow-sm shadow-orange-200/20'>
+            <Sparkles className='h-5 w-5' />
+          </div> */}
+          <h1 className='max-w-3xl text-2xl sm:text-4xl md:text-5xl font-extrabold leading-tight'>Discover the <span className='text-orange-300'>best products</span> from <span className='text-orange-300'>trusted vendors</span>, all in one place.</h1>
+          <p className='mt-2 max-w-2xl text-sm sm:text-lg leading-7 text-slate-200/90'>Browse fresh arrivals, shop top brands, and enjoy easy checkout with <span className='text-orange-300'>fast delivery</span> and friendly support.</p>
+          <div className='mt-8 text-xs flex flex-wra items-center gap-4'>
+            <Button onClick={() => navigate('/shop/listing')} className='inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-white/15'>
+              Start shopping
+              <ArrowRight className='h-4 w-4' />
+            </Button>
+            <Button onClick={() => navigate('/shop/orders')} className='inline-flex items-center gap-2 rounded-full border border-orange-300/70 bg-orange-500/15 px-6 py-3 text-sm font-semibold text-orange-100 shadow-lg shadow-orange-200/20 transition hover:bg-orange-500/25'>
+              View orders
+              <ShoppingCart className='h-4 w-4' />
+            </Button>
+          </div>
+        </div>
       </div>
 
       <section className='py-2'>
         <div className='container mx-auto px-4 py-4'>
-          <h2 className='text-2xl font-bold text-center mb-8'>Browse by Category</h2>
+          <div className='flex flex-col gap-2 mb-6 text-center md:text-left'>
+            <span className='text-sm uppercase tracking-[0.15em] text-orange-400'>Featured brands</span>
+            <h2 className='text-2xl font-semibold'>Shop products by favorite brands</h2>
+            <p className='max-w-3xl text-sm sm:text-base text-slate-600'>Use brand filters to narrow down your search and find the exact vendor collection you want.</p>
+          </div>
 
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6'>
+          <div className='flex gap-4 overflow-x-auto hide-scrollbar pb-3 scroll-smooth snap-x snap-mandatory'>
             {
-              categoriesWithIcons.map(category => (<Card onClick={() => handleNavigateToCategory(category, 'Category')} className='cursor-pointer bg-white border-gray-200 hover:shadow-lg transition-shadow' key={category.id} icon={category.icon}>
-                <CardContent className='flex items-center justify-center p-6 flex-col'>
-                  <category.icon className='w-12 h-12 mb-4 text-gray-500' />
-                  <span className='text-md text-center font-medium text-gray-800'>{category.label}</span>
-                </CardContent>
-              </Card>))
+              BrandWithIcons.map(brand => (
+                <button
+                  key={brand.id}
+                  onClick={() => handleNavigateToCategory(brand, 'Brand')}
+                  className='snap-start min-w-[140px] flex-shrink-0 rounded-2xl border border-slate-200 bg-white/90 px-5 py-5 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg'
+                >
+                  <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-slate-700 mb-4'>
+                    <brand.icon className='h-6 w-6' />
+                  </div>
+                  <h3 className='text-sm font-semibold text-slate-900'>{brand.label}</h3>
+                  {/* <p className='mt-1 text-sm text-slate-500'>Top vendor label</p> */}
+                </button>
+              ))
             }
           </div>
         </div>
       </section>
-
-      <section className='py-2'>
+      <section className=' bg-slate-50 py-2'>
         <div className='container mx-auto px-4 py-4'>
-          <h2 className='text-2xl font-bold text-center mb-8'>Browse by Brands</h2>
+          <div className='flex flex-col gap-2 mb-6 text-center md:text-left'>
+            <span className='text-sm uppercase tracking-[0.1em] text-orange-400'>Shop by department</span>
+            <h2 className='text-2xl w-60 sm:w-full mx-auto font-semibold'>Explore vendor categories</h2>
+            <p className='max-w-3xl text-sm sm:text-base text-gray-500'>We selected the top categories where vendors are selling the latest deals. Tap any category to shop vendor products filtered just for you.</p>
+          </div>
 
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6'>
+          <div className='flex md:grid-cols-3 justify-start py-2 gap-4 overflow-x-auto hide-scrollbar pb-3 scroll-smooth snap-x snap-mandatory'>
             {
-              BrandWithIcons.map(brand => (<Card onClick={() => handleNavigateToCategory(brand, 'Brand')} className='cursor-pointer bg-white border-gray-200 hover:shadow-lg transition-shadow' key={brand.id} icon={brand.icon}>
-                <CardContent className='flex items-center justify-center p-6 flex-col'>
-                  <brand.icon className='w-12 h-12 mb-4 text-gray-600' />
-                  <span className='text-md text-center font-medium text-gray-800'>{brand.label}</span>
-                </CardContent>
-              </Card>))
+              categoriesWithIcons.map(category => (
+                <button
+                  key={category.id}
+                  onClick={() => handleNavigateToCategory(category, 'Category')}
+                  className='snap-start min-w-[140px] flex-shrink-0 rounded-2xl border border-gray-200 bg-white/90 px-5 py-5 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg'
+                >
+                  <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-gray-700 mb-4'>
+                    <category.icon className='h-6 w-6' />
+                  </div>
+                  <h3 className='text-sm font-semibold text-slate-900'>{category.label}</h3>
+                  {/* <p className='mt-1 text-xs text-slate-500'>Popular vendor picks</p> */}
+                </button>
+              ))
             }
           </div>
         </div>
       </section>
+
 
 
       <section className='bg-white p-1'>
