@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Dialog, DialogContent } from './ui/dialog'
 import { Button } from './ui/button'
-import { Separator } from './ui/separator'
-import { Avatar, AvatarFallback } from './ui/avatar'
 import { StarIcon } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
