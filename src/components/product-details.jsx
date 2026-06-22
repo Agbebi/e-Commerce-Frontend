@@ -249,7 +249,7 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                             <div className='min-h-20 p-4 w-full space-y-6 text-left overflow-y-auto pr-2'>
                                 <div className='space-y-4'>
                                     {descriptionParagraphs.length > 0 ? descriptionParagraphs.map((paragraph, idx) => (
-                                        <p key={idx} className='text-gray-600 text-sm leading-7 first-letter:text-3xl first-letter:font-semibold first-letter:text-slate-900 first-letter:mr-2 first-letter:float-left'>
+                                        <p key={idx} className='text-gray-600 text-sm leading-7 first-letter:text-3xl'>
                                             {paragraph}
                                         </p>
                                     )) : (
@@ -258,11 +258,11 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                                 </div>
 
                                 {normalizedKeyFeatures.length > 0 ? (
-                                    <div className='rounded-lg border border-gray-200 bg-slate-50 p-4'>
-                                        <h2 className='mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-700'>What makes it special</h2>
+                                    <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
+                                        <h2 className='mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-slate-700'>What makes it special</h2>
                                         <div className='grid gap-3 sm:grid-cols-2'>
                                             {normalizedKeyFeatures.map((feature, idx) => (
-                                                <div key={idx} className='rounded-md border border-gray-200 bg-white p-3 text-xs text-gray-700 shadow-sm'>
+                                                <div key={idx} className='rounded border border-gray-200 bg-white p-2 text-xs text-gray-700 shadow-sm'>
                                                     <span className='block font-semibold text-slate-900 mb-1'>Feature {idx + 1}</span>
                                                     <p className='leading-6'>{feature}</p>
                                                 </div>

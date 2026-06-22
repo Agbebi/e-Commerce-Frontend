@@ -10,7 +10,7 @@ export const registerFormControls = [
 
         ]
     },
-     {
+    {
         name: 'name',
         label: 'Full Name *',
         componentType: 'input',
@@ -133,7 +133,7 @@ export const registerDispatchFormControls = [
         ]
     },
 
-     {
+    {
         name: 'name',
         label: 'Full Name *',
         componentType: 'input',
@@ -169,7 +169,7 @@ export const registerDispatchFormControls = [
     },
 ]
 
-export const dispatchVehicleDetails =[  
+export const dispatchVehicleDetails = [
     {
         name: 'vehicleType',
         label: 'Vehicle Type',
@@ -333,7 +333,7 @@ export const shoppingViewCategories = [
     { id: 'home', value: 'home', label: 'Home', path: '/shop/home' },
     { id: 'electronics', value: 'electronics', label: 'Electronics', path: '/shop/listing' },
     { id: 'fashion', value: 'fashion', label: 'Fashion', path: '/shop/listing' },
-    { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances', path: '/shop/listing' },
+    { id: 'computers', value: 'computers', label: 'Computers', path: '/shop/listing' },
     { id: 'toys', value: 'toys', label: 'Toys', path: '/shop/listing' },
 ]
 
@@ -355,10 +355,16 @@ export const filterOptions = {
         { value: 'lenovo', id: 'lenovo', label: 'Lenovo' },
     ],
     Category: [
-        { id: 'electronics', value: 'electronics', label: 'Electronics' },
-        { id: 'fashion', value: 'fashion', label: 'Fashion' },
-        { id: 'home-appliances', value: 'home-appliances', label: 'Home Appliances' },
-        { id: 'toys', value: 'toys', label: 'Toys' },
+        { value: 'electronics', id: 'electronics', label: 'Electronics' },
+        { value: 'fashion', id: 'fashion', label: 'Fashion' },
+        { value: 'home-appliances', id: 'home-appliances', label: 'Home Appliances' },
+        { value: 'beauty', id: 'beauty', label: 'Beauty & Personal Care' },
+        { value: 'baby', id: 'baby', label: 'Baby & Toys' },
+        { value: 'computers', id: 'computers', label: 'Computers' },
+        { value: 'phones-tablets', id: 'phones-tablets', label: 'Phones & Tablets' },
+        { value: 'sports', id: 'sports', label: 'Sports & Outdoors' },
+        { value: 'groceries', id: 'groceries', label: 'Groceries' },
+        { value: 'accessories', id: 'accessories', label: 'Accessories' },
     ],
 }
 
