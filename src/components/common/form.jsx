@@ -4,6 +4,7 @@ import { Label } from '../ui/label'
 import { Textarea } from '../../components/ui/textarea'
 import { Button } from '../../components/ui/button'
 import {Select, SelectTrigger, SelectValue, SelectItem,  SelectContent } from '../ui/select'
+import { Loader2 } from 'lucide-react'
 
 
 
@@ -15,7 +16,7 @@ const types = {
 }
 
 
-function commonForm({ formControls, formData, setFormData, onSubmit, buttonText, buttonDisabled }) {
+function commonForm({ formControls, formData, setFormData, onSubmit, buttonText, buttonDisabled, children, isSubmitting = false }) {
 
     function renderInputsByComponentType(getControlItem) {
         let element = null
@@ -30,6 +31,7 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                         componentType={getControlItem.componentType}
                         type={getControlItem.type}
                         id={getControlItem.name}
+                        list={getControlItem.list}
                         value={value}
                         disabled={getControlItem.disabled}
                         onChange={event => {
@@ -115,7 +117,17 @@ function commonForm({ formControls, formData, setFormData, onSubmit, buttonText,
                         </div>
                         ))}
             </div>
-            <Button disabled={buttonDisabled} type='submit' size='' className='mt-2 text-xs w-full bg-black text-white shadow cursor-pointer'>{buttonText || 'Submit'}</Button>
+            {children}
+            <Button disabled={buttonDisabled || isSubmitting} type='submit' size='' className='mt-2 text-xs w-full bg-black text-white shadow cursor-pointer'>
+                {isSubmitting ? (
+                    <span className='flex items-center justify-center gap-2'>
+                        <Loader2 className='h-4 w-4 animate-spin' />
+                        {buttonText || 'Submitting...'}
+                    </span>
+                ) : (
+                    buttonText || 'Submit'
+                )}
+            </Button>
         </form>
     )
 }

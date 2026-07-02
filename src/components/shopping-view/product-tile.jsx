@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { TbCurrencyNaira } from "react-icons/tb";
+import { formatPriceDisplay } from "@/lib/utils";
 import { CiBellOn } from "react-icons/ci";
 
 function ShoppingProductTile({
@@ -55,13 +56,13 @@ function ShoppingProductTile({
                                 : "font-bold"
                                 } items-center justify-around flex`}
                         >
-                            <TbCurrencyNaira />{product.price}
+                            <TbCurrencyNaira />{formatPriceDisplay(product.price)}
                         </span>
                         <span
                             className={`flex items-center ${product.salesPrice > 0 ? "text-sm font-bold" : "hidden"
                                 }`}
                         >
-                            <TbCurrencyNaira />{product.salesPrice}
+                            <TbCurrencyNaira />{formatPriceDisplay(product.salesPrice)}
                         </span>
                     </div>
                 </CardContent>

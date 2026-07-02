@@ -1,5 +1,6 @@
 import React from 'react'
 import { SheetContent, SheetFooter, SheetHeader, SheetTitle } from '../ui/sheet'
+import { useSelector } from 'react-redux'
 import { Button } from '../ui/button'
 import CartItemsContent from './cart-items-content'
 import { useNavigate } from 'react-router-dom'
@@ -7,10 +8,13 @@ import { Separator } from '../ui/separator'
 import { SlBasket } from 'react-icons/sl'
 import { TbCurrencyNaira } from 'react-icons/tb'
 import  cart from '../../assets/cart.jpg'
+import { formatPriceDisplay } from '@/lib/utils'
+import LoadingState from '@/components/ui/loading-state'
 
 function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
 
     const navigate = useNavigate();
+    const { isLoading } = useSelector((state) => state.shopCart)
 
     const totalPrice = cartItems && cartItems.items ? cartItems.items.reduce((total, item) => {
         const itemPrice = item.salesPrice > 0 ? item.salesPrice : item.price;
@@ -30,7 +34,14 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
             </SheetHeader>
 
             <div className='rounded-lg flex flex-col  py-3 sm:px2 gap-3 mt-4'>
-                {cartItems?.items?.length > 0 ? (
+                {isLoading && !cartItems?.items?.length ? (
+                    <LoadingState
+                        title='Updating your cart'
+                        description='Please wait while we sync the latest items.'
+                        compact
+                        className='border-none bg-transparent shadow-none'
+                    />
+                ) : cartItems?.items?.length > 0 ? (
                     cartItems.items.map((item) => (
                         <CartItemsContent key={item.productId} cartItem={item} />
                     ))
@@ -47,7 +58,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
                         <span>Subtotal</span>
                         <span className='font-semibold flex items-center gap-1'>
                             <TbCurrencyNaira className='h-4 w-4 text-slate-700' />
-                            {totalPrice.toFixed(2)}
+                            {formatPriceDisplay(totalPrice)}
                         </span>
                     </div>
                     <div className='flex justify-between text-sm text-slate-600'>
@@ -60,7 +71,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
                     <span>Total</span>
                     <span className='flex items-center gap-1 text-slate-900'>
                         <TbCurrencyNaira className='h-4 w-4' />
-                        {totalPrice.toFixed(2)}
+                        {formatPriceDisplay(totalPrice)}
                     </span>
                 </div>
                 <Button

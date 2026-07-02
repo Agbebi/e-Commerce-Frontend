@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { fetchAllProducts } from '@/store/vendor/product-slice'
 import { getAllOrders } from '@/store/vendor/order-slice'
 import { TbCurrencyNaira } from 'react-icons/tb'
+import { formatPriceDisplay } from '@/lib/utils'
+import LoadingState from '@/components/ui/loading-state'
 
 function VendorDashboard() {
   const dispatch = useDispatch()
@@ -55,7 +57,7 @@ function VendorDashboard() {
       },
       {
         label: 'Revenue',
-        value: totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        value: formatPriceDisplay(totalRevenue),
         icon: <TbCurrencyNaira className='h-5 w-5' />,
         description: 'Sales this period (NGN)',
       },
@@ -102,7 +104,19 @@ function VendorDashboard() {
 
   const recentOrders = orderList?.slice(0, 5) || []
   const featuredProducts = productList?.slice(0, 4) || []
-  
+  const isDashboardLoading = (productsLoading || ordersLoading) && (!productList?.length || !orderList?.length)
+
+  if (isDashboardLoading) {
+    return (
+      <div className='rounded-3xl border border-gray-200 bg-white p-6 shadow-sm'>
+        <LoadingState
+          title='Loading your dashboard'
+          description='Gathering products, orders, and sales insights for your store.'
+          className='min-h-[280px]'
+        />
+      </div>
+    )
+  }
 
   return (
     <div className='space-y-6'>
@@ -151,7 +165,7 @@ function VendorDashboard() {
             <div className='grid gap-4 md:grid-cols-2'>
               <div className='rounded-2xl border border-gray-100 bg-slate-50 p-4'>
                 <p className='text-sm font-medium text-gray-500'>Average order value</p>
-                <p className='mt-3 text-2xl font-semibold text-slate-900'>₦{averageOrder.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                <p className='mt-3 text-2xl font-semibold text-slate-900'>₦{formatPriceDisplay(averageOrder)}</p>
               </div>
               <div className='rounded-2xl border border-gray-100 bg-slate-50 p-4'>
                 <p className='text-sm font-medium text-gray-500'>Low stock products</p>
@@ -223,7 +237,7 @@ function VendorDashboard() {
                     <div className='flex flex-wrap items-center gap-2'>
                       <Badge className='bg-slate-100 text-slate-700'>{order.deliveryStatus || 'Unknown'}</Badge>
                       <Badge className='bg-slate-100 text-slate-700'>{order.payoutStatus || 'Status'}</Badge>
-                      <span className='text-sm font-medium text-slate-900'>₦{Number(order.subTotal || 0).toLocaleString()}</span>
+                      <span className='text-sm font-medium text-slate-900'>₦{formatPriceDisplay(order.subTotal || 0)}</span>
                     </div>
                   </div>
                 ))}
@@ -252,7 +266,7 @@ function VendorDashboard() {
                     />
                     <div className='min-w-0 flex-1'>
                       <p className='truncate font-semibold text-slate-900'>{product.name || 'Unnamed product'}</p>
-                      <p className='text-sm text-gray-600'>₦{Number(product.salesPrice > 0 ? product.salesPrice : product.price || 0).toLocaleString()}</p>
+                      <p className='text-sm text-gray-600'>₦{formatPriceDisplay(product.salesPrice > 0 ? product.salesPrice : product.price || 0)}</p>
                     </div>
                     <Badge className='bg-slate-100 text-slate-700'>{product.totalStock ? `${product.totalStock} in stock` : 'No stock'}</Badge>
                   </div>

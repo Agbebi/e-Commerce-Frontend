@@ -19,7 +19,7 @@ import UnauthPage from './pages/auth/unauth-page/unauth-page'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { checkAuth } from './store/auth-slice'
-import { Skeleton } from './components/ui/skeleton'
+import LoadingState from './components/ui/loading-state'
 import PaymentSuccess from './pages/shopping-view/payment-success'
 import ShoppingOrdersPage from './pages/shopping-view/orders'
 import ShoppingAddressPage from './pages/shopping-view/address-page'
@@ -34,6 +34,7 @@ import FirstPage from './pages/first-page'
 import DispatcherAuthRegister from './pages/auth/register-dispatch'
 import VendorAuthLogin from './pages/auth/login-vendor'
 import DispatcherAuthLogin from './pages/auth/login-dispatcher'
+import VerifyEmailPage from './pages/auth/verify-email'
 
 const App = () => {
   const { user, isAuthenticated, isLoading } = useSelector(state => state.auth)
@@ -44,10 +45,13 @@ const App = () => {
   }, [dispatch])
 
   if (isLoading) {
-    return <div className='grid grid-cols-2 w-full bg-black h-full'>
-      <Skeleton className="h-full w-full rounded-full" />
-      <div><Skeleton className="h-full w-full bg-gray-800 rounded-full" /></div>
-    </div>
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10'>
+        <div className='w-full max-w-md'>
+          <LoadingState title='Preparing your experience' description='We are loading your account details and storefront settings.' />
+        </div>
+      </div>
+    )
   }
 
 
@@ -70,6 +74,7 @@ const App = () => {
               <Route path='register' element={<AuthRegister />} />
               <Route path='register-vendor' element={<VendorAuthRegister />} />
               <Route path='register-dispatcher' element={<DispatcherAuthRegister />} />
+              <Route path='verify-email' element={<VerifyEmailPage />} />
             </Route>
 
             <Route path='/vendor' element={

@@ -7,6 +7,7 @@ import { loginUser } from '@/store/auth-slice'
 import { toast } from 'sonner'
 import { CiShop, CiUser } from 'react-icons/ci'
 import { Checkbox } from '@/components/ui/checkbox'
+import LoadingState from '@/components/ui/loading-state'
 
 
 
@@ -18,10 +19,12 @@ const initialState = {
 function AuthLogin() {
 
   const [formData, setFormData] = useState(initialState)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const dispatch = useDispatch()
 
   function onSubmit(event) {
     event.preventDefault()
+    setIsSubmitting(true)
 
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
@@ -29,8 +32,9 @@ function AuthLogin() {
       } else {
         toast.error(`${data?.payload?.message}`)
       }
-    }
-    )
+    }).finally(() => {
+      setIsSubmitting(false)
+    })
   }
 
   return (
@@ -47,13 +51,18 @@ function AuthLogin() {
         <p className='text-gray-500 text-xs'>Please enter your details.</p>
 
       </div>
-      <CommonForm
-        formControls={LoginFormControls}
-        buttonText={'Sign In'}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-      />
+      {isSubmitting ? (
+        <LoadingState title='Signing you in' description='We are validating your credentials and preparing your dashboard.' className='mt-2' />
+      ) : (
+        <CommonForm
+          formControls={LoginFormControls}
+          buttonText={'Sign In'}
+          formData={formData}
+          setFormData={setFormData}
+          onSubmit={onSubmit}
+          isSubmitting={isSubmitting}
+        />
+      )}
       <div className='flex flex-row px-6 text-xs justify-between p-1'>
         <div className='flex items-center gap-2 justify-around'>
           <Checkbox />

@@ -36,6 +36,7 @@ function ProductImageUpload({ imageFiles, setImageFiles, uploadedImgUrls, setUpl
         const nextFiles = imageFiles.filter((_, idx) => idx !== index)
         setImageFiles(nextFiles)
         setUploadedImgUrls(uploadedImgUrls.filter((_, idx) => idx !== index))
+        setImageLoadingState(false)
 
         if(inputRef.current){
             inputRef.current.value = ''
@@ -45,17 +46,22 @@ function ProductImageUpload({ imageFiles, setImageFiles, uploadedImgUrls, setUpl
     async function uploadImageToCloudinary(file, index){
         setImageLoadingState(true)
 
-        const data = new FormData()
-        data.append('my_file', file)
+        try {
+            const data = new FormData()
+            data.append('my_file', file)
 
-        const response = await API.post('/api/admin/products/upload-image', data)
+            const response = await API.post('/api/admin/products/upload-image', data)
 
-        if (response.status === 200){
-            setUploadedImgUrls(prev => {
-                const next = [...prev]
-                next[index] = response.data.data.url
-                return next
-            })
+            if (response.status === 200){
+                setUploadedImgUrls(prev => {
+                    const next = [...prev]
+                    next[index] = response.data.data.url
+                    return next
+                })
+            }
+        } catch (error) {
+            console.error('Failed to upload image:', error)
+        } finally {
             setImageLoadingState(false)
         }
     }

@@ -8,6 +8,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { TbCurrencyNaira } from 'react-icons/tb'
 import { getAllOrders, queryPaymentStatus } from '@/store/shop/order-slice'
 import { toast } from 'sonner'
+import { formatPriceDisplay } from '@/lib/utils'
 
 function ShoppingOrderDetails({ setOpenDetailsDialog }) {
   const { orderDetails } = useSelector(state => state.shopOrder)
@@ -218,7 +219,7 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
           </div>
           <div className='flex items-center justify-between'>
             <p className='text-xs text-gray-600'>Total Amount</p>
-            <Label className='flex items-center text-xs gap-1'><TbCurrencyNaira />{orderDetails?.totalAmount?.toFixed(2) ?? '0.00'}</Label>
+            <Label className='flex items-center text-xs gap-1'><TbCurrencyNaira />{formatPriceDisplay(orderDetails?.totalAmount ?? 0)}</Label>
           </div>
         </div>
 
@@ -247,7 +248,7 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
                               <p className='text-xs font-semibold'>{item.name}</p>
                               <div className='flex items-center justify-between w-full gap-2'>
                                 <p className='text-xs text-gray-600'>Qty:{item.quantity}</p>
-                                <p className='text-xs text-gray-600 flex items-center gap-0'><TbCurrencyNaira />{item.price}</p>
+                                <p className='text-xs text-gray-600 flex items-center gap-0'><TbCurrencyNaira />{formatPriceDisplay(item.price)}</p>
                               </div>
                             </div>
                           </div>

@@ -13,6 +13,7 @@ import { GrHp } from 'react-icons/gr'
 import { SiAdidas, SiLenovo, SiNike } from 'react-icons/si'
 import { PiHandbagLight, PiLampPendantLight } from 'react-icons/pi'
 import { GiBlackBook, GiMicrochip } from 'react-icons/gi'
+import LoadingState from '@/components/ui/loading-state'
 
 const categoriesWithIcons = [
   { id: 'electronics', value: 'electronics', label: 'Electronics', icon: GiMicrochip },
@@ -45,7 +46,7 @@ function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { user } = useSelector((state) => state.auth)
-  const { productList, productDetails } = useSelector(state => state.shopProducts)
+  const { productList, productDetails, isLoading } = useSelector(state => state.shopProducts)
   
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -131,11 +132,11 @@ function ShoppingHome() {
           <h1 className='max-w-3xl text-2xl sm:text-4xl md:text-5xl font-extrabold leading-tight'>Discover the <span className='text-orange-300'>best products</span> from <span className='text-orange-300'>trusted vendors</span>, all in one place.</h1>
           <p className='mt-2 max-w-2xl text-sm sm:text-lg leading-7 text-slate-200/90'>Browse fresh arrivals, shop top brands, and enjoy easy checkout with <span className='text-orange-300'>fast delivery</span> and friendly support.</p>
           <div className='mt-8 text-xs flex flex-wra items-center gap-4'>
-            <Button onClick={() => navigate('/shop/listing')} className='inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-white/15'>
+            <Button onClick={() => navigate('/shop/listing')} className='inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/20 transition-none hover:bg-white/15'>
               Start shopping
               <ArrowRight className='h-4 w-4' />
             </Button>
-            <Button onClick={() => navigate('/shop/orders')} className='inline-flex items-center gap-2 rounded-full border border-orange-300/70 bg-orange-500/15 px-6 py-3 text-sm font-semibold text-orange-100 shadow-lg shadow-orange-200/20 transition hover:bg-orange-500/25'>
+            <Button onClick={() => navigate('/shop/orders')} className='inline-flex items-center gap-2 rounded-full border border-orange-300/70 bg-orange-500/15 px-6 py-3 text-sm font-semibold text-orange-100 shadow-lg shadow-orange-200/20 transition-none hover:bg-orange-500/25'>
               View orders
               <ShoppingCart className='h-4 w-4' />
             </Button>
@@ -206,7 +207,15 @@ function ShoppingHome() {
 
           <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6'>
             {
-              productList && productList.length > 0 ? productList.slice(0, 4).map((product) => (
+              isLoading && !productList.length ? (
+                <div className='col-span-full'>
+                  <LoadingState
+                    title='Loading featured products'
+                    description='We are preparing the latest picks from our vendors.'
+                    className='min-h-[220px]'
+                  />
+                </div>
+              ) : productList && productList.length > 0 ? productList.slice(0, 4).map((product) => (
                 <ShoppingProductTile
                   handleAddToCart={handleAddToCart}
                   product={product}

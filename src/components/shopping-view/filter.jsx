@@ -12,8 +12,15 @@ const sectionIcons = {
     Brand: MdLabel,
 }
 
-function ProductFilter({ filters, handleFilters, clearFilters }) {
+function ProductFilter({ filters, handleFilters, clearFilters, brandOptions = [] }) {
     const hasFilters = filters && Object.keys(filters).length > 0;
+    const dynamicBrandOptions = (brandOptions || []).map((brand) =>
+        typeof brand === 'string' ? { id: brand, label: brand } : brand,
+    );
+    const filterSections = [
+        { key: 'Category', options: filterOptions.Category || [] },
+        { key: 'Brand', options: dynamicBrandOptions.length > 0 ? dynamicBrandOptions : filterOptions.Brand || [] },
+    ];
 
     return (
         <div className='rounded-lg border border-gray-200 bg-white shadow-xs'>
@@ -46,30 +53,32 @@ function ProductFilter({ filters, handleFilters, clearFilters }) {
                 ) : null}
             </div>
             <div className='p-4 space-y-4'>
-                {Object.keys(filterOptions).map((keyItem) => {
-                    const SectionIcon = sectionIcons[keyItem]
+                {filterSections.map(({ key, options }) => {
+                    const SectionIcon = sectionIcons[key]
                     return (
-                        <Fragment key={keyItem}>
+                        <Fragment key={key}>
                             <div className='rounded-lg p-0'>
                                 <div className='flex items-center justify-start gap-2'>
                                     {SectionIcon ? <SectionIcon className='h-4 w-4 text-gray-400' /> : null}
-                                    <h3 className='text-md font-semibold text-slate-900'>{keyItem}</h3>
+                                    <h3 className='text-md font-semibold text-slate-900'>{key}</h3>
                                 </div>
                                 <div className='grid p-2 grid-cols-2 gap-2 mt-2'>
-                                    {filterOptions[keyItem].map((option) => {
-                                        const isChecked = filters?.[keyItem]?.includes(option.id) ?? false
+                                    {options.map((option) => {
+                                        const optionId = option.id || option.value || option;
+                                        const optionLabel = option.label || option;
+                                        const isChecked = filters?.[key]?.includes(optionId) ?? false
                                         return (
                                             <Label
-                                                key={option.id}
+                                                key={optionId}
                                                 className='flex items-center border border-slate-100 rounded-lg text-left gap-3 bg-white px-2 py-2 text-xs font-normal text-gray-700 shadow-s transition hover:border-gray-200'
                                             >
                                                 <Checkbox
-                                                    id={`filter-${keyItem}-${option.id}`}
+                                                    id={`filter-${key}-${optionId}`}
                                                     checked={isChecked}
-                                                    onCheckedChange={() => handleFilters(keyItem, option.id)}
+                                                    onCheckedChange={() => handleFilters(key, optionId)}
                                                     className='border-gray-200'
                                                 />
-                                                {option.label}
+                                                {optionLabel}
                                             </Label>
                                         )
                                     })}

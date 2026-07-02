@@ -10,6 +10,7 @@ import Chip from '@mui/material/Chip'
 import { TbCurrencyNaira } from 'react-icons/tb'
 import { MdErrorOutline } from 'react-icons/md'
 import API from '@/api/axios'
+import { formatPriceDisplay } from '@/lib/utils'
 
 function ProductDetailsDialog({ productDetails, open, setOpen }) {
 
@@ -160,11 +161,13 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
     const isOutOfStock = availableStock === 0;
     const isMaxInCart = currentCartQuantity >= availableStock;
 
-    const normalizedKeyFeatures = Array.isArray(productDetails.keyFeatures)
-        ? productDetails.keyFeatures
-        : typeof productDetails.keyFeatures === 'string'
-            ? productDetails.keyFeatures.split(/\r?\n/).map(item => item.trim()).filter(Boolean)
-            : []
+    const normalizedSpecifications = Array.isArray(productDetails.specifications) && productDetails.specifications.length > 0
+        ? productDetails.specifications.filter((specification) => specification?.name?.trim() || specification?.value?.trim())
+        : Array.isArray(productDetails.keyFeatures)
+            ? productDetails.keyFeatures.map((feature, idx) => ({ name: `Feature ${idx + 1}`, value: feature }))
+            : typeof productDetails.keyFeatures === 'string'
+                ? productDetails.keyFeatures.split(/\r?\n/).map((item) => item.trim()).filter(Boolean).map((feature, idx) => ({ name: `Feature ${idx + 1}`, value: feature }))
+                : []
 
     const descriptionParagraphs = typeof productDetails.description === 'string'
         ? productDetails.description.split(/\r?\n/).map(item => item.trim()).filter(Boolean)
@@ -172,7 +175,7 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
 
     return (
         <Dialog open={open} onOpenChange={handleDialogClose} className='p-0'>
-            <DialogContent className='grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-2 p-0 sm:p-4 max-w-[90vw] max-h-[85vh] sm:max-w-[80vw] lg:max-w-[70vw] bg-white border-gray-200'>
+            <DialogContent className='grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-2 p-0 sm:p-4 max-w-[90vw] max-h-[90vh] sm:max-w-[80vw] lg:max-w-[70vw] bg-white border-gray-200'>
                 <div className='relative overflow-hidden rounded-lg rounded-b-none sm:rounded-b-lg h-full'>
                     {Array.isArray(productDetails.images) && productDetails.images.length > 0 ? (
                         <div className='relative w-full overflow-hidden'>
@@ -206,7 +209,7 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                         <img src={productDetails.image} alt={productDetails.name} className='w-full max-h-[300px] sm:max-h-[400px] object-cover' />
                     )}
                 </div>
-                <div className='flex flex-col p-4 sm:py-0 h-full'>
+                <div className='flex flex-col p-3 sm:py-0 h-full'>
                     <div className=''>
                         <div className='flex flex-wrap items-center gap-2 text-xs text-gray-500'>
                             {productDetails.category ? <span className='capitalize'>{productDetails.category}</span> : null}
@@ -216,8 +219,8 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                         <h1 className='text-3xl font-extrabold'>{productDetails.name}</h1>
                     </div>
                     <div className='flex items-center justify-between my-2'>
-                        <span className={`${productDetails.salesPrice > 0 ? 'line-through font-bold text-gray-400' : 'font-bold'} flex items-center text-2xl`}><TbCurrencyNaira />{productDetails.price}</span>
-                        <span className={`${productDetails.salesPrice > 0 ? 'text-2xl font-bold' : 'hidden'} flex items-center`}><TbCurrencyNaira />{productDetails.salesPrice}</span>
+                        <span className={`${productDetails.salesPrice > 0 ? 'line-through font-bold text-gray-400' : 'font-bold'} flex items-center text-2xl`}><TbCurrencyNaira />{formatPriceDisplay(productDetails.price)}</span>
+                        <span className={`${productDetails.salesPrice > 0 ? 'text-2xl font-bold' : 'hidden'} flex items-center`}><TbCurrencyNaira />{formatPriceDisplay(productDetails.salesPrice)}</span>
                     </div>
                     <div className='flex justify-around px-4 mt-2 sm:gap-2'>
                         {
@@ -249,7 +252,7 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                             <div className='min-h-20 p-4 w-full space-y-6 text-left overflow-y-auto pr-2'>
                                 <div className='space-y-4'>
                                     {descriptionParagraphs.length > 0 ? descriptionParagraphs.map((paragraph, idx) => (
-                                        <p key={idx} className='text-gray-600 text-sm leading-7 first-letter:text-3xl'>
+                                        <p key={idx} className='text-gray-600 text-sm leading-7 first-letter:text-xl'>
                                             {paragraph}
                                         </p>
                                     )) : (
@@ -257,14 +260,14 @@ function ProductDetailsDialog({ productDetails, open, setOpen }) {
                                     )}
                                 </div>
 
-                                {normalizedKeyFeatures.length > 0 ? (
+                                {normalizedSpecifications.length > 0 ? (
                                     <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
-                                        <h2 className='mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-slate-700'>What makes it special</h2>
+                                        <h2 className='mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-slate-700'>Specifications</h2>
                                         <div className='grid gap-3 sm:grid-cols-2'>
-                                            {normalizedKeyFeatures.map((feature, idx) => (
+                                            {normalizedSpecifications.map((specification, idx) => (
                                                 <div key={idx} className='rounded border border-gray-200 bg-white p-2 text-xs text-gray-700 shadow-sm'>
-                                                    <span className='block font-semibold text-slate-900 mb-1'>Feature {idx + 1}</span>
-                                                    <p className='leading-6'>{feature}</p>
+                                                    <span className='block font-semibold text-slate-900 mb-1'>{specification.name || `Specification ${idx + 1}`}</span>
+                                                    <p className='leading-6'>{specification.value || '—'}</p>
                                                 </div>
                                             ))}
                                         </div>

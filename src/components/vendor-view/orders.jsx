@@ -7,6 +7,8 @@ import VendorOrderDetailsView from './order-details'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllOrders } from '@/store/vendor/order-slice'
 import { Badge } from '../ui/badge'
+import { formatPriceDisplay } from '@/lib/utils'
+import LoadingState from '@/components/ui/loading-state'
 
 function VendorOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
@@ -15,11 +17,11 @@ function VendorOrders() {
   const [sortOrder, setSortOrder] = useState('newest')
 
   const { user } = useSelector((state) => state.auth)
-  const { orderList } = useSelector((state) => state.vendorOrders)
+  const { orderList, isLoading } = useSelector((state) => state.vendorOrders)
 
   const dispatch = useDispatch()
   const userId = user?.id || user?._id
-  const filterOptions = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled']
+  const filterOptions = ['all', 'pending', 'packaging', 'accepted', 'ready', 'cancelled']
 
   useEffect(() => {
     if (userId) {
@@ -98,7 +100,18 @@ function VendorOrders() {
           </TableHeader>
 
           <TableBody className='text-sm text-center'>
-            {orderList && orderList.length > 0 ? (
+            {isLoading && !orderList?.length ? (
+              <TableRow>
+                <TableCell colSpan={6} className='py-10'>
+                  <LoadingState
+                    title='Loading orders'
+                    description='Fetching the latest order activity from your store.'
+                    compact
+                    className='border-none bg-transparent shadow-none'
+                  />
+                </TableCell>
+              </TableRow>
+            ) : orderList && orderList.length > 0 ? (
               orderList.map((order) => (
                 <TableRow key={order._id} className='border-b border-slate-100'>
                   <TableCell className='font-medium text-slate-900'>{order._id || 'N/A'}</TableCell>
@@ -131,7 +144,7 @@ function VendorOrders() {
                     </Badge>
                   </TableCell>
                   <TableCell className='font-semibold text-slate-900'>
-                    {Number(order.subTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {formatPriceDisplay(order.subTotal)}
                   </TableCell>
                   <TableCell>
                     <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog} className='bg-white rounded-lg shadow-lg p-4'>

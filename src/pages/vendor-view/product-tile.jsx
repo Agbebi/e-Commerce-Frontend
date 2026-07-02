@@ -5,13 +5,11 @@ import React from 'react'
 import { CiBellOn } from 'react-icons/ci'
 import { MdOutlineDelete, MdOutlineEdit } from 'react-icons/md'
 import { TbCurrencyNaira } from 'react-icons/tb'
+import { formatPriceDisplay } from '@/lib/utils'
 
 function VendorProductTile({product, setFormData, setOpenProductSheet, setCurrentEditedId, handleDelete}) {        
 
-    const formatAmount = (value) => {
-        const num = Number(value) || 0
-        return num.toLocaleString()
-    }
+    const formatAmount = (value) => formatPriceDisplay(value)
 
   return (
     <Card className='w-full max-w-sm mx-auto py-0 overflow-hidden border-gray-300 shadow'>
@@ -58,6 +56,11 @@ function VendorProductTile({product, setFormData, setOpenProductSheet, setCurren
                         setCurrentEditedId(product._id)
                         setFormData({
                             ...product,
+                            specifications: Array.isArray(product.specifications) && product.specifications.length > 0
+                                ? product.specifications
+                                : (Array.isArray(product.keyFeatures) && product.keyFeatures.length > 0
+                                    ? product.keyFeatures.map((feature) => ({ name: 'Feature', value: feature }))
+                                    : []),
                             keyFeatures: Array.isArray(product.keyFeatures) ? product.keyFeatures.join('\n') : product.keyFeatures || '',
                             subcategory: product.subcategory || ''
                         })

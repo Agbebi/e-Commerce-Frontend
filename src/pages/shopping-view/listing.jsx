@@ -21,18 +21,19 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-
-
+import API from "@/api/axios";
+import LoadingState from "@/components/ui/loading-state";
 
 
 function ShoppingListing() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { productList, productDetails } = useSelector((state) => state.shopProducts);
+  const { productList, productDetails, isLoading } = useSelector((state) => state.shopProducts);
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState('price:low-to-high');
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [availableBrands, setAvailableBrands] = useState([]);
 
   const categorySearchParams = searchParams.get('category');
 
@@ -167,10 +168,25 @@ function ShoppingListing() {
     }
   }, [productDetails]);
 
+  useEffect(() => {
+    async function loadBrands() {
+      try {
+        const response = await API.get('/api/shop/products/brands')
+        if (response?.data?.success) {
+          setAvailableBrands(response.data.data || [])
+        }
+      } catch (error) {
+        console.error('Failed to load brands:', error)
+      }
+    }
+
+    loadBrands()
+  }, [])
+
   return (
     <div className="grid grid-cols-1 bg-gray-50 md:grid-cols-[300px_1fr] gap-6 md:p-6 p-4">
       <div className="flex flex-col gap-4 md:sticky md:top-6">
-        <ProductFilter filters={filters} handleFilters={handleFilters} clearFilters={handleClearFilters} />
+        <ProductFilter filters={filters} handleFilters={handleFilters} clearFilters={handleClearFilters} brandOptions={availableBrands} />
       </div>
       <div className="w-full rounded-lg shadow-sm bg-white overflow-hidden">
         <div className="p-4 border-b border-gray-200">
@@ -215,7 +231,15 @@ function ShoppingListing() {
       </div>
 
         <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
-          {productList && productList.length > 0 ? (
+          {isLoading && !productList.length ? (
+            <div className="col-span-full">
+              <LoadingState
+                title="Loading products"
+                description="We are gathering the latest items for your selection."
+                className="min-h-[220px]"
+              />
+            </div>
+          ) : productList && productList.length > 0 ? (
             productList.map((product) => (
               <ShoppingProductTile
                 key={product._id}

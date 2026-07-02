@@ -5,6 +5,7 @@ import { Separator } from '../ui/separator'
 import CommonForm from '../common/form'
 import { useDispatch, useSelector } from 'react-redux'
 import { TbCurrencyNaira } from 'react-icons/tb'
+import { formatPriceDisplay } from '@/lib/utils'
 import { deliverOrder, getAllOrders, updateOrderStatus } from '../../store/vendor/order-slice'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
@@ -59,7 +60,7 @@ function VendorOrderDetailsView({ selectedOrder, setOpenDetailsDialog }) {
                         </div>
                         <div className='flex items-center justify-between'>
                             <p className='  font-medium'>Total Amount</p>
-                            <Label className='flex text-xs items-center gap-1'><TbCurrencyNaira />{Number(selectedOrder.subTotal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</Label>
+                            <Label className='flex text-xs items-center gap-1'><TbCurrencyNaira />{formatPriceDisplay(selectedOrder.subTotal)}</Label>
                         </div>
                     </div>
 
@@ -82,10 +83,10 @@ function VendorOrderDetailsView({ selectedOrder, setOpenDetailsDialog }) {
 
                                             <ul className='grid text-xs border-x border-gray-200'>
                                                 <li className='flex flex-col gap-1 p-2 items-center justify-between'>
-                                                    <p className='font-medium'>{product.name}</p>
+                                                    <p className='font-medium text-center'>{product.name}</p>
+                                                    <p className='text-gray-600'>Id: {product._id.slice(0, 10)}...</p>
                                                     <p className='text-gray-600'>Qty: {product.quantity}</p>
-                                                    <p className='text-gray-600'>{product.description}</p>
-                                                    <p className='flex items-center font-medium'><TbCurrencyNaira />{Number(product.price * product.quantity).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) || 'N/A'}</p>
+                                                    <p className='flex items-center font-medium'><TbCurrencyNaira />{formatPriceDisplay(product.price * product.quantity) || 'N/A'}</p>
                                                 </li>
 
                                             </ul>
@@ -113,6 +114,7 @@ function VendorOrderDetailsView({ selectedOrder, setOpenDetailsDialog }) {
                                         { name: 'accepted', value: 'accepted', label: 'Accepted' },
                                         { name: 'packaging', value: 'packaging', label: 'Packaging' },
                                         { name: 'ready', value: 'ready', label: 'Ready for Pickup' },
+                                        { name: 'cancelled', value: 'cancelled', label: 'Cancelled' },
                                     ]
                                 }
                             ]}

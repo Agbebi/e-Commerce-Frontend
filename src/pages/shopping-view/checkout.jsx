@@ -8,16 +8,19 @@ import { toast } from 'sonner';
 import { createNewOrder } from '@/store/shop/order-slice';
 import { TbCurrencyNaira } from 'react-icons/tb';
 import { Separator } from '@/components/ui/separator';
+import { formatPriceDisplay } from '@/lib/utils';
+import LoadingState from '@/components/ui/loading-state';
+import { Loader2 } from 'lucide-react';
 
 
 function ShoppingCheckout() {
 
   const dispatch = useDispatch()
 
-  const { cartItems } = useSelector(state => state.shopCart)
+  const { cartItems, isLoading: cartLoading } = useSelector(state => state.shopCart)
   const { user } = useSelector(state => state.auth)
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null)
-  const { approvalUrl } = useSelector(state => state.shopOrder)
+  const { approvalUrl, isLoading: orderLoading } = useSelector(state => state.shopOrder)
 
   const totalPrice = cartItems && cartItems.items ? cartItems.items.reduce((total, item) => {
     const itemPrice = item.salesPrice > 0 ? item.salesPrice : item.price;
@@ -110,11 +113,29 @@ function ShoppingCheckout() {
           <div className='mt-8 space-y-4'>
             <div className='flex justify-between'>
               <span className='font-sm text-gray-600'>Total</span>
-              <span className='font-bold flex items-center'><TbCurrencyNaira className='w-5 h-5' />{totalPrice.toFixed(2)}</span>
+              <span className='font-bold flex items-center'><TbCurrencyNaira className='w-5 h-5' />{formatPriceDisplay(totalPrice)}</span>
             </div>
           </div>
           <div>
-            <Button onClick={handleOpayPayment} className='w-full mt-4 bg-black text-white hover:bg-gray-800'>Checkout</Button>
+            {orderLoading ? (
+              <div className='mt-4 rounded-2xl border border-slate-200 bg-white p-3'>
+                <LoadingState
+                  title='Preparing your order'
+                  description='We are setting up checkout and redirecting you to payment.'
+                  compact
+                  className='border-none bg-transparent shadow-none'
+                />
+              </div>
+            ) : (
+              <Button disabled={cartLoading || !cartItems?.items?.length} onClick={handleOpayPayment} className='w-full mt-4 bg-black text-white hover:bg-gray-800'>
+                {cartLoading ? (
+                  <span className='flex items-center justify-center gap-2'>
+                    <Loader2 className='h-4 w-4 animate-spin' />
+                    Updating cart...
+                  </span>
+                ) : 'Checkout'}
+              </Button>
+            )}
           </div>
         </div>
       </div>

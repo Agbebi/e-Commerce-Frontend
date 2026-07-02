@@ -9,6 +9,8 @@ import { getAllOrders, getOrderDetails } from '@/store/shop/order-slice'
 import { Badge } from '../ui/badge'
 import { Separator } from '../ui/separator'
 import { TbCurrencyNaira } from 'react-icons/tb'
+import { formatPriceDisplay } from '@/lib/utils'
+import LoadingState from '@/components/ui/loading-state'
 
 function ShoppingOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
@@ -17,7 +19,7 @@ function ShoppingOrders() {
 
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
-  const { orderList, orderDetails } = useSelector(state => state.shopOrder)
+  const { orderList, orderDetails, isLoading } = useSelector(state => state.shopOrder)
 
   const userId = user?.id || user?._id
   const filterOptions = ['all', 'pending', 'completed', 'failed']
@@ -88,8 +90,18 @@ function ShoppingOrders() {
           </TableHeader>
 
           <TableBody className='text-xs'>
-            {
-              orderList && orderList.length > 0 ? orderList.map(order =>
+            {isLoading && !orderList?.length ? (
+              <TableRow>
+                <TableCell colSpan={5} className='py-10'>
+                  <LoadingState
+                    title='Loading your orders'
+                    description='Please wait while we fetch your recent purchases.'
+                    compact
+                    className='border-none bg-transparent shadow-none'
+                  />
+                </TableCell>
+              </TableRow>
+            ) : orderList && orderList.length > 0 ? orderList.map(order =>
                 <TableRow className='border-none shadow text-center'>
                   <TableCell>{order._id}</TableCell>
                   <TableCell>{order.orderDate.slice(0, 10)}</TableCell>
@@ -101,7 +113,7 @@ function ShoppingOrders() {
                       {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
                     </Badge>
                   </TableCell>
-                  <TableCell>{Number(order.totalAmount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</TableCell>
+                  <TableCell>{formatPriceDisplay(order.totalAmount)}</TableCell>
                   <TableCell>
                     <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog} >
                       <Button onClick={() => handleFetchOrderDetails(order._id)} className="bg-gray-500 text-white px-2 py-0 rounded hover:bg-gray-600">

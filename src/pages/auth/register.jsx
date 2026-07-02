@@ -7,6 +7,7 @@ import { registerUser } from '@/store/auth-slice'
 import { toast } from 'sonner'
 import { CiShop } from 'react-icons/ci'
 import { Checkbox } from '@/components/ui/checkbox'
+import LoadingState from '@/components/ui/loading-state'
 
 
 
@@ -22,6 +23,7 @@ function AuthRegister() {
 
   const [formData, setFormData] = useState(initialState)
   const [disabled, setDisabled] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -30,17 +32,18 @@ function AuthRegister() {
 
   function onSubmit(event) {
     event.preventDefault()
+    setIsSubmitting(true)
 
     dispatch(registerUser(formData)).then((data) => {
       if (data?.payload?.success == true) {
-        toast.success('Registration successful!')
+        toast.success('Account created. Please check your email to verify your address.')
         navigate('/auth/login')
       } else {
         toast.error(`${data?.payload?.message}`)
       }
-    }
-
-    )
+    }).finally(() => {
+      setIsSubmitting(false)
+    })
   }
 
   return (
@@ -56,14 +59,19 @@ function AuthRegister() {
       </div>
       <div className='px-4 sm:px-8 text-gray-600 text-sm justify-between p-2'>
 
-        <CommonForm
-          formControls={registerFormControls}
-          buttonText={'Sign Up'}
-          formData={formData}
-          setFormData={setFormData}
-          onSubmit={onSubmit}
-          buttonDisabled={disabled}
-        />
+        {isSubmitting ? (
+          <LoadingState title='Creating your account' description='We are setting up your profile and preparing your verification email.' className='mt-2' />
+        ) : (
+          <CommonForm
+            formControls={registerFormControls}
+            buttonText={'Sign Up'}
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={onSubmit}
+            buttonDisabled={disabled}
+            isSubmitting={isSubmitting}
+          />
+        )}
       </div>
       <div className='flex flex-row px-6 text-gray-600 text-sm justify-between p-2'>
         <div className='flex items-center gap-3 justify-around'>

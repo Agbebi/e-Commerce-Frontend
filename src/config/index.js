@@ -253,23 +253,12 @@ export const addProductFormElements = [
     },
 
     {
-        name: 'keyFeatures',
-        label: 'Key Features',
-        componentType: 'textarea',
-        placeholder: 'Add key features, one per line'
-    },
-
-    {
         name: 'brand',
         label: 'Brand',
-        placeholder: 'Product Brand',
-        componentType: 'select',
-        options: [
-            { value: 'nike', id: 'nike', label: 'Nike' },
-            { value: 'hp', id: 'hp', label: 'HP' },
-            { value: 'adidas', id: 'adidas', label: 'Adidas' },
-            { value: 'lenovo', id: 'lenovo', label: 'Lenovo' },
-        ]
+        placeholder: 'Type or select a brand',
+        componentType: 'input',
+        type: 'text',
+        list: 'product-brands'
     },
 
     {
@@ -327,6 +316,86 @@ export const categorySubcategoryMap = {
     ],
     groceries: [],
     accessories: []
+}
+
+export const specificationTemplatesByCategory = {
+    electronics: [
+        { name: 'RAM', value: '' },
+        { name: 'Processor', value: '' },
+        { name: 'Storage', value: '' },
+        { name: 'Battery', value: '' }
+    ],
+    computers: [
+        { name: 'Processor', value: '' },
+        { name: 'RAM', value: '' },
+        { name: 'Storage', value: '' },
+        { name: 'Screen Size', value: '' }
+    ],
+    'phones-tablets': [
+        { name: 'Storage', value: '' },
+        { name: 'RAM', value: '' },
+        { name: 'Battery', value: '' },
+        { name: 'Camera', value: '' }
+    ],
+    'home-appliances': [
+        { name: 'Capacity', value: '' },
+        { name: 'Power', value: '' },
+        { name: 'Material', value: '' }
+    ],
+    fashion: [
+        { name: 'Size', value: '' },
+        { name: 'Color', value: '' },
+        { name: 'Material', value: '' },
+        { name: 'Fit', value: '' }
+    ],
+    beauty: [
+        { name: 'Size', value: '' },
+        { name: 'Skin Type', value: '' },
+        { name: 'Scent', value: '' }
+    ],
+    sports: [
+        { name: 'Size', value: '' },
+        { name: 'Color', value: '' },
+        { name: 'Material', value: '' }
+    ],
+    groceries: [
+        { name: 'Weight', value: '' },
+        { name: 'Ingredients', value: '' },
+        { name: 'Flavor', value: '' }
+    ],
+    accessories: [
+        { name: 'Material', value: '' },
+        { name: 'Color', value: '' },
+        { name: 'Size', value: '' }
+    ],
+    default: [
+        { name: 'Color', value: '' },
+        { name: 'Material', value: '' }
+    ]
+}
+
+export const specificationTemplatesBySubcategory = {
+    televisions: [
+        { name: 'Screen Size', value: '' },
+        { name: 'Resolution', value: '' },
+        { name: 'Refresh Rate', value: '' },
+        { name: 'Smart TV', value: '' }
+    ],
+    'men-clothing': [
+        { name: 'Size', value: '' },
+        { name: 'Color', value: '' },
+        { name: 'Fabric', value: '' }
+    ],
+    'women-clothing': [
+        { name: 'Size', value: '' },
+        { name: 'Color', value: '' },
+        { name: 'Fabric', value: '' }
+    ],
+    shoes: [
+        { name: 'Size', value: '' },
+        { name: 'Color', value: '' },
+        { name: 'Material', value: '' }
+    ]
 }
 
 export const shoppingViewCategories = [
