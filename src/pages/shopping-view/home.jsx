@@ -131,12 +131,12 @@ function ShoppingHome() {
           </div> */}
           <h1 className='max-w-3xl text-2xl sm:text-4xl md:text-5xl font-extrabold leading-tight'>Discover the <span className='text-orange-300'>best products</span> from <span className='text-orange-300'>trusted vendors</span>, all in one place.</h1>
           <p className='mt-2 max-w-2xl text-sm sm:text-lg leading-7 text-slate-200/90'>Browse fresh arrivals, shop top brands, and enjoy easy checkout with <span className='text-orange-300'>fast delivery</span> and friendly support.</p>
-          <div className='mt-8 text-xs flex flex-wra items-center gap-4'>
-            <Button onClick={() => navigate('/shop/listing')} className='inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/20 transition-none hover:bg-white/15'>
+          <div className='mt-8 text-xs flex items-center gap-4'>
+            <Button onClick={() => navigate('/shop/listing')} className='inline-flex will-change-transform items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-white/15'>
               Start shopping
               <ArrowRight className='h-4 w-4' />
             </Button>
-            <Button onClick={() => navigate('/shop/orders')} className='inline-flex items-center gap-2 rounded-full border border-orange-300/70 bg-orange-500/15 px-6 py-3 text-sm font-semibold text-orange-100 shadow-lg shadow-orange-200/20 transition-none hover:bg-orange-500/25'>
+            <Button onClick={() => navigate('/shop/orders')} className='inline-flex will-change-transform items-center gap-2 rounded-full border border-orange-300/70 bg-orange-500/15 px-6 py-3 text-sm font-semibold text-orange-100 shadow-lg shadow-orange-200/20 transition hover:bg-orange-500/25'>
               View orders
               <ShoppingCart className='h-4 w-4' />
             </Button>
