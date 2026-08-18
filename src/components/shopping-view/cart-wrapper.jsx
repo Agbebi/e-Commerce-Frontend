@@ -1,18 +1,14 @@
 import React from 'react'
-import { SheetContent, SheetFooter, SheetHeader, SheetTitle } from '../ui/sheet'
+import { SheetContent, SheetHeader, SheetTitle } from '../ui/sheet'
 import { useSelector } from 'react-redux'
-import { Button } from '../ui/button'
-import CartItemsContent from './cart-items-content'
 import { useNavigate } from 'react-router-dom'
-import { Separator } from '../ui/separator'
-import { SlBasket } from 'react-icons/sl'
+import { Box, Typography, alpha } from '@mui/material'
+import { IoCartOutline, IoClose } from 'react-icons/io5'
 import { TbCurrencyNaira } from 'react-icons/tb'
-import  cart from '../../assets/cart.jpg'
 import { formatPriceDisplay } from '@/lib/utils'
-import LoadingState from '@/components/ui/loading-state'
+import CartItemsContent from './cart-items-content'
 
 function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
-
     const navigate = useNavigate();
     const { isLoading } = useSelector((state) => state.shopCart)
 
@@ -22,69 +18,157 @@ function UserCartWrapper({ cartItems, setOpenCartSheet, setOpenSheet }) {
     }, 0) : 0;
 
     return (
-        <SheetContent className='bg-white sm:max-w-md w-full max-w-xs p-4 gap-4 pt-6 overflow-y-auto'>
-            <SheetHeader className='rounded-xl  px-4 py-5 text-orange-700'>
-                <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-orange-700'>
-                    <SlBasket className='h-6 w-6' />
-                </div>
-                <div className='mt-3 text-center'>
-                    <h2 className='text-lg font-semibold'>Your Cart</h2>
-                    <p className='text-sm text-gray-600/80'>Review the items before checkout.</p>
-                </div>
-            </SheetHeader>
+        <SheetContent className='bg-white sm:max-w-md w-full max-w-xs p-0 gap-0 overflow-hidden flex flex-col'>
+            <Box sx={{ 
+                px: 3, 
+                py: 2, 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+            }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Box sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '12px',
+                        bgcolor: alpha('#f97316', 0.1),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#f97316',
+                    }}>
+                        <IoCartOutline size={22} />
+                    </Box>
+                    <Box>
+                        <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1.2 }}>
+                            Your Cart
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+                            {cartItems?.items?.length || 0} {cartItems?.items?.length === 1 ? 'item' : 'items'}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
 
-            <div className='rounded-lg flex flex-col  py-3 sm:px2 gap-3 mt-4'>
+            <Box sx={{ 
+                flex: 1, 
+                overflowY: 'auto', 
+                p: 2,
+                bgcolor: '#fafafa',
+            }}>
                 {isLoading && !cartItems?.items?.length ? (
-                    <LoadingState
-                        title='Updating your cart'
-                        description='Please wait while we sync the latest items.'
-                        compact
-                        className='border-none bg-transparent shadow-none'
-                    />
+                    <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        height: '100%',
+                        gap: 2,
+                        py: 8,
+                    }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Updating your cart...
+                        </Typography>
+                    </Box>
                 ) : cartItems?.items?.length > 0 ? (
-                    cartItems.items.map((item) => (
-                        <CartItemsContent key={item.productId} cartItem={item} />
-                    ))
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        {cartItems.items.map((item) => (
+                            <CartItemsContent key={item.productId} cartItem={item} />
+                        ))}
+                    </Box>
                 ) : (
-                    <div className='rounded-2xl border border-dashed border-gray-200 bg-white p-5 text-center text-sm text-gray-500'>
-                        Your cart seems empty — add a few items to get started.
-                    </div>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        height: '100%',
+                        gap: 2,
+                        py: 8,
+                        textAlign: 'center',
+                    }}>
+                        <Box sx={{
+                            width: 64,
+                            height: 64,
+                            borderRadius: '50%',
+                            bgcolor: alpha('#000', 0.04),
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            mb: 1,
+                        }}>
+                            <IoCartOutline size={32} color="#ccc" />
+                        </Box>
+                        <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
+                            Your cart is empty
+                        </Typography>
+                        <Typography variant="caption" color="text.disabled" sx={{ maxWidth: 240 }}>
+                            Looks like you haven't added anything to your cart yet.
+                        </Typography>
+                    </Box>
                 )}
-            </div>
+            </Box>
 
-            <SheetFooter className='rounded-2xl border border-gray-100 bg-white p-4 shadow-sm'>
-                <div className='space-y-3'>
-                    <div className='flex justify-between text-sm text-slate-600'>
-                        <span>Subtotal</span>
-                        <span className='font-semibold flex items-center gap-1'>
-                            <TbCurrencyNaira className='h-4 w-4 text-slate-700' />
-                            {formatPriceDisplay(totalPrice)}
-                        </span>
-                    </div>
-                    <div className='flex justify-between text-sm text-slate-600'>
-                        <span>Shipping</span>
-                        <span className='font-semibold text-slate-500'>Calculated at checkout</span>
-                    </div>
-                </div>
-                <Separator className='my-4 border-gray-100' />
-                <div className='flex justify-between items-center text-base font-semibold'>
-                    <span>Total</span>
-                    <span className='flex items-center gap-1 text-slate-900'>
-                        <TbCurrencyNaira className='h-4 w-4' />
-                        {formatPriceDisplay(totalPrice)}
-                    </span>
-                </div>
-                <Button
-                    onClick={() => {
-                        navigate('/shop/checkout')
-                        setOpenCartSheet(false)
-                        setOpenSheet(false)
-                    }}
-                    className='w-full rounded-full bg-black py-3 text-sm text-white hover:bg-slate-900'
-                >
-                    Confirm Order
-                </Button>
-            </SheetFooter>
+            {cartItems?.items?.length > 0 && (
+                <Box sx={{ 
+                    p: 3, 
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'background.paper',
+                    boxShadow: '0 -4px 20px rgba(0,0,0,0.04)',
+                }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body2" color="text.secondary">Subtotal</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                {formatPriceDisplay(totalPrice)}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body2" color="text.secondary">Shipping</Typography>
+                            <Typography variant="body2" color="text.disabled" sx={{ fontSize: '0.75rem' }}>
+                                Calculated at checkout
+                            </Typography>
+                        </Box>
+                        <Box sx={{ height: '1px', bgcolor: 'divider', my: 1 }} />
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Total</Typography>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                                {formatPriceDisplay(totalPrice)}
+                            </Typography>
+                        </Box>
+                        <Box
+                            onClick={() => {
+                                navigate('/shop/checkout')
+                                setOpenCartSheet(false)
+                                setOpenSheet(false)
+                            }}
+                            sx={{
+                                mt: 1,
+                                py: 1.5,
+                                px: 2,
+                                borderRadius: '12px',
+                                bgcolor: 'black',
+                                color: 'white',
+                                textAlign: 'center',
+                                fontSize: '0.95rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    bgcolor: '#1a1a1a',
+                                    boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+                                },
+                            }}
+                        >
+                            Confirm Order
+                        </Box>
+                    </Box>
+                </Box>
+            )}
         </SheetContent>
     )
 }

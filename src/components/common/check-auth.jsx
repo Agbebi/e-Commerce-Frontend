@@ -7,7 +7,7 @@ function CheckAuth( {isAuthenticated, user, children} ) {
 
     if (
         !isAuthenticated && 
-        !(location.pathname.includes('login') || location.pathname.includes('register')))
+        !(location.pathname.includes('login') || location.pathname.includes('register') || location.pathname.includes('forgot-password') || location.pathname.includes('reset-password')))
     {
         return(
             <Navigate to='/' />

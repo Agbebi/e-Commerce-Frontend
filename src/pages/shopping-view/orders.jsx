@@ -1,31 +1,44 @@
 import React from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import Address from '@/components/shopping-view/address'
+import { motion } from 'framer-motion'
+import { IoReceipt } from 'react-icons/io5'
 import ShoppingOrders from '@/components/shopping-view/orders'
-import ordersImg from '../../assets/orderImg.jpg'
-import { GoArrowDown, GoArrowRight } from 'react-icons/go'
-import { BsFillArrowRightCircleFill } from 'react-icons/bs'
-
 
 function ShoppingOrdersPage() {
   return (
-    <div className='flex flex-col h-full'>
-      <div className='relative w-full bg-gray-100 h-50 mb-6'>
-        <img
-          src={ordersImg}
-          alt='Account Image'
-          className=' object-cover h-full w-full'
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 to-slate-800 opacity-[0.03]"></div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 mb-4">
+              <IoReceipt className="text-slate-700" size={24} />
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-3">
+              Your Orders
+            </h1>
+            <p className="text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
+              Track and manage your purchases. View order details, payment status, and delivery updates.
+            </p>
+          </motion.div>
+        </div>
       </div>
-      <div className='w-full flex flex-col sm:px-6 px-2 mx-auto py-4'>
-        <div className='mx-auto text-gray-600 flex items-center gap-1'>
-            <BsFillArrowRightCircleFill /><span>Your Orders </span>
-        </div>   
-          <Tabs orientation='horiontal' defaultValue='orders' className='p-4 justify-center grid grid-cols-1 sm:grid-cols-3'>
-             <TabsContent value='orders' className='border rounded-lg border-gray-100 bg-white  sm:col-span-3'>
-              <ShoppingOrders />
-            </TabsContent>
-          </Tabs>
+
+      {/* Orders Content */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8"
+        >
+          <ShoppingOrders />
+        </motion.div>
       </div>
     </div>
   )

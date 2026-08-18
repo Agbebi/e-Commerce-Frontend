@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
 import Divider from '@mui/material/Divider'
 import Input from '@mui/material/Input'
+import NotificationBell from '@/components/common/notification-bell'
 
 function DispatchHeader({ setOpen }) {
 
@@ -40,14 +41,7 @@ function DispatchHeader({ setOpen }) {
           <span className=''>Tims Dispatch</span>
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
-        <div className='flex  text-lg font-semibold'>
-          <Box sx={{ color: 'black' }}>
-            <Badge color="primary" variant="dot">
-              <IoIosNotificationsOutline size={24} />
-            </Badge>
-          </Box>
-
-        </div>
+        <NotificationBell />
 
         <Button onClick={handleLogout} size='' className='cursor-pointer border-none outline-none bg-black text-white hover:bg-gray-950'>
           <LogOut size={24} />

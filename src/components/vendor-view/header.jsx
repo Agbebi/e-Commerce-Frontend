@@ -4,6 +4,7 @@ import { LogOut, Menu } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { logoutUser } from '@/store/auth-slice'
 import { toast } from 'sonner'
+import NotificationBell from '@/components/common/notification-bell'
 
 function AdminHeader({ setOpen }) {
 
@@ -27,7 +28,8 @@ function AdminHeader({ setOpen }) {
       </Button>
 
       <span className='font-semibold justify-center'>Tims Marketplace.</span>
-      <div className='flex flex-1 justify-end text-lg font-semibold'>
+      <div className='flex flex-1 justify-end text-lg font-semibold items-center gap-2'>
+        <NotificationBell />
         <Button onClick={handleLogout} size='lg' className='cursor-pointer bg-black text-white hover:bg-gray-950'>
           <LogOut />
           <span className='ml-2'>Logout</span>

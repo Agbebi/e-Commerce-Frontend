@@ -1,81 +1,168 @@
 import { LoginFormControls } from '../../config/index'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import CommonForm from '../../components/common/form'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { loginVendor } from '@/store/auth-slice'
 import { toast } from 'sonner'
-import { CiShop, CiUser } from 'react-icons/ci'
 import { Checkbox } from '@/components/ui/checkbox'
-
-
-
-const initialState = {
-  email: '',
-  password: ''
-}
+import { ArrowRight, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 function VendorAuthLogin() {
-
-  const [formData, setFormData] = useState(initialState)
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   function onSubmit(event) {
     event.preventDefault()
+    setIsSubmitting(true)
 
     dispatch(loginVendor(formData)).then((data) => {
       if (data?.payload?.success) {
         toast.success(`${data?.payload?.message}`)
+        navigate('/vendor/dashboard')
       } else {
         toast.error(`${data?.payload?.message}`)
       }
-    }
-    )
+    }).finally(() => {
+      setIsSubmitting(false)
+    })
   }
 
+  const inputClassName = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200"
+
   return (
-    <div className='mx-auto w-full bg-white p-8 rounded-lg max-w-md space-y-6'>
-      <div className='text-orange flex items-center justify-between w-full  sm:flex-row gap-1'>
-        <span className='flex items-center gap-2'>
-          {/* <CiShop size={30} /> */}
-          Tim Marketplace.
-        </span>
-        <span className='text-gray-500 text-sm flex items-center gap-2'><CiUser /> Vendor Login</span>
-      </div>
-      <div className='text-center mb-8'>
-        <h1 className='text-2xl tracking-tight font-semibold text-gray-800 my-2'>Welcome back!</h1>
-        <p className='text-gray-500 text-xs'>Please enter your details.</p>
-
-      </div>
-      <CommonForm
-        formControls={LoginFormControls}
-        buttonText={'Sign In'}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-      />
-      <div className='flex flex-row px-6 text-sm justify-between p-1'>
-        <div className='flex items-center gap-2 justify-around'>
-          <Checkbox />
-          <span>Remember me</span>
+    <div className="w-full">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-medium mb-4">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          Vendor Portal
         </div>
-        <div className='text-orange-600 underline'>Forgot Password?</div>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back, Vendor</h1>
+        <p className="text-slate-500">Sign in to manage your store and track orders</p>
       </div>
 
-      <div className='flex text-sm justify-center gap-2 text-gray-600 space-y-4'>
-        <p>Doesn't have an account?</p>
-        <Link
-          className='font-medium underline text-gray-800 hover:underline'
-          to='/auth/register-vendor'>
-          Sign up
-        </Link>
-      </div>
+      {isSubmitting ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+            className="w-10 h-10 border-3 border-slate-200 border-t-blue-600 rounded-full mb-4"
+          />
+          <p className="text-slate-500 text-sm font-medium">Signing you in...</p>
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
+            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                <Mail className="text-blue-600" size={20} />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">Sign in to your vendor account</h3>
+                <p className="text-xs text-slate-500">Manage your store and orders</p>
+              </div>
+            </div>
 
-      <Link
-                className='font-medium underline text-center mx-auto text-gray-800 text-xs hover:underline'
-                to='/'>
-                Not a vendor?
-              </Link>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-slate-700">Email *</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="you@example.com"
+                    className={inputClassName + " pl-10"}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-slate-700">Password *</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter your password"
+                    className={inputClassName + " pl-10 pr-10"}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Checkbox id="remember" />
+                  <label htmlFor="remember" className="text-sm text-slate-600 cursor-pointer">
+                    Remember me
+                  </label>
+                </div>
+                <Link to="/auth/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                  Forgot password?
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 font-semibold text-sm"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                />
+                Signing in...
+              </span>
+            ) : (
+              <>
+                Sign In
+                <ArrowRight size={16} className="ml-2" />
+              </>
+            )}
+          </Button>
+        </form>
+      )}
+
+      <div className="mt-6 space-y-2">
+        <p className="text-sm text-slate-600 text-center">
+          Not registered yet?{' '}
+          <Link to="/auth/register-vendor" className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+            Sign up
+          </Link>
+        </p>
+        <p className="text-sm text-slate-600 text-center">
+          Not a vendor?{' '}
+          <Link to="/" className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+            Go to Marketplace
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

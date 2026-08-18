@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Button } from '../ui/button';
-import { Minus, Plus, TrashIcon } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteCartItem, updateCartItems } from '@/store/shop/cart-slice';
-import { toast } from 'sonner';
-import { TbCurrencyNaira } from 'react-icons/tb';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { Input } from '../ui/input';
-import { IoAddCircle, IoAddCircleOutline, IoAddOutline, IoRemoveCircleOutline, IoRemoveOutline } from 'react-icons/io5';
-import { CiCircleRemove } from 'react-icons/ci';
-import { MdDelete, MdDeleteOutline } from 'react-icons/md';
-import { formatPriceDisplay } from '@/lib/utils';
-
-
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteCartItem, updateCartItems } from '@/store/shop/cart-slice'
+import { toast } from 'sonner'
+import { IoRemoveOutline, IoAddOutline, IoTrashOutline } from 'react-icons/io5'
+import { TbCurrencyNaira } from 'react-icons/tb'
+import { formatPriceDisplay } from '@/lib/utils'
 
 function CartItemsContent({ cartItem }) {
-
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const [quantity, setQuantity] = useState(cartItem.quantity)
@@ -28,15 +19,11 @@ function CartItemsContent({ cartItem }) {
     dispatch(deleteCartItem({ userId: user.id, productId: cartItem.productId })).then((data) => {
       if (data.payload.success) {
         toast.success('Cart item deleted successfully', {
-          style: {
-            background: 'white',
-          },
+          style: { background: 'white' },
         })
       } else {
         toast.error('Failed to delete cart item', {
-          style: {
-            background: 'white',
-          },
+          style: { background: 'white' },
         })
       }
     })
@@ -58,37 +45,63 @@ function CartItemsContent({ cartItem }) {
     }))
   }
 
+  const itemPrice = (cartItem.salesPrice > 0 ? cartItem.salesPrice : cartItem.price) * quantity
+
   return (
-    <div className='text-xs flex items-center border border-slate-200 gap-2 rounded-xl bg-white pr-3 shadow-xs'>
-      <div className='min-w-[60px] h-full w-fit overflow-hidden rounded-l-xl border-none border-slate-100 '>
-        <img src={cartItem.images?.[0] || cartItem.image} alt={cartItem.name} className='h-full w-full w-20 max-h-20 sm:max-w-40 object-cover' />
-      </div>
-      <div className='flex-1 flex flex-col justify-center gap-1 py-1 text-left'>
-        <h3 className='text-sm font-semibold leading-5 text-slate-900'>{cartItem.name.slice(0, 8)}</h3>
-        <span className='text-[11px] text-gray-500 italic'>{cartItem.productId.substring(0, 6) + '...'}</span>
-        <p className='flex items-center text-sm font-semibold text-slate-900'>
-          <TbCurrencyNaira className='h-4 w-4' />
-          {formatPriceDisplay((cartItem.salesPrice > 0 ? cartItem.salesPrice : cartItem.price) * quantity)}
-        </p>
-      </div>
-      <div className='flex flex-col items-center justify-around h-full max-w-25'>
-        <div className='flex items-center gap-0  rounded border border-slate-200 '>
-          <Button disabled={quantity <= 1} onClick={() => { handleQuantityChange(cartItem, 'minus') }} size='icon' className='h-6 w-6 p-0 text-slate-600 bg-slate-100 rounded-none transition-transform duration-150 active:scale-95'>
-            <IoRemoveOutline className={`h-4 w-4 ${quantity <= 1 ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`} />
-            <span className='sr-only'>Decrease</span>
-          </Button>
-          <input className='w-10 bg-white text-center text-xs font-semibold text-slate-900' 
-            value={quantity}
-            disabled
+    <div className="flex flex-col gap-3 p-3.5 rounded-2xl bg-white border border-slate-200 overflow-hidden transition-all duration-300">
+      <div className="flex items-center gap-3">
+        <div className="w-[72px] h-[72px] rounded-xl overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-100">
+          <img
+            src={cartItem.images?.[0] || cartItem.image}
+            alt={cartItem.name}
+            className="w-full h-full object-cover"
           />
-          <Button onClick={() => { handleQuantityChange(cartItem, 'plus') }} size='icon' className='h-6 w-6 p-0 bg-slate-100 rounded-none text-slate-600 transition-transform duration-150 active:scale-95'>
-            <IoAddOutline className='h-4 w-4 opacity-80 hover:opacity-100 text-green-600' />
-            <span className='sr-only'>Increase</span>
-          </Button>
         </div>
-        <MdDeleteOutline onClick={() => handleCartItemDelete(cartItem)} className='h-5 w-5 text-red-400 cursor-pointer opacity-80 transition hover:opacity-100' />
+
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold text-slate-900 truncate leading-snug">
+            {cartItem.name}
+          </h3>
+          <p className="text-[11px] text-slate-400 mt-0.5 font-mono tracking-tight">
+            {cartItem.productId.substring(0, 8)}...
+          </p>
+          <div className="flex items-center gap-1 mt-1.5">
+            <TbCurrencyNaira style={{ fontSize: '0.75rem' }} className="text-slate-900" />
+            <span className="text-sm font-bold text-slate-900">
+              {formatPriceDisplay(itemPrice)}
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => handleCartItemDelete(cartItem)}
+          className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200 flex-shrink-0"
+        >
+          <IoTrashOutline size={15} />
+        </button>
       </div>
 
+      <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+        <span className="text-xs text-slate-500 font-medium">Quantity</span>
+        <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50/50">
+          <button
+            onClick={() => handleQuantityChange(cartItem, 'minus')}
+            disabled={quantity <= 1}
+            className="w-7 h-7 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-40 transition-all duration-200"
+          >
+            <IoRemoveOutline size={13} />
+          </button>
+          <div className="w-8 text-center text-sm font-bold text-slate-900 select-none tabular-nums">
+            {quantity}
+          </div>
+          <button
+            onClick={() => handleQuantityChange(cartItem, 'plus')}
+            className="w-7 h-7 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200"
+          >
+            <IoAddOutline size={13} />
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

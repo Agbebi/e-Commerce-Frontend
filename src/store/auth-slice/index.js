@@ -130,6 +130,58 @@ export const checkAuth = createAsyncThunk('/auth/check-auth',
     }
 )
 
+export const updateProfile = createAsyncThunk('/auth/update-profile',
+
+    async (formData) => {
+        const response = await API.put("/api/auth/update-profile", formData, {
+            withCredentials: true,
+            headers : {
+                'Cache-Control' : 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            }
+        })
+        return response.data
+    }
+)
+
+export const updatePassword = createAsyncThunk('/auth/update-password',
+
+    async (formData) => {
+        const response = await API.put("/api/auth/update-password", formData, {
+            withCredentials: true,
+            headers : {
+                'Cache-Control' : 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            }
+        })
+        return response.data
+    }
+)
+
+export const forgotPassword = createAsyncThunk('/auth/forgot-password',
+
+    async (email) => {
+        const response = await API.post("/api/auth/forgot-password", { email }, {
+            withCredentials: true,
+            headers : {
+                'Cache-Control' : 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            }
+        })
+        return response.data
+    }
+)
+
+export const resetPassword = createAsyncThunk('/auth/reset-password',
+
+    async ({ token, newPassword }) => {
+        const response = await API.post(`/api/auth/reset-password/${token}`, { newPassword }, {
+            withCredentials: true,
+            headers : {
+                'Cache-Control' : 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            }
+        })
+        return response.data
+    }
+)
+
 export const checkVendorAuth = createAsyncThunk('/auth/vendor/check-auth',
 
     async () => {     
@@ -251,6 +303,31 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.user = null;
             state.isAuthenticated = false;
+        }).addCase(updateProfile.pending, (state)=>{
+            state.isLoading = true
+        }).addCase(updateProfile.fulfilled, (state, action)=>{
+            state.isLoading = false;
+            state.user = action.payload.user
+        }).addCase(updateProfile.rejected, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(updatePassword.pending, (state)=>{
+            state.isLoading = true
+        }).addCase(updatePassword.fulfilled, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(updatePassword.rejected, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(forgotPassword.pending, (state)=>{
+            state.isLoading = true
+        }).addCase(forgotPassword.fulfilled, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(forgotPassword.rejected, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(resetPassword.pending, (state)=>{
+            state.isLoading = true
+        }).addCase(resetPassword.fulfilled, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(resetPassword.rejected, (state, action)=>{
+            state.isLoading = false;
         })}
 })
 

@@ -19,11 +19,14 @@ import UnauthPage from './pages/auth/unauth-page/unauth-page'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { checkAuth } from './store/auth-slice'
+import { getNotifications } from './store/notification-slice'
 import LoadingState from './components/ui/loading-state'
+import ProductDetailsPage from './pages/shopping-view/product-details-page'
 import PaymentSuccess from './pages/shopping-view/payment-success'
 import ShoppingOrdersPage from './pages/shopping-view/orders'
 import ShoppingAddressPage from './pages/shopping-view/address-page'
 import SearchPage from './pages/shopping-view/search'
+import ContactPage from './pages/shopping-view/contact'
 import VendorDeliveryPage from './pages/dispatch/deliver'
 import DispatchDashboard from './pages/dispatch/dashboard'
 import DispatchDeliveryPage from './pages/dispatch/deliver'
@@ -35,14 +38,24 @@ import DispatcherAuthRegister from './pages/auth/register-dispatch'
 import VendorAuthLogin from './pages/auth/login-vendor'
 import DispatcherAuthLogin from './pages/auth/login-dispatcher'
 import VerifyEmailPage from './pages/auth/verify-email'
+import ForgotPasswordPage from './pages/auth/forgot-password'
+import ResetPasswordPage from './pages/auth/reset-password'
+import useSocket from './hooks/useSocket'
 
 const App = () => {
   const { user, isAuthenticated, isLoading } = useSelector(state => state.auth)
   const dispatch = useDispatch()
+  useSocket()
 
   useEffect(() => {
     dispatch(checkAuth())
   }, [dispatch])
+
+  useEffect(() => {
+    if (isAuthenticated && user && !isLoading) {
+      dispatch(getNotifications())
+    }
+  }, [isAuthenticated, user, isLoading, dispatch])
 
   if (isLoading) {
     return (
@@ -75,6 +88,8 @@ const App = () => {
               <Route path='register-vendor' element={<VendorAuthRegister />} />
               <Route path='register-dispatcher' element={<DispatcherAuthRegister />} />
               <Route path='verify-email' element={<VerifyEmailPage />} />
+              <Route path='forgot-password' element={<ForgotPasswordPage />} />
+              <Route path='reset-password/:token' element={<ResetPasswordPage />} />
             </Route>
 
             <Route path='/vendor' element={
@@ -113,6 +128,8 @@ const App = () => {
               <Route path='orders' element={<ShoppingOrdersPage />} />
               <Route path='address' element={<ShoppingAddressPage />} />
               <Route path='search' element={<SearchPage />} />
+              <Route path='contact' element={<ContactPage />} />
+              <Route path='product/:productId' element={<ProductDetailsPage />} />
             </Route>
             <Route path='/unauth-page' element={<UnauthPage />} />
             <Route path='*' element={<CheckAuth />} />
