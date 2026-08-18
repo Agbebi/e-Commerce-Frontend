@@ -212,6 +212,34 @@ export const checkDispatchAgentAuth = createAsyncThunk('/auth/dispatch/check-aut
     }
 )
 
+export const getVendorProfile = createAsyncThunk('/auth/vendor/profile',
+
+    async () => {     
+        const response = await API.get("/api/auth/vendor/profile", {
+            withCredentials: true,
+            headers : {
+                'Cache-Control' : 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            }            
+        })             
+        
+        return response.data
+
+    }
+)
+
+export const updateVendorProfile = createAsyncThunk('/auth/vendor/update-profile',
+
+    async (formData) => {
+        const response = await API.put("/api/auth/vendor/profile", formData, {
+            withCredentials: true,
+            headers : {
+                'Cache-Control' : 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            }
+        })
+        return response.data
+    }
+)
+
 
 
 const authSlice = createSlice({
@@ -326,7 +354,19 @@ const authSlice = createSlice({
             state.isLoading = true
         }).addCase(resetPassword.fulfilled, (state, action)=>{
             state.isLoading = false;
-        }).addCase(resetPassword.rejected, (state, action)=>{
+        }).addCase(resetPassword.rejected, (state)=>{
+            state.isLoading = false;
+        }).addCase(getVendorProfile.pending, (state)=>{
+            state.isLoading = true
+        }).addCase(getVendorProfile.fulfilled, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(getVendorProfile.rejected, (state)=>{
+            state.isLoading = false;
+        }).addCase(updateVendorProfile.pending, (state)=>{
+            state.isLoading = true
+        }).addCase(updateVendorProfile.fulfilled, (state, action)=>{
+            state.isLoading = false;
+        }).addCase(updateVendorProfile.rejected, (state)=>{
             state.isLoading = false;
         })}
 })

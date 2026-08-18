@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
+import React, { useEffect, useState, useMemo } from 'react'
+import { Card, CardContent, CardHeader } from '../ui/card'
 import { Button } from '../ui/button'
-import { Dialog } from '../ui/dialog'
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import VendorOrderDetailsView from './order-details'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllOrders } from '@/store/vendor/order-slice'
 import { Badge } from '../ui/badge'
 import { formatPriceDisplay } from '@/lib/utils'
 import LoadingState from '@/components/ui/loading-state'
+import { Package, ArrowUpRight, Filter, ChevronDown } from 'lucide-react'
+import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from '../ui/select'
 
 function VendorOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
@@ -23,6 +24,22 @@ function VendorOrders() {
   const userId = user?.id || user?._id
   const filterOptions = ['all', 'pending', 'packaging', 'accepted', 'ready', 'cancelled']
 
+  const filteredOrders = useMemo(() => {
+    let result = [...orderList]
+
+    if (statusFilter !== 'all') {
+      result = result.filter(order => order.deliveryStatus === statusFilter)
+    }
+
+    if (sortOrder === 'newest') {
+      result.sort((a, b) => new Date(b.payoutDate || 0) - new Date(a.payoutDate || 0))
+    } else if (sortOrder === 'oldest') {
+      result.sort((a, b) => new Date(a.payoutDate || 0) - new Date(b.payoutDate || 0))
+    }
+
+    return result
+  }, [orderList, statusFilter, sortOrder])
+
   useEffect(() => {
     if (userId) {
       dispatch(getAllOrders({
@@ -33,141 +50,169 @@ function VendorOrders() {
     }
   }, [dispatch, userId, statusFilter, sortOrder])
 
-
   function handleDetailsView(order) {
     setOpenDetailsDialog(true)
     setSelectedOrder(order)
   }
 
+  const getStatusColor = (status) => {
+    const colors = {
+      pending: 'bg-slate-100 text-slate-700',
+      accepted: 'bg-sky-50 text-sky-700',
+      packaging: 'bg-violet-50 text-violet-700',
+      ready: 'bg-emerald-50 text-emerald-700',
+      cancelled: 'bg-red-50 text-red-700',
+      processing: 'bg-sky-50 text-sky-700',
+      shipped: 'bg-violet-50 text-violet-700',
+      completed: 'bg-emerald-50 text-emerald-700',
+      delivered: 'bg-emerald-50 text-emerald-700',
+    }
+    return colors[status] || 'bg-slate-100 text-slate-700'
+  }
+
   return (
-    // <div className=''>
-    <Card className='rounded-lg w-full grid border border-gray-200 bg-white shadow-sm'>
-      <CardHeader>
-        <div className='flex flex-col gap-4'>
-          <div className='flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between'>
-            <div>
-              <CardTitle className='text-lg'>All Orders</CardTitle>
-              <p className='text-sm text-gray-500 mt-4'>Review order activity, update fulfillment, and stay on top of store performance.</p>
-            </div>
-            <div className='inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700'>
+    <div className='space-y-6'>
+      {/* Header */}
+      <div className='rounded-2xl border border-slate-200 bg-white p-6 sm:p-8'>
+        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
+          <div>
+            <p className='text-xs font-medium uppercase tracking-[0.15em] text-slate-500'>Orders</p>
+            <h1 className='mt-2 text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight'>
+              All Orders
+            </h1>
+            <p className='mt-2 max-w-2xl text-sm text-slate-500'>
+              Review order activity, update fulfillment, and stay on top of store performance.
+            </p>
+          </div>
+          <div className='flex items-center gap-3'>
+            <span className='inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700'>
               {orderList?.length || 0} orders total
-            </div>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className='rounded-2xl border border-slate-200 bg-white p-5 sm:p-6'>
+        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
+          <div className='flex flex-wrap items-center gap-2'>
+            {filterOptions.map((option) => (
+              <button
+                key={option}
+                type='button'
+                onClick={() => setStatusFilter(option)}
+                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                  statusFilter === option 
+                    ? 'border-slate-900 bg-slate-900 text-white shadow-sm' 
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                }`}
+              >
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </button>
+            ))}
           </div>
 
-          <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
-            <div className='flex flex-wrap items-center gap-2 text-sm text-slate-600'>
-              {filterOptions.map((option) => (
-                <button
-                  key={option}
-                  type='button'
-                  onClick={() => setStatusFilter(option)}
-                  className={`rounded-full border px-3 py-1 text-xs transition ${statusFilter === option ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}
-                >
-                  {option.charAt(0).toUpperCase() + option.slice(1)}
-                </button>
-              ))}
-            </div>
+          <div className='flex items-center gap-3'>
+            <Select value={sortOrder} onValueChange={(value) => setSortOrder(value)}>
+              <SelectTrigger className='w-40 rounded-lg border-slate-200 bg-slate-50 text-xs'>
+                <SelectValue placeholder='Sort by' />
+              </SelectTrigger>
+              <SelectContent className='w-full bg-white border-slate-200 text-xs'>
+                <SelectItem value='newest'>Newest first</SelectItem>
+                <SelectItem value='oldest'>Oldest first</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className='text-xs text-slate-500 font-medium'>
+              Showing {filteredOrders.length} of {orderList?.length || 0}
+            </span>
+          </div>
+        </div>
+      </div>
 
-            <div className='flex items-center gap-2 text-sm text-slate-600'>
-              <label htmlFor='vendor-order-sort' className='font-medium'>Sort:</label>
-              <select
-                id='vendor-order-sort'
-                className='rounded border border-slate-300 bg-white px-3 py-1 text-sm'
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-              >
-                <option value='newest'>Newest first</option>
-                <option value='oldest'>Oldest first</option>
-              </select>
+      {/* Orders List */}
+      {isLoading && !orderList?.length ? (
+        <div className='rounded-2xl border border-slate-200 bg-white p-6'>
+          <LoadingState
+            title='Loading orders'
+            description='Fetching the latest order activity from your store.'
+            className='min-h-[200px]'
+          />
+        </div>
+      ) : filteredOrders.length > 0 ? (
+        <div className='space-y-3'>
+          {filteredOrders.map((order) => (
+            <Card 
+              key={order._id} 
+              className='border border-slate-200 bg-white rounded-2xl hover:shadow-sm transition-shadow'
+            >
+              <CardContent className='p-5'>
+                <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                  <div className='flex-1 min-w-0'>
+                    <div className='flex items-center gap-3 mb-2'>
+                      <div className='h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs'>
+                        #{order._id?.slice(-4)}
+                      </div>
+                      <div>
+                        <p className='text-sm font-semibold text-slate-900'>
+                          Order #{order._id?.slice(-8) || 'N/A'}
+                        </p>
+                        <p className='text-xs text-slate-500 mt-0.5'>
+                          {order.payoutDate ? new Date(order.payoutDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className='flex flex-wrap items-center gap-2 ml-[52px]'>
+                      <Badge className={`${getStatusColor(order.deliveryStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
+                        {order.deliveryStatus ? order.deliveryStatus.charAt(0).toUpperCase() + order.deliveryStatus.slice(1) : 'Unknown'}
+                      </Badge>
+                      <Badge className={`${getStatusColor(order.payoutStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
+                        {order.payoutStatus ? order.payoutStatus.charAt(0).toUpperCase() + order.payoutStatus.slice(1) : 'Unknown'}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-4 sm:gap-6'>
+                    <div className='text-right'>
+                      <p className='text-xs text-slate-500 mb-0.5'>Total</p>
+                      <p className='text-sm font-bold text-slate-900'>₦{formatPriceDisplay(order.subTotal || 0)}</p>
+                    </div>
+                    <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size='sm' 
+                          onClick={() => handleDetailsView(order)}
+                          className='rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm'
+                          variant='outline'
+                        >
+                          View <ArrowUpRight className='ml-1 h-3 w-3 rotate-45' />
+                        </Button>
+                      </DialogTrigger>
+                      {openDetailsDialog && selectedOrder?._id === order._id && (
+                        <VendorOrderDetailsView 
+                          selectedOrder={selectedOrder} 
+                          setOpenDetailsDialog={setOpenDetailsDialog} 
+                        />
+                      )}
+                    </Dialog>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className='rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center'>
+          <div className='flex flex-col items-center justify-center gap-3'>
+            <div className='p-3 rounded-full bg-white border border-slate-100 text-slate-400'>
+              <Package className='h-6 w-6' />
+            </div>
+            <div>
+              <p className='text-sm font-medium text-slate-900'>No orders found</p>
+              <p className='text-xs text-slate-500 mt-1'>Orders will appear here once customers start purchasing.</p>
             </div>
           </div>
         </div>
-      </CardHeader>
-
-      <CardContent className='grid overflow-auto w-full'>
-        <Table className=' overflow-auto'>
-          <TableHeader className='bg-slate-50 text-slate-700 text-center'>
-            <TableRow className='border-none text-sm'>
-              <TableHead className='text-sm text-center'>Order ID</TableHead>
-              <TableHead className='text-sm text-center'>Order Date</TableHead>
-              <TableHead className='text-sm text-center'>Delivery Status</TableHead>
-              <TableHead className='text-sm text-center'>Order Status</TableHead>
-              <TableHead className='text-sm text-center'>Total (NG)</TableHead>
-              <TableHead>
-                <span className="sr-only">View Details</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody className='text-sm text-center'>
-            {isLoading && !orderList?.length ? (
-              <TableRow>
-                <TableCell colSpan={6} className='py-10'>
-                  <LoadingState
-                    title='Loading orders'
-                    description='Fetching the latest order activity from your store.'
-                    compact
-                    className='border-none bg-transparent shadow-none'
-                  />
-                </TableCell>
-              </TableRow>
-            ) : orderList && orderList.length > 0 ? (
-              orderList.map((order) => (
-                <TableRow key={order._id} className='border-b border-slate-100'>
-                  <TableCell className='font-medium text-slate-900'>{order._id || 'N/A'}</TableCell>
-                  <TableCell className='text-slate-600'>
-                    {order.payoutDate ? new Date(order.payoutDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={
-                      {
-                        pending: 'bg-amber-100 text-amber-700',
-                        accepted: 'bg-blue-100 text-blue-700',
-                        packaging: 'bg-purple-100 text-purple-700',
-                        ready: 'bg-emerald-100 text-emerald-700',
-                      }[order.deliveryStatus] || 'bg-slate-100 text-slate-700'
-                    }>
-                      {order.deliveryStatus ? order.deliveryStatus.charAt(0).toUpperCase() + order.deliveryStatus.slice(1) : 'Unknown'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={
-                      {
-                        pending: 'bg-amber-100 text-amber-700',
-                        processing: 'bg-sky-100 text-sky-700',
-                        shipped: 'bg-purple-100 text-purple-700',
-                        completed: 'bg-emerald-100 text-emerald-700',
-                        cancelled: 'bg-red-100 text-red-700',
-                      }[order.payoutStatus] || 'bg-slate-100 text-slate-700'
-                    }>
-                      {order.payoutStatus ? order.payoutStatus.charAt(0).toUpperCase() + order.payoutStatus.slice(1) : 'Unknown'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className='font-semibold text-slate-900'>
-                    {formatPriceDisplay(order.subTotal)}
-                  </TableCell>
-                  <TableCell>
-                    <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog} className='bg-white rounded-lg shadow-lg p-4'>
-                      <Button size='' onClick={() => handleDetailsView(order)} className='rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700'>
-                        View / Update
-                      </Button>
-                      {openDetailsDialog && <VendorOrderDetailsView selectedOrder={selectedOrder} setOpenDetailsDialog={setOpenDetailsDialog} />}
-                    </Dialog>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className='py-10 text-center text-sm text-gray-500'>
-                  No orders found yet. Once a customer places an order, it will appear here for quick review and updates.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-    // </div>
+      )}
+    </div>
   )
 }
 

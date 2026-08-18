@@ -4,7 +4,7 @@ const baseURL = "https://e-commerce-backend-8j28.onrender.com";
 const devUrl = "http://localhost:3000";
 
 const API = axios.create({
-  baseURL: baseURL,
+  baseURL: devUrl,
   headers: {
     "Content-Type": "application/json",
   },

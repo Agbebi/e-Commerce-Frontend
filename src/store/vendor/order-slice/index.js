@@ -42,8 +42,8 @@ export const updateOrderStatus = createAsyncThunk('orders/updateOrderStatus', as
     return response.data
 })
 
-export const deliverOrder = createAsyncThunk('orders/deliverOrder', async (orderId) => {
-    const response = await API.put(`/api/admin/orders/deliver/${orderId}`)
+export const deliverOrder = createAsyncThunk('orders/deliverOrder', async ({ orderId, userId }) => {
+    const response = await API.put(`/api/admin/orders/deliver/${orderId}/${userId}`)
     return response.data
 })
 

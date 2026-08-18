@@ -27,7 +27,7 @@ import ShoppingOrdersPage from './pages/shopping-view/orders'
 import ShoppingAddressPage from './pages/shopping-view/address-page'
 import SearchPage from './pages/shopping-view/search'
 import ContactPage from './pages/shopping-view/contact'
-import VendorDeliveryPage from './pages/dispatch/deliver'
+import VendorProfile from './pages/vendor-view/profile'
 import DispatchDashboard from './pages/dispatch/dashboard'
 import DispatchDeliveryPage from './pages/dispatch/deliver'
 import DispatchLayout from './components/dispatch/layout'
@@ -101,7 +101,7 @@ const App = () => {
               <Route path='features' element={<VendorFeatures />} />
               <Route path='orders' element={<VendorOrders />} />
               <Route path='products' element={<VendorProducts />} />
-              <Route path='deliver' element={<VendorDeliveryPage />} />
+              <Route path='profile' element={<VendorProfile />} />
             </Route>
 
 

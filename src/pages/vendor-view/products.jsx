@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useMemo } from 'react'
 import CommonForm from '../../components/common/form'
 import { addProductFormElements, categorySubcategoryMap, specificationTemplatesByCategory, specificationTemplatesBySubcategory } from '../../config/index'
 import ProductImageUpload from '../../components/vendor-view/image-upload'
@@ -11,10 +11,11 @@ import { fetchAllProducts, addNewProduct, editProduct, deleteProduct } from '../
 import { toast } from 'sonner'
 import VendorProductTile from './product-tile'
 import API from '../../api/axios'
-import { IoIosAddCircleOutline } from 'react-icons/io'
 import { IoAddSharp } from 'react-icons/io5'
 import { CiSearch } from 'react-icons/ci'
 import LoadingState from '@/components/ui/loading-state'
+import { Package } from 'lucide-react'
+import HeroCarousel from '../../components/vendor-view/hero-carousel'
 
 
 function VendorProducts() {
@@ -45,6 +46,7 @@ function VendorProducts() {
   const [currentEditedId, setCurrentEditedId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
   const [availableBrands, setAvailableBrands] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -111,9 +113,9 @@ function VendorProducts() {
     return Array.isArray(options) && options.length > 0
   }, [])
 
-  const filteredProducts = React.useMemo(() => {
+  const filteredProducts = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase()
-    return productList.filter((product) => {
+    let result = productList.filter((product) => {
       const matchesCategory = categoryFilter && categoryFilter !== 'all' ? product.category === categoryFilter : true
       const matchesSearch = normalizedSearch === '' ? true : [
         product._id,
@@ -128,7 +130,23 @@ function VendorProducts() {
         .some((value) => value.toString().toLowerCase().includes(normalizedSearch))
       return matchesCategory && matchesSearch
     })
-  }, [productList, categoryFilter, searchQuery])
+
+    if (sortBy === 'price-asc') {
+      result = [...result].sort((a, b) => (Number(a.salesPrice) || Number(a.price)) - (Number(b.salesPrice) || Number(b.price)))
+    } else if (sortBy === 'price-desc') {
+      result = [...result].sort((a, b) => (Number(b.salesPrice) || Number(b.price)) - (Number(a.salesPrice) || Number(a.price)))
+    } else if (sortBy === 'name-asc') {
+      result = [...result].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    } else if (sortBy === 'stock-asc') {
+      result = [...result].sort((a, b) => (Number(a.totalStock) || 0) - (Number(b.totalStock) || 0))
+    } else if (sortBy === 'stock-desc') {
+      result = [...result].sort((a, b) => (Number(b.totalStock) || 0) - (Number(a.totalStock) || 0))
+    } else if (sortBy === 'newest') {
+      result = [...result].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    }
+
+    return result
+  }, [productList, categoryFilter, searchQuery, sortBy])
 
   const formControls = React.useMemo(() => {
     return addProductFormElements.map((control) => {
@@ -173,7 +191,7 @@ function VendorProducts() {
         }
       }
     })
-  }, [canInteractWithDetails, formData.category])
+  }, [canInteractWithDetails, formData.category, categoryRequiresSubcategory])
 
   function isFormValid() {
     const requiredFields = [
@@ -207,11 +225,11 @@ function VendorProducts() {
     
     dispatch(deleteProduct(productId)).then((data) => {
       if (data.payload.success) {
-        dispatch(fetchAllProducts())
+        dispatch(fetchAllProducts(user.id))
         toast.success(`${data.payload.message}`)
       }
     })
-}
+  }
 
 
   function onSubmit(event) {
@@ -252,7 +270,7 @@ function VendorProducts() {
 
     submitAction.then((data) => {
       if (data.payload?.success) {
-        dispatch(fetchAllProducts())
+        dispatch(fetchAllProducts(user.id))
         setFormData(initialFormData)
         setUploadedImgUrls([])
         setImageFiles([])
@@ -291,91 +309,132 @@ function VendorProducts() {
 
   return (
     <Fragment>
-      <div className='mb-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm'>
-        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
-          <div>
-            <p className='text-sm font-semibold uppercase tracking-[0.2em] text-slate-500'>catalog</p>
-            <h1 className='mt-2 text-3xl font-semibold text-slate-900'>Your storefront inventory</h1>
-            <p className='mt-3 max-w-2xl text-sm text-gray-600'>Add new items, update pricing, and keep your collection fresh for customers browsing your store.</p>
-          </div>
-          <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-            <span className='inline-flex items-center rounded-full bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700'>
-              {productList.length} products
-            </span>
-            <Button onClick={() => setOpenProductSheet(true)} className='justify-center text-xs text-gray-600 border-gray-300' variant='outline' size='sm'>
-              <IoAddSharp /> Add New Product
-            </Button>
+      <div className='space-y-6'>
+        {/* Header */}
+        <div className='relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 sm:p-6'>
+          <div className='grid items-center gap-6 md:grid-cols-2'>
+            <div>
+              <p className='text-xs font-medium uppercase tracking-[0.15em] text-slate-500'>Catalog</p>
+              <h1 className='mt-1.5 text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight'>
+                Products
+              </h1>
+              <p className='mt-1.5 max-w-2xl text-sm text-slate-500'>
+                Add new items, update pricing, and keep your collection fresh.
+              </p>
+              <div className='mt-3 flex flex-col gap-2 sm:flex-row sm:items-center'>
+                <span className='inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700'>
+                  {productList.length} products
+                </span>
+                <Button onClick={() => setOpenProductSheet(true)} className='bg-slate-900 text-white hover:bg-slate-800' size='sm'>
+                  <IoAddSharp className='mr-2 h-4 w-4' /> Add New Product
+                </Button>
+              </div>
+            </div>
+            <div className='hidden md:flex items-center justify-center'>
+              <HeroCarousel interval={4000} className="max-w-sm lg:max-w-md" />
+            </div>
           </div>
         </div>
-      </div>
-      <div className='mb-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm'>
-        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
-          <div className='space-y-3'>
-            <div className='relative'>
-              <CiSearch className='pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400' />
-              <Input
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder='Search by name, brand, category, or ID'
-                className='rounded-full border-gray-300 pl-12 text-xs focus:border-black focus:ring-black'
-              />
-            </div>
-            <div className='grid gap-3 sm:grid-cols-[1fr_auto]'>
-              <div>
-                <Select value={categoryFilter || undefined} onValueChange={(value) => setCategoryFilter(value)}>
-                  <SelectTrigger className='w-full rounded-full border-gray-300 text-xs'>
-                    <SelectValue placeholder='Filter by category' />
-                  </SelectTrigger>
-                  <SelectContent className='w-full bg-white px-0 py-0 border text-xs border-gray-300'>
-                    <SelectItem key='all' value='all'>All Categories</SelectItem>
-                    {categoryOptions.map((option) => (
-                      <SelectItem key={option.id} value={option.value}>{option.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+        {/* Filters */}
+        <div className='rounded-2xl border border-slate-200 bg-white p-6 sm:p-8'>
+          <div className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
+            <div className='flex-1 space-y-4'>
+              <div className='relative'>
+                <CiSearch className='pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400' />
+                <Input
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder='Search by name, brand, category, or ID'
+                  className='rounded-xl border-slate-200 bg-slate-50 pl-10 text-xs focus:border-slate-300 focus:ring-slate-200'
+                />
               </div>
+              <div className='grid gap-4 sm:grid-cols-2'>
+                <div>
+                  <Select value={categoryFilter || undefined} onValueChange={(value) => setCategoryFilter(value)}>
+                    <SelectTrigger className='w-full rounded-xl border-slate-200 bg-slate-50 text-xs'>
+                      <SelectValue placeholder='Filter by category' />
+                    </SelectTrigger>
+                    <SelectContent className='w-full bg-white border-slate-200 text-xs'>
+                      <SelectItem key='all' value='all'>All Categories</SelectItem>
+                      {categoryOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
+                    <SelectTrigger className='w-full rounded-xl border-slate-200 bg-slate-50 text-xs'>
+                      <SelectValue placeholder='Sort by' />
+                    </SelectTrigger>
+                    <SelectContent className='w-full bg-white border-slate-200 text-xs'>
+                      <SelectItem value='newest'>Newest first</SelectItem>
+                      <SelectItem value='price-asc'>Price: Low to High</SelectItem>
+                      <SelectItem value='price-desc'>Price: High to Low</SelectItem>
+                      <SelectItem value='name-asc'>Name: A to Z</SelectItem>
+                      <SelectItem value='stock-asc'>Stock: Low to High</SelectItem>
+                      <SelectItem value='stock-desc'>Stock: High to Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <div className='flex items-center gap-3'>
               <Button
                 variant='outline'
                 size='sm'
-                className='rounded-full border-gray-300 text-xs text-gray-700'
+                className='rounded-xl border-slate-200 text-xs text-slate-700 hover:bg-slate-50'
                 onClick={() => {
                   setSearchQuery('')
                   setCategoryFilter('')
+                  setSortBy('newest')
                 }}
               >
                 Clear filters
               </Button>
+              <div className='rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-[11px] font-medium text-slate-700 whitespace-nowrap'>
+                Showing {filteredProducts.length} of {productList.length} products
+              </div>
             </div>
           </div>
-          <div className='rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-medium text-slate-700'>
-            Showing {filteredProducts.length} of {productList.length} products
+        </div>
+
+        {/* Product Grid */}
+        {productListLoading && !productList.length ? (
+          <LoadingState
+            title='Loading your catalog'
+            description='Fetching your latest inventory updates before you continue.'
+            className='min-h-[220px]'
+          />
+        ) : filteredProducts.length > 0 ? (
+           <div className='grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+            {filteredProducts.map((product) => (
+              <VendorProductTile
+                setOpenProductSheet={setOpenProductSheet}
+                setCurrentEditedId={setCurrentEditedId}
+                handleDelete={handleDelete}
+                setFormData={setFormData}
+                key={product._id}
+                product={product}
+              />
+            ))}
           </div>
-        </div>
+        ) : (
+          <div className='rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center'>
+            <div className='flex flex-col items-center justify-center gap-3'>
+              <div className='p-3 rounded-full bg-white border border-slate-100 text-slate-400'>
+                <Package className='h-6 w-6' />
+              </div>
+              <div>
+                <p className='text-sm font-medium text-slate-900'>No products yet</p>
+                <p className='text-xs text-slate-500 mt-1'>Click “Add New Product” to start building your catalog.</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      {productListLoading && !productList.length ? (
-        <LoadingState
-          title='Loading your catalog'
-          description='Fetching your latest inventory updates before you continue.'
-          className='min-h-[220px]'
-        />
-      ) : filteredProducts.length > 0 ? (
-        <div className='grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-          {filteredProducts.map((product) => (
-            <VendorProductTile
-              setOpenProductSheet={setOpenProductSheet}
-              setCurrentEditedId={setCurrentEditedId}
-              handleDelete={handleDelete}
-              setFormData={setFormData}
-              key={product._id}
-              product={product}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className='rounded-3xl border border-dashed border-gray-200 bg-slate-50 p-10 text-center text-sm text-gray-600'>
-          No products yet. Click “Add New Product” to start building your catalog and showcase your best items.
-        </div>
-      )}
+
       <Sheet open={openProductSheet} onOpenChange={
         () => {
           setOpenProductSheet(false)
@@ -387,7 +446,7 @@ function VendorProducts() {
       }>
         <SheetContent side='right' className='overflow-auto w-full sm:w-[400px] px-4 py-4 bg-white'>
           <SheetHeader>
-            <SheetTitle className='text-2xl font-bold'>{currentEditedId != null ? 'Edit Product' : 'Add New Product'}</SheetTitle>
+            <SheetTitle className='text-xl font-semibold text-slate-900'>{currentEditedId != null ? 'Edit Product' : 'Add New Product'}</SheetTitle>
           </SheetHeader>
 
           <ProductImageUpload
@@ -423,7 +482,7 @@ function VendorProducts() {
               <div className='mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4'>
                 <div className='mb-3 flex items-center justify-between gap-2'>
                   <div>
-                    <p className='text-xs font-semibold uppercase tracking-[0.2em] text-slate-600'>Specifications</p>
+                    <p className='text-xs font-semibold uppercase tracking-[0.15em] text-slate-600'>Specifications</p>
                     <p className='text-xs text-slate-500'>Add details like RAM, size, color, picture quality, or processor.</p>
                   </div>
                   <Button type='button' variant='outline' size='sm' onClick={addSpecificationRow} disabled={!canInteractWithDetails} className='rounded-full border-slate-300 text-xs'>Add spec</Button>
@@ -437,14 +496,14 @@ function VendorProducts() {
                           value={specification.name || ''}
                           onChange={(event) => updateSpecificationRow(index, 'name', event.target.value)}
                           disabled={!canInteractWithDetails}
-                          className='border-gray-200 rounded-none text-xs placeholder:text-xs'
+                          className='border-slate-200 rounded-lg text-xs placeholder:text-xs'
                         />
                         <Input
                           placeholder='Value (e.g. 8GB)'
                           value={specification.value || ''}
                           onChange={(event) => updateSpecificationRow(index, 'value', event.target.value)}
                           disabled={!canInteractWithDetails}
-                          className='border-gray-200 rounded-none text-xs placeholder:text-xs'
+                          className='border-slate-200 rounded-lg text-xs placeholder:text-xs'
                         />
                         <Button type='button' variant='ghost' size='sm' onClick={() => removeSpecificationRow(index)} disabled={!canInteractWithDetails} className='justify-self-end text-xs text-red-600 hover:text-red-700'>Remove</Button>
                       </div>
