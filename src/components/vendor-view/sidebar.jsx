@@ -106,12 +106,21 @@ function VendorSidebar({ open, setOpen }) {
               <MenuItems setOpen={setOpen} />
             </div>
             <div className="p-4 border-t border-slate-100">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="h-9 w-9 rounded-full bg-slate-900 flex items-center justify-center text-white font-semibold text-xs">
+                  {user?.shopName?.charAt(0).toUpperCase() || 'V'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-900 truncate">{user?.shopName || 'Vendor'}</p>
+                  <p className="text-[11px] text-slate-500 truncate">{user?.email || 'vendor@example.com'}</p>
+                </div>
+              </div>
               <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className="w-full justify-start gap-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl"
+                className="w-full mt-3 justify-start gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl text-sm"
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
                 Logout

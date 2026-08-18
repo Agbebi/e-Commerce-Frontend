@@ -117,15 +117,15 @@ function VendorProductTile({product, setFormData, setOpenProductSheet, setCurren
                     size='sm'
                     variant='outline'
                 >
-                    <MdOutlineEdit className='mr-1 h-3.5 w-3.5' /> Edit
+                    <MdOutlineEdit className='mr-1 h-3.5 w-3.5 hidden md:block' /> Edit
                 </Button>
                 <Button
                     onClick={() => handleDelete(product._id)}
-                    className='rounded-lg border border-red-200 bg-white px-2.5 py-2 text-[11px] font-semibold text-red-600 transition-all duration-200 hover:border-red-300 hover:bg-red-50 hover:shadow-sm'
+                    className='flex-1 rounded-lg border border-red-200 bg-white px-2.5 py-2 text-[11px] font-semibold text-red-600 transition-all duration-200 hover:border-red-300 hover:bg-red-50 hover:shadow-sm'
                     size='sm'
                     variant='outline'
                 >
-                    <MdOutlineDelete className='mr-1 h-3.5 w-3.5' /> Remove
+                    <MdOutlineDelete className='mr-1 h-3.5 w-3.5 hidden md:block' /> Remove
                 </Button>
             </CardFooter>
         </div>

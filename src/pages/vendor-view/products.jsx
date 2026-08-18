@@ -311,18 +311,18 @@ function VendorProducts() {
     <Fragment>
       <div className='space-y-6'>
         {/* Header */}
-        <div className='relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 sm:p-6'>
+        <div className='relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:p-10'>
           <div className='grid items-center gap-6 md:grid-cols-2'>
-            <div>
-              <p className='text-xs font-medium uppercase tracking-[0.15em] text-slate-500'>Catalog</p>
-              <h1 className='mt-1.5 text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight'>
+            <div className='space-y-6 sm:space-y-5'>
+              <p className='text-[10px] sm:text-xs font-medium uppercase tracking-[0.15em] text-slate-500'>Catalog</p>
+              <h1 className='mt-1.5 text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight'>
                 Products
               </h1>
-              <p className='mt-1.5 max-w-2xl text-sm text-slate-500'>
+              <p className='mt-1.5 text-xs sm:text-sm text-slate-500'>
                 Add new items, update pricing, and keep your collection fresh.
               </p>
-              <div className='mt-3 flex flex-col gap-2 sm:flex-row sm:items-center'>
-                <span className='inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700'>
+              <div className='mt-4 flex flex-col gap-3 sm:flex-row sm:items-center'>
+                <span className='inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700'>
                   {productList.length} products
                 </span>
                 <Button onClick={() => setOpenProductSheet(true)} className='bg-slate-900 text-white hover:bg-slate-800' size='sm'>
@@ -408,7 +408,7 @@ function VendorProducts() {
             className='min-h-[220px]'
           />
         ) : filteredProducts.length > 0 ? (
-           <div className='grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+           <div className='grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 pb-6'>
             {filteredProducts.map((product) => (
               <VendorProductTile
                 setOpenProductSheet={setOpenProductSheet}

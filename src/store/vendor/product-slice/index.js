@@ -51,9 +51,21 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
     '/products/deleteProduct',
-   async (id) => {
+    async (id) => {
         const result = await API.delete(`/api/admin/products/delete/${id}`)
 
+        return result.data;
+    }
+)
+
+export const fetchProductById = createAsyncThunk(
+    '/products/fetchProductById',
+    async (id) => {
+        const result = await API.get(`/api/admin/products/get-product/${id}`, {
+            headers : {
+                "Content-Type" : 'application/json'
+            }
+        })
         return result.data;
     }
 )

@@ -71,21 +71,21 @@ function VendorOrders() {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-6 pb-6'>
       {/* Header */}
-      <div className='rounded-2xl border border-slate-200 bg-white p-6 sm:p-8'>
+      <div className='rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:p-10'>
         <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
-          <div>
-            <p className='text-xs font-medium uppercase tracking-[0.15em] text-slate-500'>Orders</p>
-            <h1 className='mt-2 text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight'>
+          <div className='space-y-6 sm:space-y-5'>
+            <p className='text-[10px] sm:text-xs font-medium uppercase tracking-[0.15em] text-slate-500'>Orders</p>
+            <h1 className='mt-2 text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight'>
               All Orders
             </h1>
-            <p className='mt-2 max-w-2xl text-sm text-slate-500'>
+            <p className='mt-2 text-xs sm:text-sm text-slate-500'>
               Review order activity, update fulfillment, and stay on top of store performance.
             </p>
           </div>
           <div className='flex items-center gap-3'>
-            <span className='inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700'>
+            <span className='inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs sm:text-sm font-medium text-slate-700'>
               {orderList?.length || 0} orders total
             </span>
           </div>

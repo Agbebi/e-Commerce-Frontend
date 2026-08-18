@@ -226,10 +226,10 @@ function ProductDetailsPage() {
 
       {/* Product Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
           {/* Left - Image Gallery */}
-          <div className="space-y-4">
-            <div className="relative aspect-square bg-slate-50 rounded-3xl overflow-hidden border border-slate-100">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="relative aspect-square bg-slate-50 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-100">
               <img
                 src={images[activeImageIndex]}
                 alt={productDetails.name}

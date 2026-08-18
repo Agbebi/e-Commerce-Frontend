@@ -263,42 +263,42 @@ function ShoppingHome() {
           backgroundImage: `radial-gradient(circle at 1px 1px, #000 1px, transparent 0)`,
           backgroundSize: '20px 20px'
         }}></div>
-        <div className="relative max-w-7xl mx-auto py-8">
-          <div className="px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
-                <Truck className="w-6 h-6" />
+        <div className="relative max-w-7xl mx-auto py-6 sm:py-8">
+          <div className="px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                <Truck className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900">Free Shipping</p>
-                <p className="text-sm text-slate-500">On orders over $50</p>
+                <p className="text-xs sm:text-sm font-medium text-slate-900">Free Shipping</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">On orders over $50</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
-                <Shield className="w-6 h-6" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                <Shield className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900">Secure Payment</p>
-                <p className="text-sm text-slate-500">100% protected</p>
+                <p className="text-xs sm:text-sm font-medium text-slate-900">Secure Payment</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">100% protected</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
-                <HeadphonesIcon className="w-6 h-6" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                <HeadphonesIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900">24/7 Support</p>
-                <p className="text-sm text-slate-500">Dedicated support</p>
+                <p className="text-xs sm:text-sm font-medium text-slate-900">24/7 Support</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">Dedicated support</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
-                <Star className="w-6 h-6" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                <Star className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900">Trusted Vendors</p>
-                <p className="text-sm text-slate-500">Verified sellers</p>
+                <p className="text-xs sm:text-sm font-medium text-slate-900">Trusted Vendors</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">Verified sellers</p>
               </div>
             </div>
           </div>

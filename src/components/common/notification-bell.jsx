@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '@/store/notification-slice'
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification, clearAllNotifications } from '@/store/notification-slice'
 import { formatDistanceToNow } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
 import { IoIosNotificationsOutline } from 'react-icons/io'
 import { FaCheck, FaRegBell, FaEnvelopeOpenText } from 'react-icons/fa'
-import { MdOutlineMarkunread } from 'react-icons/md'
+import { MdOutlineMarkunread, MdDelete } from 'react-icons/md'
 
 const notificationConfig = {
   order: {
@@ -82,6 +82,16 @@ function NotificationBell({ compact = false }) {
     await dispatch(markAllNotificationsAsRead())
   }
 
+  const handleDeleteNotification = async (e, id) => {
+    e.stopPropagation()
+    await dispatch(deleteNotification(id))
+  }
+
+  const handleClearAll = async (e) => {
+    e.stopPropagation()
+    await dispatch(clearAllNotifications())
+  }
+
   const formatTimestamp = (timestamp) => {
     try {
       return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
@@ -144,15 +154,26 @@ function NotificationBell({ compact = false }) {
                     </span>
                   )}
                 </div>
-                {unreadCount > 0 && (
-                  <button
-                    onClick={handleMarkAllAsRead}
-                    className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
-                  >
-                    <FaCheck size={12} />
-                    Mark all read
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={handleClearAll}
+                      className="flex items-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700 transition-colors"
+                    >
+                      <MdDelete size={12} />
+                      Clear all
+                    </button>
+                  )}
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={handleMarkAllAsRead}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                    >
+                      <FaCheck size={12} />
+                      Mark all read
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Content */}
@@ -202,31 +223,40 @@ function NotificationBell({ compact = false }) {
                           </div>
 
                           <div className="flex-1 min-w-0 pt-0.5">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-semibold truncate ${isUnread ? 'text-slate-900' : 'text-slate-700'}`}>
-                                  {notification.title}
-                                </p>
-                                <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
-                                  {notification.message}
-                                </p>
-                                <p className="text-[10px] text-slate-400 mt-1.5 font-medium">
-                                  {formatTimestamp(notification.createdAt)}
-                                </p>
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm font-semibold truncate ${isUnread ? 'text-slate-900' : 'text-slate-700'}`}>
+                                    {notification.title}
+                                  </p>
+                                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 mt-1.5 font-medium">
+                                    {formatTimestamp(notification.createdAt)}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  {isUnread && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleMarkAsRead(e, notification._id)
+                                      }}
+                                      className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all opacity-0 group-hover:opacity-100"
+                                      title="Mark as read"
+                                    >
+                                      <MdOutlineMarkunread size={16} />
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={(e) => handleDeleteNotification(e, notification._id)}
+                                    className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                                    title="Delete notification"
+                                  >
+                                    <MdDelete size={16} />
+                                  </button>
+                                </div>
                               </div>
-                              {isUnread && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleMarkAsRead(e, notification._id)
-                                  }}
-                                  className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all opacity-0 group-hover:opacity-100"
-                                  title="Mark as read"
-                                >
-                                  <MdOutlineMarkunread size={16} />
-                                </button>
-                              )}
-                            </div>
                           </div>
                         </motion.div>
                       )
@@ -270,15 +300,26 @@ function NotificationBell({ compact = false }) {
                     </span>
                   )}
                 </div>
-                {unreadCount > 0 && (
-                  <button
-                    onClick={handleMarkAllAsRead}
-                    className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
-                  >
-                    <FaCheck size={12} />
-                    Mark all read
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={handleClearAll}
+                      className="flex items-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700 transition-colors"
+                    >
+                      <MdDelete size={12} />
+                      Clear all
+                    </button>
+                  )}
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={handleMarkAllAsRead}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                    >
+                      <FaCheck size={12} />
+                      Mark all read
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Content */}
@@ -328,31 +369,40 @@ function NotificationBell({ compact = false }) {
                           </div>
 
                           <div className="flex-1 min-w-0 pt-0.5">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-semibold truncate ${isUnread ? 'text-slate-900' : 'text-slate-700'}`}>
-                                  {notification.title}
-                                </p>
-                                <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
-                                  {notification.message}
-                                </p>
-                                <p className="text-[10px] text-slate-400 mt-1.5 font-medium">
-                                  {formatTimestamp(notification.createdAt)}
-                                </p>
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm font-semibold truncate ${isUnread ? 'text-slate-900' : 'text-slate-700'}`}>
+                                    {notification.title}
+                                  </p>
+                                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 mt-1.5 font-medium">
+                                    {formatTimestamp(notification.createdAt)}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  {isUnread && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleMarkAsRead(e, notification._id)
+                                      }}
+                                      className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all opacity-0 group-hover:opacity-100"
+                                      title="Mark as read"
+                                    >
+                                      <MdOutlineMarkunread size={16} />
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={(e) => handleDeleteNotification(e, notification._id)}
+                                    className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                                    title="Delete notification"
+                                  >
+                                    <MdDelete size={16} />
+                                  </button>
+                                </div>
                               </div>
-                              {isUnread && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleMarkAsRead(e, notification._id)
-                                  }}
-                                  className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all opacity-0 group-hover:opacity-100"
-                                  title="Mark as read"
-                                >
-                                  <MdOutlineMarkunread size={16} />
-                                </button>
-                              )}
-                            </div>
                           </div>
                         </motion.div>
                       )

@@ -131,23 +131,29 @@ function VendorDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
       {/* Hero / Welcome Section */}
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 md:p-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 md:p-12">
+        {/* Mobile-only background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center md:hidden"
+          style={{ backgroundImage: 'url(/illustration.png)', opacity: 0.05 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50 md:hidden" />
+        
         <div className="relative grid items-center gap-8 md:grid-cols-2">
-          <div className="space-y-4">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">Dashboard</p>
-            <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight leading-tight">
+          <div className="space-y-6 sm:space-y-5">
+            <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] text-slate-500">Dashboard</p>
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-semibold text-slate-900 tracking-tight leading-tight">
               Welcome back, {user?.shopName || 'Vendor'}
             </h1>
-            <p className="max-w-md text-sm text-slate-500 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
               Manage your inventory, track orders, and grow your store from one place.
             </p>
-            <div className="flex flex-col gap-3 sm:flex-row pt-1">
+            <div className="flex flex-col gap-4 sm:flex-row pt-1">
               <Button
                 variant="outline"
-                size="lg"
+                size="default"
                 onClick={() => navigate('/vendor/products')}
                 className="border-slate-200 text-slate-700 hover:bg-slate-50"
               >
@@ -155,7 +161,7 @@ function VendorDashboard() {
                 Manage Products
               </Button>
               <Button
-                size="lg"
+                size="default"
                 onClick={() => navigate('/vendor/orders')}
                 className="bg-slate-900 text-white hover:bg-slate-800"
               >

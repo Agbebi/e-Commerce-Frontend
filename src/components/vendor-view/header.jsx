@@ -35,7 +35,7 @@ function AdminHeader({ setOpen }) {
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3 bg-white border-b border-slate-200">
       {/* Left: Mobile menu */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center">
         <Button
           onClick={() => setOpen(true)}
           variant="ghost"
@@ -45,6 +45,11 @@ function AdminHeader({ setOpen }) {
           <Menu className="h-5 w-5 text-slate-600" />
           <span className="sr-only">Open sidebar</span>
         </Button>
+      </div>
+
+      {/* Center: Brand (mobile) */}
+      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 md:hidden">
+        <span className="text-sm font-semibold text-slate-900 tracking-tight">Tims Marketplace</span>
       </div>
 
       {/* Right: Actions */}

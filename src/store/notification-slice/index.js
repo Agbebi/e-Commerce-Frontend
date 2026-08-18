@@ -35,6 +35,24 @@ export const markAllNotificationsAsRead = createAsyncThunk('notification/markAll
     }
 });
 
+export const deleteNotification = createAsyncThunk('notification/delete', async (id, { rejectWithValue }) => {
+    try {
+        const response = await API.delete(`/api/shop/notifications/${id}`, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || error.message);
+    }
+});
+
+export const clearAllNotifications = createAsyncThunk('notification/clearAll', async (_, { rejectWithValue }) => {
+    try {
+        const response = await API.delete('/api/shop/notifications', { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || error.message);
+    }
+});
+
 const notificationSlice = createSlice({
     name: 'notifications',
     initialState,
@@ -79,6 +97,18 @@ const notificationSlice = createSlice({
         }).addCase(markAllNotificationsAsRead.fulfilled, (state) => {
             state.notifications.forEach(n => n.isRead = true);
             state.unreadCount = 0;
+        }).addCase(deleteNotification.fulfilled, (state, action) => {
+            const id = action.payload?.data?._id || action.payload?.id
+            if (id) {
+                const notification = state.notifications.find(n => n._id === id)
+                if (notification && !notification.isRead) {
+                    state.unreadCount = Math.max(0, state.unreadCount - 1)
+                }
+                state.notifications = state.notifications.filter(n => n._id !== id)
+            }
+        }).addCase(clearAllNotifications.fulfilled, (state) => {
+            state.notifications = []
+            state.unreadCount = 0
         });
     }
 });
