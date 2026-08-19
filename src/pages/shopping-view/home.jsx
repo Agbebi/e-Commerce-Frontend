@@ -14,6 +14,7 @@ import { PiHandbagLight, PiLampPendantLight } from 'react-icons/pi'
 import { GiBlackBook, GiMicrochip } from 'react-icons/gi'
 import LoadingState from '@/components/ui/loading-state'
 import { motion, AnimatePresence } from 'framer-motion'
+import LogoLoop from '@/components/ui/logo-loop'
 
 const categoriesWithIcons = [
   { id: 'electronics', value: 'electronics', label: 'Electronics', icon: GiMicrochip },
@@ -129,7 +130,7 @@ function ShoppingHome() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative h-[90vh] min-h-[600px] overflow-hidden">
+      <section className="relative h-[70vh] min-h-[500px] md:h-[90vh] md:min-h-[600px] overflow-hidden">
         {/* Video Background */}
         <video
           autoPlay
@@ -154,17 +155,17 @@ function ShoppingHome() {
         </div>
 
         {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+        <div className="relative max-w-7xl mx-auto px-8 sm:px-8 lg:px-8 h-full flex items-center py-8 md:py-0">
           <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
-            <div className="space-y-8">
+            <div className="space-y-8 md:space-y-8">
               {/* Badge */}
-              <div className="animate-fade-in inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm text-white/90">
+              <div className="animate-fade-in inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs md:text-sm text-white/90">
                 <Sparkles className="w-4 h-4 text-orange-300" />
                 <span className="font-medium">Premium Shopping Experience</span>
               </div>
 
               {/* Headline */}
-              <h1 className="animate-fade-in-up animation-delay-100 text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight">
+              <h1 className="animate-fade-in-up animation-delay-100 text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
                 Discover the
                 <span className="block bg-gradient-to-r from-orange-400 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
                   Best Products
@@ -172,43 +173,43 @@ function ShoppingHome() {
               </h1>
 
               {/* Subtitle */}
-              <p className="animate-fade-in-up animation-delay-200 text-lg text-slate-300 max-w-lg leading-relaxed">
+              <p className="animate-fade-in-up animation-delay-200 text-sm md:text-base text-slate-300 max-w-lg leading-relaxed">
                 Browse fresh arrivals, shop top brands, and enjoy easy checkout with fast delivery and friendly support.
               </p>
 
               {/* CTAs */}
-              <div className="animate-fade-in-up animation-delay-300 flex flex-wrap gap-4">
+              <div className="animate-fade-in-up animation-delay-300 flex flex-wrap gap-6 md:gap-4">
                 <Button
                   onClick={() => navigate('/shop/listing')}
-                  className="h-14 px-8 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-full font-semibold text-base shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105"
+                  className="h-10 md:h-12 px-5 md:px-6 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-medium text-xs md:text-sm shadow-lg shadow-black/10 hover:bg-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105"
                 >
                   Start shopping
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => navigate('/shop/orders')}
-                  className="h-14 px-8 border-white/30 text-white hover:bg-white/10 rounded-full font-semibold text-base backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                   className="h-10 md:h-12 px-5 md:px-6 border-white/30 text-white hover:bg-white/10 rounded-full font-semibold text-xs md:text-sm backdrop-blur-sm transition-all duration-300 hover:scale-105"
                 >
                   View orders
                 </Button>
               </div>
 
               {/* Stats Row */}
-              <div className="animate-fade-in-up animation-delay-400 flex items-center gap-8 pt-4">
+              <div className="animate-fade-in-up animation-delay-400 flex items-center gap-10 md:gap-8 pt-6 md:pt-4">
                 <div>
-                  <p className="text-2xl font-bold text-white">10K+</p>
-                  <p className="text-sm text-slate-400">Products</p>
+                  <p className="text-xl md:text-2xl font-bold text-white">10K+</p>
+                  <p className="text-xs md:text-sm text-slate-400">Products</p>
                 </div>
-                <div className="w-px h-10 bg-white/20"></div>
+                <div className="w-px h-8 md:h-10 bg-white/20"></div>
                 <div>
-                  <p className="text-2xl font-bold text-white">4.8</p>
-                  <p className="text-sm text-slate-400">Rating</p>
+                  <p className="text-xl md:text-2xl font-bold text-white">4.8</p>
+                  <p className="text-xs md:text-sm text-slate-400">Rating</p>
                 </div>
-                <div className="w-px h-10 bg-white/20"></div>
+                <div className="w-px h-8 md:h-10 bg-white/20"></div>
                 <div>
-                  <p className="text-2xl font-bold text-white">24/7</p>
-                  <p className="text-sm text-slate-400">Support</p>
+                  <p className="text-xl md:text-2xl font-bold text-white">24/7</p>
+                  <p className="text-xs md:text-sm text-slate-400">Support</p>
                 </div>
               </div>
             </div>
@@ -306,50 +307,61 @@ function ShoppingHome() {
       </section>
 
       {/* Categories Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="/categories-bg.jpg"
-            alt="Shopping background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-slate-900/95"></div>
+      <section className="relative py-20 md:py-28 overflow-hidden bg-slate-900">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800"></div>
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)`,
+          backgroundSize: '28px 28px'
+        }}></div>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-32 -right-32 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl"></div>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="text-center mb-16">
-             <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium mb-4">
-               Shop by Department
-             </span>
-             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-               Explore Categories
-             </h2>
-             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-               Browse through our curated collection of categories and find exactly what you need.
-             </p>
-           </div>
-           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
-             {categoriesWithIcons.slice(0, isMobile ? 6 : 10).map((category) => (
-               <button
-                 key={category.id}
-                 onClick={() => handleNavigateToCategory(category, 'Category')}
-                 className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white/20"
-               >
-                 <div className="relative z-10">
-                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-white mb-4 group-hover:bg-orange-500 transition-colors duration-300 shadow-sm">
-                     <category.icon className="h-7 w-7" />
-                   </div>
-                   <h3 className="text-base font-semibold text-white group-hover:text-orange-300 transition-colors duration-300">
-                     {category.label}
-                   </h3>
-                 </div>
-               </button>
-             ))}
-           </div>
-        </div>
+        <div className="relative max-w-7xl mx-auto px-0 sm:px-8 lg:px-8">
+           <div className="text-center mb-12 md:mb-18 px-4 sm:px-6 lg:px-0">
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-500/10 text-orange-300 border border-orange-500/20 text-xs font-medium mb-3">
+              Shop by Department
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              Explore Categories
+            </h2>
+            <p className="text-sm md:text-base text-slate-400 max-w-2xl mx-auto">
+              Browse through our curated collection and find exactly what you need.
+            </p>
+          </div>
+          <div className="relative px-6 sm:px-6 lg:px-0">
+            <LogoLoop
+              logos={categoriesWithIcons.slice(0, isMobile ? 6 : 10).map((category) => ({
+                node: (
+                    <button
+                      onClick={() => handleNavigateToCategory(category, 'Category')}
+                      className="group flex flex-col items-center justify-center rounded-2xl bg-white/[0.04] border border-white/[0.08] p-5 md:p-6 text-center transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-orange-500/10"
+                    >
+                      <div className="relative mb-4">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.06] text-white shadow-lg shadow-black/10">
+                          <category.icon className="h-6 w-6" />
+                        </div>
+                      </div>
+                      <h3 className="text-xs md:text-sm font-semibold text-white/90 whitespace-nowrap">
+                        {category.label}
+                      </h3>
+                    </button>
+                ),
+                ariaLabel: category.label,
+              }))}
+              speed={60}
+              direction="left"
+              width="100%"
+              logoHeight={120}
+              gap={24}
+              pauseOnHover
+            />
+          </div>
+         </div>
       </section>
 
       {/* Brands Section */}
-      <section className="relative py-20 bg-white overflow-hidden">
+      <section className="relative py-16 md:py-24 bg-white overflow-hidden">
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, #000 1px, transparent 0)`,
           backgroundSize: '24px 24px'
@@ -359,28 +371,28 @@ function ShoppingHome() {
           <div className="absolute bottom-10 left-1/3 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
+          <div className="text-center mb-10 md:mb-14">
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium mb-3">
               Trusted Partners
             </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
               Featured Brands
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto">
               Shop from your favorite brands and discover premium quality products.
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-5 lg:gap-6">
             {BrandWithIcons.map((brand) => (
               <button
                 key={brand.id}
                 onClick={() => handleNavigateToCategory(brand, 'Brand')}
-                className="group flex flex-col items-center justify-center rounded-2xl bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border border-slate-200 hover:border-orange-200"
+                className="group flex flex-col items-center justify-center rounded-2xl bg-white p-6 md:p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border border-slate-200 hover:border-orange-200"
               >
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-slate-700 mb-4 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors duration-300">
-                  <brand.icon className="h-10 w-10" />
+                <div className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-700 mb-3 md:mb-4 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors duration-300">
+                  <brand.icon className="h-8 w-8 md:h-10 md:w-10" />
                 </div>
-                <h3 className="text-base font-semibold text-slate-900">{brand.label}</h3>
+                <h3 className="text-sm md:text-base font-semibold text-slate-900">{brand.label}</h3>
               </button>
             ))}
           </div>
@@ -388,17 +400,17 @@ function ShoppingHome() {
       </section>
 
       {/* Featured Products */}
-      <section className="relative py-20 bg-gradient-to-b from-white to-slate-50 overflow-hidden">
+      <section className="relative py-16 md:py-24 bg-gradient-to-b from-white to-slate-50 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-orange-50/40 to-slate-50/40 rounded-full blur-3xl"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
+          <div className="flex items-end justify-between mb-8 md:mb-12">
             <div>
-              <span className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
+              <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium mb-3">
                 Handpicked for You
               </span>
-              <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
                 Featured Products
               </h2>
             </div>
@@ -413,13 +425,13 @@ function ShoppingHome() {
           </div>
 
           {isLoading && !productList.length ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5 lg:gap-6">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="bg-slate-100 rounded-2xl h-[350px] animate-pulse"></div>
               ))}
             </div>
           ) : productList && productList.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5 lg:gap-6">
               {productList.slice(0, 5).map((product) => (
                 <ShoppingProductTile
                   handleAddToCart={handleAddToCart}
@@ -434,7 +446,7 @@ function ShoppingHome() {
       </section>
 
       {/* FAQ Section */}
-      <section className="relative py-20 bg-white overflow-hidden">
+      <section className="relative py-16 md:py-24 bg-white overflow-hidden">
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, #000 1px, transparent 0)`,
           backgroundSize: '24px 24px'
@@ -444,19 +456,19 @@ function ShoppingHome() {
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-100/20 rounded-full blur-3xl"></div>
         </div>
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
+          <div className="text-center mb-10 md:mb-14">
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium mb-3">
               FAQ
             </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
               Frequently Asked Questions
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto">
               Everything you need to know about shopping with us. Can't find the answer? Contact our support team.
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             {faqs.map((faq) => {
               const isOpen = openFaq === faq.id
               return (
@@ -469,15 +481,15 @@ function ShoppingHome() {
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : faq.id)}
-                    className="w-full flex items-center justify-between px-6 py-5 text-left"
+                    className="w-full flex items-center justify-between px-5 py-4 md:px-6 md:py-5 text-left"
                   >
                     <span className="text-sm font-semibold text-slate-900 pr-4">{faq.question}</span>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
-                      className="flex-shrink-0 w-8 h-8 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center"
+                      className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center"
                     >
-                      <ChevronDown size={18} className="text-slate-600" />
+                      <ChevronDown size={16} className="text-slate-600" />
                     </motion.div>
                   </button>
 
@@ -490,7 +502,7 @@ function ShoppingHome() {
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                         className="overflow-hidden"
                       >
-                        <div className="px-6 pb-5 pt-0">
+                        <div className="px-5 pb-4 pt-0 md:px-6 md:pb-5">
                           <p className="text-sm text-slate-600 leading-relaxed">
                             {faq.answer}
                           </p>
@@ -506,17 +518,17 @@ function ShoppingHome() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-slate-900 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-20 bg-slate-900 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             Ready to start shopping?
           </h2>
-          <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
             Join thousands of happy customers and discover the best products from trusted vendors.
           </p>
           <Button
             onClick={() => navigate('/shop/listing')}
-            className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-semibold"
+            className="h-10 md:h-12 px-6 md:px-8 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-medium text-sm hover:bg-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105"
           >
             Browse all products
             <ArrowRight className="w-4 h-4 ml-2" />
