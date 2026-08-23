@@ -206,9 +206,9 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
             <div className='space-y-1'>
               <p className='text-sm text-slate-900'>{orderDetails?.addressInfo?.address}</p>
               <p className='text-sm text-slate-600'>{orderDetails?.addressInfo?.city}</p>
-              <p className='text-sm text-slate-600'>
-                {orderDetails?.addressInfo?.state}, {orderDetails?.addressInfo?.country}
-              </p>
+               <p className='text-sm text-slate-600'>
+                 {orderDetails?.addressInfo?.state ? `${orderDetails.addressInfo.state}, ` : ''}{orderDetails?.addressInfo?.country}
+               </p>
               <p className='text-sm text-slate-600'>{orderDetails?.addressInfo?.phoneNumber}</p>
             </div>
           </div>
