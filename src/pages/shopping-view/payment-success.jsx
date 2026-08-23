@@ -1,5 +1,6 @@
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion'
-import { capturePayment } from '@/store/shop/order-slice'
+import { getOrderDetails } from '@/store/shop/order-slice'
 import { fetchCartItems } from '@/store/shop/cart-slice'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,37 +12,54 @@ import { Card } from '@/components/ui/card'
 function PaymentSuccess() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { cartItems } = useSelector(state => state.shopCart)
   const { user } = useSelector(state => state.auth)
 
-  const opayReference = sessionStorage.getItem('orderID')
-  const cartId = cartItems?._id
-  const hasCaptured = useRef(false)
+  const orderId = sessionStorage.getItem('orderID')
+  const hasFetched = useRef(false)
 
   const [status, setStatus] = useState('processing')
   const [message, setMessage] = useState('Verifying your payment...')
 
   useEffect(() => {
-    if (opayReference && cartId && !hasCaptured.current) {
-      hasCaptured.current = true
-      dispatch(capturePayment({ opayReference, cartId })).then((data) => {
-        if (data?.error) {
-          setStatus('failed')
-          setMessage('Payment verification failed. Please check your orders for details.')
-        } else {
+    if (!orderId || hasFetched.current) return
+    hasFetched.current = true
+
+    let pollCount = 0
+    const maxPolls = 10
+    const pollInterval = 2000
+
+    const checkOrderStatus = async () => {
+      try {
+        const result = await dispatch(getOrderDetails(orderId)).unwrap()
+        const paymentStatus = result?.data?.paymentStatus
+
+        if (paymentStatus === 'completed') {
           setStatus('success')
           setMessage('Payment confirmed! Your order has been received.')
+          dispatch(fetchCartItems({ userId: user.id }))
+        } else if (paymentStatus === 'failed') {
+          setStatus('failed')
+          setMessage('Payment failed. Please try again or contact support.')
+        } else if (pollCount >= maxPolls) {
+          setStatus('failed')
+          setMessage('Payment verification timed out. Please check your orders for details.')
+        } else {
+          pollCount++
         }
-        dispatch(fetchCartItems({ userId: user.id }))
-      }).catch(() => {
-        setStatus('failed')
-        setMessage('Something went wrong while verifying your payment.')
-      })
-    } else if (!opayReference || !cartId) {
-      setStatus('failed')
-      setMessage('Missing payment reference. Please contact support if you completed the payment.')
+      } catch {
+        if (pollCount >= maxPolls) {
+          setStatus('failed')
+          setMessage('Something went wrong while verifying your payment.')
+        } else {
+          pollCount++
+        }
+      }
     }
-  }, [cartId, dispatch, navigate, opayReference, user.id])
+
+    checkOrderStatus()
+    const timer = setInterval(checkOrderStatus, pollInterval)
+    return () => clearInterval(timer)
+  }, [orderId, dispatch, user.id])
 
   useEffect(() => {
     if (status === 'success') {
@@ -188,7 +206,7 @@ function PaymentSuccess() {
           <div className="bg-slate-50 border-t border-slate-100 px-6 py-4 flex items-center justify-center gap-2">
             <IoReceipt size={14} className="text-slate-400" />
             <p className="text-xs text-slate-500">
-              Reference: <span className="font-mono text-slate-700">{opayReference?.slice(-8) || 'N/A'}</span>
+              Reference: <span className="font-mono text-slate-700">{orderId?.slice(-8) || 'N/A'}</span>
             </p>
           </div>
         </Card>

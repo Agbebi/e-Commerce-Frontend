@@ -22,36 +22,36 @@ function FirstPage() {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
       
       {/* Content */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm text-white/90 mb-6 backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-orange-300" />
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 md:py-16">
+        <div className="text-center mb-10 sm:mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs sm:text-sm text-white/90 mb-4 sm:mb-6 backdrop-blur-sm">
+            <Sparkles className="w-3.5 h-3.5 text-orange-300" />
             Premium Shopping Platform
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Tim Marketplace</span>
           </h1>
-          <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
             Your one-stop shop for all your needs. Explore our wide range of products and enjoy a seamless shopping experience.
           </p>
         </div>
 
         {/* Role Selection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 max-w-4xl mx-auto">
           {/* Customer Card */}
           <Link 
             to="/auth/login" 
-            className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:bg-white/15 hover:border-white/40 hover:shadow-2xl hover:shadow-orange-500/10"
+            className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:bg-white/15 hover:border-white/40 hover:shadow-2xl hover:shadow-orange-500/10"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/5 rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-orange-500 group-hover:scale-110 transition-all duration-300">
-                <CiUser className="w-8 h-8 text-white group-hover:text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-5 md:mb-6 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-orange-500 group-hover:scale-110 transition-all duration-300">
+                <CiUser className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white group-hover:text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Customer</h3>
-              <p className="text-slate-300 text-sm mb-6">Shop from thousands of products</p>
-              <div className="inline-flex items-center gap-2 text-orange-300 text-sm font-medium group-hover:gap-3 transition-all">
-                Get Started <ArrowRight className="w-4 h-4" />
+              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">Customer</h3>
+              <p className="text-slate-300 text-xs sm:text-sm mb-4 sm:mb-6">Shop from thousands of products</p>
+              <div className="inline-flex items-center gap-2 text-orange-300 text-xs sm:text-sm font-medium group-hover:gap-3 transition-all">
+                Get Started <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
           </Link>
@@ -59,17 +59,17 @@ function FirstPage() {
           {/* Vendor Card */}
           <Link 
             to="/auth/login-vendor" 
-            className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:bg-white/15 hover:border-white/40 hover:shadow-2xl hover:shadow-blue-500/10"
+            className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:bg-white/15 hover:border-white/40 hover:shadow-2xl hover:shadow-blue-500/10"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/5 rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:scale-110 transition-all duration-300">
-                <BsShopWindow className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-5 md:mb-6 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:scale-110 transition-all duration-300">
+                <BsShopWindow className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Vendor</h3>
-              <p className="text-slate-300 text-sm mb-6">Sell your products to millions</p>
-              <div className="inline-flex items-center gap-2 text-blue-300 text-sm font-medium group-hover:gap-3 transition-all">
-                Start Selling <ArrowRight className="w-4 h-4" />
+              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">Vendor</h3>
+              <p className="text-slate-300 text-xs sm:text-sm mb-4 sm:mb-6">Sell your products to millions</p>
+              <div className="inline-flex items-center gap-2 text-blue-300 text-xs sm:text-sm font-medium group-hover:gap-3 transition-all">
+                Start Selling <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
           </Link>
@@ -77,25 +77,25 @@ function FirstPage() {
           {/* Dispatcher Card */}
           <Link 
             to="/auth/login-dispatch" 
-            className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:bg-white/15 hover:border-white/40 hover:shadow-2xl hover:shadow-green-500/10"
+            className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:bg-white/15 hover:border-white/40 hover:shadow-2xl hover:shadow-green-500/10"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-green-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/0 to-green-500/5 rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-green-500 group-hover:scale-110 transition-all duration-300">
-                <GiDutchBike className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-5 md:mb-6 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-green-500 group-hover:scale-110 transition-all duration-300">
+                <GiDutchBike className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Dispatcher</h3>
-              <p className="text-slate-300 text-sm mb-6">Deliver packages efficiently</p>
-              <div className="inline-flex items-center gap-2 text-green-300 text-sm font-medium group-hover:gap-3 transition-all">
-                Start Delivering <ArrowRight className="w-4 h-4" />
+              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">Dispatcher</h3>
+              <p className="text-slate-300 text-xs sm:text-sm mb-4 sm:mb-6">Deliver packages efficiently</p>
+              <div className="inline-flex items-center gap-2 text-green-300 text-xs sm:text-sm font-medium group-hover:gap-3 transition-all">
+                Start Delivering <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
           </Link>
         </div>
 
         {/* Footer */}
-        <div className="mt-16 text-center">
-          <p className="text-slate-400 text-sm">
+        <div className="mt-10 sm:mt-12 md:mt-16 text-center">
+          <p className="text-slate-400 text-xs sm:text-sm">
             By continuing, you agree to our{' '}
             <Link to="#" className="text-orange-300 hover:text-orange-200 underline underline-offset-4">Terms of Service</Link>
             {' '}and{' '}
