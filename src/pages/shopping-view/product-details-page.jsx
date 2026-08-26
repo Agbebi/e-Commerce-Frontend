@@ -87,6 +87,7 @@ function ProductDetailsPage() {
   }
 
   const scrollToImage = (index) => {
+    setActiveImageIndex(index)
     const container = imageCarouselRef.current
     if (!container) return
     const target = container.children[index]
@@ -418,18 +419,26 @@ function ProductDetailsPage() {
                     )}
 
                     {normalizedSpecifications.length > 0 && (
-                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-                        <h3 className="text-sm font-semibold text-slate-900 mb-4 uppercase tracking-wider">Specifications</h3>
-                        <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                        <div className="flex items-center gap-2 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
+                          <span className="h-4 w-1 rounded-full bg-slate-900" />
+                          <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900">Specifications</h3>
+                        </div>
+                        <dl className="divide-y divide-slate-100">
                           {normalizedSpecifications.map((specification, idx) => (
-                            <div key={idx} className="rounded-xl border border-slate-200 bg-white p-4">
-                              <span className="block text-xs font-semibold text-slate-900 mb-1">
+                            <div
+                              key={idx}
+                              className="group flex items-center justify-between gap-6 px-6 py-4 transition-colors hover:bg-slate-50/70"
+                            >
+                              <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 group-hover:text-slate-500">
                                 {specification.name || `Specification ${idx + 1}`}
-                              </span>
-                              <p className="text-sm text-slate-600">{specification.value || '—'}</p>
+                              </dt>
+                              <dd className="text-right text-sm font-semibold text-slate-900">
+                                {specification.value || '—'}
+                              </dd>
                             </div>
                           ))}
-                        </div>
+                        </dl>
                       </div>
                     )}
                   </motion.div>

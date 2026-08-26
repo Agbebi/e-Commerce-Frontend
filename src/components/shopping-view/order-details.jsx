@@ -20,6 +20,8 @@ const statusConfig = {
   accepted: { label: 'Accepted', color: 'bg-blue-50 text-blue-700 border-blue-200', dot: 'bg-blue-500', icon: IoCheckmarkCircle },
   packaging: { label: 'Packaging', color: 'bg-purple-50 text-purple-700 border-purple-200', dot: 'bg-purple-500', icon: IoTime },
   ready: { label: 'Ready', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500', icon: IoCheckmarkCircle },
+  shipped: { label: 'Shipped', color: 'bg-purple-50 text-purple-700 border-purple-200', dot: 'bg-purple-500', icon: IoTime },
+  delivered: { label: 'Delivered', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500', icon: IoCheckmarkCircle },
   cancelled: { label: 'Cancelled', color: 'bg-red-50 text-red-700 border-red-200', dot: 'bg-red-500', icon: IoCloseCircle },
 }
 
@@ -88,8 +90,10 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
   const PaymentIcon = paymentStatusConfig.icon
   const DeliveryIcon = deliveryStatusConfig.icon
 
-  const orderItems = orderDetails?.childOrders?.flatMap(co => co.cartItems || []) || []
-  const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const childOrders = orderDetails?.childOrders || []
+  const totalItemCount = childOrders.reduce(
+    (sum, co) => sum + (co.cartItems?.length || 0), 0
+  )
 
   return (
     <DialogContent className='w-full max-w-[95vw] max-h-[90vh] overflow-y-auto bg-white border border-slate-200 shadow-2xl rounded-3xl p-0'>
@@ -158,7 +162,7 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
             </div>
             <div>
               <p className='text-xs text-slate-500 mb-1'>Total Items</p>
-              <p className='text-sm font-medium text-slate-900'>{orderItems.length} items</p>
+              <p className='text-sm font-medium text-slate-900'>{totalItemCount} items</p>
             </div>
           </div>
         </div>
@@ -166,32 +170,60 @@ function ShoppingOrderDetails({ setOpenDetailsDialog }) {
         {/* Order Items */}
         <div>
           <h3 className='text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4'>Order Items</h3>
-          <div className='space-y-3'>
-            {orderItems.map((item, index) => (
-              <motion.div
-                key={item._id || index}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2, delay: index * 0.05 }}
-                className='flex items-center gap-4 p-3 bg-white border border-slate-100 rounded-xl hover:border-slate-200 hover:shadow-sm transition-all duration-200'
-              >
-                <div className='w-16 h-16 rounded-xl bg-slate-100 border border-slate-100 overflow-hidden flex-shrink-0'>
-                  <img src={item.imageUrl} alt={item.name} className='w-full h-full object-cover' />
+          {childOrders.length > 0 ? (
+            childOrders.map((childOrder, childIndex) => {
+              const items = childOrder.cartItems || []
+              const shippingStatus = childOrder.shippingStatus || 'pending'
+              const shippingConfig = statusConfig[shippingStatus] || statusConfig.pending
+              const ShippingIcon = shippingConfig.icon
+
+              return (
+                <div key={childOrder._id || childIndex} className='mb-4'>
+                  <div className='flex items-center justify-between mb-2 pb-2 border-b border-slate-100'>
+                    <div className='flex items-center gap-2'>
+                      <ShippingIcon className='text-slate-500' size={14} />
+                      <span className='text-xs font-semibold text-slate-500 uppercase'>Vendor Status</span>
+                    </div>
+                    <Badge className={`${shippingConfig.color} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
+                      {shippingConfig.label}
+                    </Badge>
+                  </div>
+                  {items.length > 0 ? (
+                    <div className='space-y-2'>
+                      {items.map((item, itemIndex) => (
+                        <motion.div
+                          key={item._id || itemIndex}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.2, delay: childIndex * 0.1 + itemIndex * 0.03 }}
+                          className='flex items-center gap-4 p-3 bg-white border border-slate-100 rounded-xl hover:border-slate-200 hover:shadow-sm transition-all duration-200'
+                        >
+                          <div className='w-16 h-16 rounded-xl bg-slate-100 border border-slate-100 overflow-hidden flex-shrink-0'>
+                            <img src={item.imageUrl} alt={item.name} className='w-full h-full object-cover' />
+                          </div>
+                          <div className='flex-1 min-w-0'>
+                            <p className='text-sm font-semibold text-slate-900 truncate'>{item.name}</p>
+                            <p className='text-xs text-slate-500'>Qty: {item.quantity}</p>
+                          </div>
+                          <div className='text-right flex-shrink-0'>
+                            <p className='text-sm font-bold text-slate-900 flex items-center gap-0.5'>
+                              <TbCurrencyNaira size={12} />
+                              {formatPriceDisplay(item.price)}
+                            </p>
+                            <p className='text-xs text-slate-500'>Subtotal</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className='text-xs text-slate-500'>No items in this shipment.</p>
+                  )}
                 </div>
-                <div className='flex-1 min-w-0'>
-                  <p className='text-sm font-semibold text-slate-900 truncate'>{item.name}</p>
-                  <p className='text-xs text-slate-500'>Qty: {item.quantity}</p>
-                </div>
-                <div className='text-right flex-shrink-0'>
-                  <p className='text-sm font-bold text-slate-900 flex items-center gap-0.5'>
-                    <TbCurrencyNaira size={12} />
-                    {formatPriceDisplay(item.price)}
-                  </p>
-                  <p className='text-xs text-slate-500'>Subtotal</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              )
+            })
+          ) : (
+            <p className='text-sm text-slate-500'>No items found in this order.</p>
+          )}
         </div>
 
         <Separator className='border-slate-100' />

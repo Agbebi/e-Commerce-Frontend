@@ -110,19 +110,19 @@ function Address({ currentSelectedAddress, setCurrentSelectedAddress }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}
-                            className={`group relative bg-white rounded-2xl p-5 border transition-all duration-300 ${currentSelectedAddress === address._id
+                            className={`group relative bg-white rounded-2xl p-5 border transition-all duration-300 ${currentSelectedAddress?._id === address._id
                                     ? 'border-slate-900 shadow-md'
                                     : 'border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300'
                                 }`}
                         >
-                            {currentSelectedAddress === address._id && (
+                            {currentSelectedAddress?._id === address._id && (
                                 <div className="absolute top-4 right-4">
                                     <IoCheckmarkCircle className="text-slate-900" size={20} />
                                 </div>
                             )}
 
                             <div
-                                onClick={() => setCurrentSelectedAddress && setCurrentSelectedAddress(address._id)}
+                                onClick={() => setCurrentSelectedAddress && setCurrentSelectedAddress(address)}
                                 className="cursor-pointer"
                             >
                                 <div className="flex items-start gap-3 mb-3">

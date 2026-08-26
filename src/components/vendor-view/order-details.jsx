@@ -90,8 +90,8 @@ function VendorOrderDetailsView({ selectedOrder, setOpenDetailsDialog }) {
                             <p className='text-xs text-slate-500 mt-0.5'>Order #{selectedOrder._id?.slice(-8) || 'N/A'}</p>
                         </div>
                         <div className='flex items-center gap-2'>
-                            <Badge className={`${getStatusColor(selectedOrder.deliveryStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
-                                {selectedOrder.deliveryStatus ? selectedOrder.deliveryStatus.charAt(0).toUpperCase() + selectedOrder.deliveryStatus.slice(1) : 'Unknown'}
+                            <Badge className={`${getStatusColor(selectedOrder.shippingStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
+                                {selectedOrder.shippingStatus ? selectedOrder.shippingStatus.charAt(0).toUpperCase() + selectedOrder.shippingStatus.slice(1) : 'Unknown'}
                             </Badge>
                         </div>
                     </div>
@@ -113,9 +113,9 @@ function VendorOrderDetailsView({ selectedOrder, setOpenDetailsDialog }) {
                             </Label>
                         </div>
                         <div className='flex items-center justify-between py-2 border-b border-slate-50'>
-                            <span className='text-xs font-medium text-slate-500'>Delivery Status</span>
+                            <span className='text-xs font-medium text-slate-500'>Shipping Status</span>
                             <Label className='text-xs font-medium text-slate-900'>
-                                {selectedOrder.deliveryStatus.charAt(0).toUpperCase() + selectedOrder.deliveryStatus.slice(1) || 'N/A'}
+                                {selectedOrder.shippingStatus ? selectedOrder.shippingStatus.charAt(0).toUpperCase() + selectedOrder.shippingStatus.slice(1) : 'Unknown'}
                             </Label>
                         </div>
                         <div className='flex items-center justify-between py-2'>

@@ -1,55 +1,66 @@
 import React from 'react'
 import { Button } from '../ui/button'
-import { LogOut, Menu, SearchIcon } from 'lucide-react'
+import { Menu } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { logoutUser } from '@/store/auth-slice'
 import { toast } from 'sonner'
-import { IoIosNotificationsOutline } from 'react-icons/io'
-import { IoLogOutOutline } from 'react-icons/io5'
-import Box from '@mui/material/Box';
-import Badge from '@mui/material/Badge';
-import TextField from '@mui/material/TextField'
-import Paper from '@mui/material/Paper'
-import IconButton from '@mui/material/IconButton'
-import InputBase from '@mui/material/InputBase'
-import Divider from '@mui/material/Divider'
-import Input from '@mui/material/Input'
 import NotificationBell from '@/components/common/notification-bell'
 
 function DispatchHeader({ setOpen }) {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-  const dispatch = useDispatch()
+    const handleLogout = () => {
+        dispatch(logoutUser()).then((response) => {
+            if (response.payload.success) {
+                toast.success('Logged out successfully!')
+                navigate('/')
+            } else {
+                toast.error('Logout failed. Please try again.')
+            }
+        })
+    }
 
-  function handleLogout() {
-    dispatch(logoutUser()).then((response) => {
-      if (response.payload.success) {
-        toast.success('Logged out successfully!')
-      } else {
-        toast.error('Logout failed. Please try again.')
-      }
-    })
-  }
+    return (
+        <header className='sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3 bg-white border-b border-slate-200'>
+            {/* Left: Mobile menu */}
+            <div className='flex items-center'>
+                <Button
+                    onClick={() => setOpen(true)}
+                    variant='ghost'
+                    size='icon'
+                    className='lg:hidden rounded-lg hover:bg-slate-100'
+                >
+                    <Menu className='h-5 w-5 text-slate-600' />
+                    <span className='sr-only'>Open sidebar</span>
+                </Button>
+            </div>
 
-  return (
-    <header className='flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200'>
-      <Button onClick={() => setOpen(true)} variant='ghost' size='icon-lg' className='cursor-pointer lg:hidden sm-block'>
-        <Menu />
-        <span className='sr-only'>Open sidebar</span>
-      </Button>
+            {/* Center: Brand (mobile) */}
+            <div className='absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 md:hidden'>
+                <span className='text-sm font-semibold text-slate-900 tracking-tight'>
+                    Dispatch Panel
+                </span>
+            </div>
 
-      <div className='flex flex-2 justify-end text-lg items-center gap-3 font-semibold'>
-          <span className=''>Tims Dispatch</span>
-        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            {/* Right: Actions */}
+            <div className='flex items-center gap-1 sm:gap-2'>
+                <div className='relative'>
+                    <NotificationBell />
+                </div>
 
-        <NotificationBell />
-
-        <Button onClick={handleLogout} size='' className='cursor-pointer border-none outline-none bg-black text-white hover:bg-gray-950'>
-          <LogOut size={24} />
-          <span className='ml-2 text-xs sm:text-sm'>Logout</span>
-        </Button>
-      </div>
-    </header>
-  )
+                <Button
+                    onClick={handleLogout}
+                    variant='ghost'
+                    size='sm'
+                    className='hidden sm:flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl'
+                >
+                    <span className='text-xs font-medium'>Logout</span>
+                </Button>
+            </div>
+        </header>
+    )
 }
 
 export default DispatchHeader

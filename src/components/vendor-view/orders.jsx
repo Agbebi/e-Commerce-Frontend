@@ -28,7 +28,7 @@ function VendorOrders() {
     let result = [...orderList]
 
     if (statusFilter !== 'all') {
-      result = result.filter(order => order.deliveryStatus === statusFilter)
+      result = result.filter(order => order.shippingStatus === statusFilter)
     }
 
     if (sortOrder === 'newest') {
@@ -162,8 +162,8 @@ function VendorOrders() {
                       </div>
                     </div>
                     <div className='flex flex-wrap items-center gap-2 ml-[52px]'>
-                      <Badge className={`${getStatusColor(order.deliveryStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
-                        {order.deliveryStatus ? order.deliveryStatus.charAt(0).toUpperCase() + order.deliveryStatus.slice(1) : 'Unknown'}
+                      <Badge className={`${getStatusColor(order.shippingStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
+                        {order.shippingStatus ? order.shippingStatus.charAt(0).toUpperCase() + order.shippingStatus.slice(1) : 'Unknown'}
                       </Badge>
                       <Badge className={`${getStatusColor(order.payoutStatus)} text-[10px] font-semibold px-2 py-0.5 rounded-md border-0`}>
                         {order.payoutStatus ? order.payoutStatus.charAt(0).toUpperCase() + order.payoutStatus.slice(1) : 'Unknown'}

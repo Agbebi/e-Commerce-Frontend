@@ -38,6 +38,36 @@ const notificationConfig = {
     hover: 'hover:bg-amber-50/60',
     badge: 'bg-amber-100 text-amber-700'
   },
+  otp: {
+    emoji: '🔐',
+    label: 'OTP',
+    iconBg: 'bg-violet-50',
+    iconBorder: 'border-violet-200',
+    accent: 'bg-violet-500',
+    text: 'text-violet-700',
+    hover: 'hover:bg-violet-50/60',
+    badge: 'bg-violet-100 text-violet-700'
+  },
+  stock: {
+    emoji: '📦',
+    label: 'Stock',
+    iconBg: 'bg-orange-50',
+    iconBorder: 'border-orange-200',
+    accent: 'bg-orange-500',
+    text: 'text-orange-700',
+    hover: 'hover:bg-orange-50/60',
+    badge: 'bg-orange-100 text-orange-700'
+  },
+  dispatch: {
+    emoji: '🛵',
+    label: 'Dispatch',
+    iconBg: 'bg-sky-50',
+    iconBorder: 'border-sky-200',
+    accent: 'bg-sky-500',
+    text: 'text-sky-700',
+    hover: 'hover:bg-sky-50/60',
+    badge: 'bg-sky-100 text-sky-700'
+  },
   default: {
     emoji: '🔔',
     label: 'Notification',
