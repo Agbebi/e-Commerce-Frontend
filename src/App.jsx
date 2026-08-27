@@ -8,6 +8,7 @@ import VendorDashboard from './pages/vendor-view/dashboard'
 import VendorFeatures from './pages/vendor-view/features'
 import VendorOrders from './pages/vendor-view/orders'
 import VendorProducts from './pages/vendor-view/products'
+import VendorProductForm from './pages/vendor-view/product-form'
 import ShoppingLayout from './pages/shopping-view/layout'
 import NotFound from './pages/not-found'
 import ShoppingAccount from './pages/shopping-view/account'
@@ -101,6 +102,8 @@ const App = () => {
               <Route path='features' element={<VendorFeatures />} />
               <Route path='orders' element={<VendorOrders />} />
               <Route path='products' element={<VendorProducts />} />
+              <Route path='products/new' element={<VendorProductForm />} />
+              <Route path='products/edit/:id' element={<VendorProductForm />} />
               <Route path='profile' element={<VendorProfile />} />
             </Route>
 

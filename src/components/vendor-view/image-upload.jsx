@@ -1,120 +1,254 @@
-import React, { useEffect, useRef } from 'react'
-import { Label } from '../ui/label'
-import { Input } from '../ui/input'
-import { FileIcon, UploadCloudIcon, XIcon } from 'lucide-react';
-import { Button } from '../ui/button';
-import API from '../../api/axios';
-import { Skeleton } from '../ui/skeleton';
+import React, { useEffect, useRef, useState } from 'react'
+import { UploadCloudIcon, XIcon, AlertCircle, RefreshCw } from 'lucide-react'
+import { Button } from '../ui/button'
+import API from '../../api/axios'
 
+let keyCounter = 0
+const nextKey = () => `img_${Date.now()}_${keyCounter++}`
 
-function ProductImageUpload({ imageFiles, setImageFiles, uploadedImgUrls, setUploadedImgUrls, imageLoadingState, setImageLoadingState, isEditMode }) {
+function ProductImageUpload({ initialImages = [], onChange, onBusyChange, disabled = false, maxImages = 5 }) {
+  const inputRef = useRef(null)
+  const previewUrls = useRef(new Map())
+  const timers = useRef({})
+  const inFlight = useRef(0)
+  const [items, setItems] = useState(() =>
+    (initialImages || []).map((url) => ({ key: nextKey(), url, status: 'done', progress: 100 }))
+  )
 
-    const inputRef = useRef(null)
+  useEffect(() => {
+    const urls = items.filter((item) => item.status === 'done' && item.url).map((item) => item.url)
+    onChange?.(urls)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items])
 
-    function handleImageFileChange(event) {
-        const selectedFiles = Array.from(event.target.files || [])
-        const nextFiles = [...imageFiles, ...selectedFiles].slice(0, 5)
-
-        setImageFiles(nextFiles)
+  useEffect(() => {
+    const map = previewUrls.current
+    return () => {
+      map.forEach((url) => URL.revokeObjectURL(url))
+      map.clear()
     }
+  }, [])
 
-    function handleDragOver(event){
-        event.preventDefault()
+  function getPreviewUrl(file) {
+    if (!previewUrls.current.has(file)) {
+      previewUrls.current.set(file, URL.createObjectURL(file))
     }
+    return previewUrls.current.get(file)
+  }
 
-    function handleDrop(event){
-        event.preventDefault()
+  function startSimulatedProgress(key) {
+    timers.current[key] = setInterval(() => {
+      setItems((prev) => prev.map((item) => {
+        if (item.key !== key || item.status !== 'uploading') return item
+        const next = Math.min(90, (item.progress || 0) + Math.random() * 12)
+        return { ...item, progress: next }
+      }))
+    }, 300)
+  }
 
-        const droppedFiles = Array.from(event.dataTransfer.files || [])
-        const nextFiles = [...imageFiles, ...droppedFiles].slice(0, 5)
-        if (nextFiles.length > imageFiles.length) {
-            setImageFiles(nextFiles)
+  function stopSimulatedProgress(key) {
+    if (timers.current[key]) {
+      clearInterval(timers.current[key])
+      delete timers.current[key]
+    }
+  }
+
+  async function uploadItem(item) {
+    inFlight.current += 1
+    onBusyChange?.(true)
+    startSimulatedProgress(item.key)
+    try {
+      const data = new FormData()
+      data.append('my_file', item.file)
+      const response = await API.post('/api/admin/products/upload-image', data, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            stopSimulatedProgress(item.key)
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            setItems((prev) => prev.map((entry) =>
+              entry.key === item.key ? { ...entry, progress: percentCompleted } : entry
+            ))
+          }
         }
+      })
+      stopSimulatedProgress(item.key)
+      if (response.status === 200) {
+        setItems((prev) => prev.map((entry) =>
+          entry.key === item.key
+            ? { ...entry, url: response.data.data.url, status: 'done', progress: 100, file: undefined }
+            : entry
+        ))
+      } else {
+        throw new Error('Upload failed')
+      }
+    } catch (error) {
+      stopSimulatedProgress(item.key)
+      console.error('Failed to upload image:', error)
+      setItems((prev) => prev.map((entry) =>
+        entry.key === item.key ? { ...entry, status: 'error' } : entry
+      ))
+    } finally {
+      inFlight.current = Math.max(0, inFlight.current - 1)
+      if (inFlight.current === 0) {
+        onBusyChange?.(false)
+      }
     }
+  }
 
-    function handleRemoveImage(index){
-        const nextFiles = imageFiles.filter((_, idx) => idx !== index)
-        setImageFiles(nextFiles)
-        setUploadedImgUrls(uploadedImgUrls.filter((_, idx) => idx !== index))
-        setImageLoadingState(false)
+  function handleFiles(selectedFiles) {
+    const remaining = maxImages - items.length
+    if (remaining <= 0) return
+    const accepted = Array.from(selectedFiles || []).slice(0, remaining)
+    if (accepted.length === 0) return
+    const newItems = accepted.map((file) => ({ key: nextKey(), file, status: 'uploading', progress: 8 }))
+    setItems((prev) => [...prev, ...newItems])
+    newItems.forEach((entry) => uploadItem(entry))
+  }
 
-        if(inputRef.current){
-            inputRef.current.value = ''
-        }
-    }
+  function handleInputChange(event) {
+    handleFiles(event.target.files)
+    if (inputRef.current) inputRef.current.value = ''
+  }
 
-    async function uploadImageToCloudinary(file, index){
-        setImageLoadingState(true)
+  function handleDrop(event) {
+    event.preventDefault()
+    if (disabled) return
+    handleFiles(event.dataTransfer.files)
+  }
 
-        try {
-            const data = new FormData()
-            data.append('my_file', file)
+  function handleRemove(key) {
+    setItems((prev) => {
+      const target = prev.find((entry) => entry.key === key)
+      if (target?.file && previewUrls.current.has(target.file)) {
+        URL.revokeObjectURL(previewUrls.current.get(target.file))
+        previewUrls.current.delete(target.file)
+      }
+      stopSimulatedProgress(key)
+      return prev.filter((entry) => entry.key !== key)
+    })
+  }
 
-            const response = await API.post('/api/admin/products/upload-image', data)
+  function handleRetry(key) {
+    setItems((prev) => {
+      const target = prev.find((entry) => entry.key === key)
+      if (!target?.file) return prev
+      uploadItem(target)
+      return prev.map((entry) =>
+        entry.key === key ? { ...entry, status: 'uploading', progress: 8 } : entry
+      )
+    })
+  }
 
-            if (response.status === 200){
-                setUploadedImgUrls(prev => {
-                    const next = [...prev]
-                    next[index] = response.data.data.url
-                    return next
-                })
-            }
-        } catch (error) {
-            console.error('Failed to upload image:', error)
-        } finally {
-            setImageLoadingState(false)
-        }
-    }
+  const canAdd = !disabled && items.length < maxImages
 
-    useEffect(() =>{
-        imageFiles.forEach((file, idx) => {
-            if (!uploadedImgUrls[idx]) {
-                uploadImageToCloudinary(file, idx)
-            }
-        })
-    }, [imageFiles])
-
-    return (
-        <div className='w-full max-w-md mx-auto mt-4'>
-
-            <Label className='text-lg font-semibold mb-2 block'>Upload Images (up to 5)</Label>
-
-            <div onDragOver={handleDragOver} onDrop={handleDrop} className={`${isEditMode ? '' : ''}border-2 border-dashed rounded-lg p-4 text-gray-500 border-gray-300 outline-none`}>
-                <Input disabled={isEditMode} type='file' multiple className='border-gray-300 hidden' id='image-upload' ref={inputRef} onChange={handleImageFileChange} />
-
-                {imageFiles.length === 0 ?
-                    <Label htmlFor='image-upload' className={`${isEditMode ? 'cursor-not-allowed' : ''}flex flex-col items-center justify-center h-32 cursor-pointer`}>
-                        <UploadCloudIcon className='w-10 h-12 text-gray-500 mb-2' />
-                        <span className='text-gray-500'>Drag & drop or click to upload images</span>
-                        <span className='text-xs text-gray-400 mt-1'>You can upload up to 5 images.</span>
-                    </Label>
-                    : (
-                        <div className='flex flex-col gap-3'>
-                            {imageFiles.map((file, idx) => (
-                                <div key={`${file.name}-${idx}`} className='flex items-center justify-between rounded border p-2 bg-white'>
-                                    <div className='flex items-center gap-2 min-w-0'>
-                                        <FileIcon className='w-6 h-6 text-black' />
-                                        <div className='flex flex-col min-w-0'>
-                                            <p className='text-xs font-medium max-w-[180px] truncate'>{file.name}</p>
-                                            <p className='text-xs text-gray-500'>{Math.round(file.size / 1024)} KB</p>
-                                        </div>
-                                    </div>
-                                    <Button variant='ghost' size='icon' className='text-gray-500 hover:text-black' onClick={() => handleRemoveImage(idx)}>
-                                        <XIcon className='w-4 h-4'></XIcon>
-                                        <span className='sr-only'>Remove the Image</span>
-                                    </Button>
-                                </div>
-                            ))}
-                            {imageFiles.length < 5 && (
-                                <Label htmlFor='image-upload' className='flex items-center justify-center h-14 rounded border border-dashed border-gray-300 cursor-pointer text-sm text-gray-500'>
-                                    Add more images
-                                </Label>
-                            )}
-                        </div>
-                    )}
+  return (
+    <div>
+      <div
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={handleDrop}
+        className={`relative rounded-2xl border-2 border-dashed transition-colors ${
+          canAdd ? 'border-slate-200 bg-slate-50/60 hover:border-slate-300' : 'border-slate-100 bg-slate-50/30'
+        } p-6`}
+      >
+        {items.length === 0 ? (
+          <label
+            htmlFor='product-image-upload'
+            className={`flex cursor-pointer flex-col items-center justify-center gap-3 py-10 text-center ${
+              disabled ? 'cursor-not-allowed opacity-60' : ''
+            }`}
+          >
+            <div className='flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-100'>
+              <UploadCloudIcon className='h-6 w-6 text-slate-500' />
             </div>
-        </div>
-    )
+            <div>
+              <p className='text-sm font-medium text-slate-700'>Drag &amp; drop or click to upload</p>
+              <p className='mt-1 text-xs text-slate-400'>PNG, JPG or WEBP · up to {maxImages} images</p>
+            </div>
+          </label>
+        ) : (
+          <div className='grid grid-cols-2 gap-4 sm:grid-cols-3'>
+            {items.map((item) => (
+              <div key={item.key} className='group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100'>
+                <img
+                  src={item.file ? getPreviewUrl(item.file) : item.url}
+                  alt=''
+                  className='h-full w-full object-cover'
+                />
+
+                {item.status === 'uploading' && (
+                  <>
+                    <button
+                      type='button'
+                      onClick={() => handleRemove(item.key)}
+                      className='absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-slate-600 shadow-sm transition hover:bg-white hover:text-red-600'
+                    >
+                      <XIcon className='h-3.5 w-3.5' />
+                    </button>
+                    <div className='absolute inset-0 flex flex-col justify-end gap-2 bg-slate-900/45 p-3'>
+                      <div className='h-1.5 w-full overflow-hidden rounded-full bg-white/30'>
+                        <div
+                          className='h-full rounded-full bg-white transition-all duration-200'
+                          style={{ width: `${item.progress || 0}%` }}
+                        />
+                      </div>
+                      <p className='text-center text-[11px] font-medium text-white'>Uploading… {Math.round(item.progress || 0)}%</p>
+                    </div>
+                  </>
+                )}
+
+                {item.status === 'error' && (
+                  <div className='absolute inset-0 flex flex-col items-center justify-center gap-2 bg-red-500/10 p-3'>
+                    <AlertCircle className='h-5 w-5 text-red-500' />
+                    <p className='text-center text-[10px] font-medium text-red-600'>Upload failed</p>
+                    <button
+                      type='button'
+                      onClick={() => handleRetry(item.key)}
+                      className='flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[10px] font-medium text-red-600 shadow-sm'
+                    >
+                      <RefreshCw className='h-3 w-3' /> Retry
+                    </button>
+                  </div>
+                )}
+
+                {item.status === 'done' && (
+                  <button
+                    type='button'
+                    onClick={() => handleRemove(item.key)}
+                    className='absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-slate-600 opacity-0 shadow-sm transition hover:bg-white hover:text-red-600 group-hover:opacity-100'
+                  >
+                    <XIcon className='h-3.5 w-3.5' />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {canAdd && (
+              <label
+                htmlFor='product-image-upload'
+                className='flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 text-slate-400 transition hover:border-slate-300 hover:text-slate-500'
+              >
+                <UploadCloudIcon className='h-5 w-5' />
+                <span className='text-[11px] font-medium'>Add image</span>
+              </label>
+            )}
+          </div>
+        )}
+
+        <input
+          id='product-image-upload'
+          ref={inputRef}
+          type='file'
+          accept='image/*'
+          multiple
+          disabled={disabled || !canAdd}
+          className='hidden'
+          onChange={handleInputChange}
+        />
+      </div>
+
+      <p className='mt-3 text-center text-xs text-slate-400'>{items.length} of {maxImages} images added</p>
+    </div>
+  )
 }
 
 export default ProductImageUpload

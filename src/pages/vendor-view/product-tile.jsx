@@ -2,11 +2,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { MdOutlineDelete, MdOutlineEdit } from 'react-icons/md'
 import { TbCurrencyNaira } from 'react-icons/tb'
 import { formatPriceDisplay } from '@/lib/utils'
 
-function VendorProductTile({product, setFormData, setOpenProductSheet, setCurrentEditedId, handleDelete}) {        
+function VendorProductTile({ product, handleDelete }) {
+  const navigate = useNavigate()
 
   const formatAmount = (value) => formatPriceDisplay(value)
 
@@ -99,20 +101,7 @@ function VendorProductTile({product, setFormData, setOpenProductSheet, setCurren
             {/* Actions Section */}
             <CardFooter className='flex gap-2 px-3.5 pb-3.5 pt-0'>
                 <Button
-                    onClick={() => {
-                        setOpenProductSheet(true)
-                        setCurrentEditedId(product._id)
-                        setFormData({
-                            ...product,
-                            specifications: Array.isArray(product.specifications) && product.specifications.length > 0
-                                ? product.specifications
-                                : (Array.isArray(product.keyFeatures) && product.keyFeatures.length > 0
-                                    ? product.keyFeatures.map((feature) => ({ name: 'Feature', value: feature }))
-                                    : []),
-                            keyFeatures: Array.isArray(product.keyFeatures) ? product.keyFeatures.join('\n') : product.keyFeatures || '',
-                            subcategory: product.subcategory || ''
-                        })
-                    }}
+                    onClick={() => navigate(`/vendor/products/edit/${product._id}`)}
                     className='flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-[11px] font-semibold text-slate-700 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm'
                     size='sm'
                     variant='outline'
