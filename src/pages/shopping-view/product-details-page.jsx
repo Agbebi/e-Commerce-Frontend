@@ -1,109 +1,135 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchProductDetails, setProductDetails } from '@/store/shop/product-slice'
-import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { StarIcon, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart, Heart, Share2, Truck, Shield, RefreshCw } from 'lucide-react'
-import { TbCurrencyNaira } from 'react-icons/tb'
-import API from '@/api/axios'
-import { formatPriceDisplay } from '@/lib/utils'
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchProductDetails,
+  setProductDetails,
+} from "@/store/shop/product-slice";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  StarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+  ShoppingCart,
+  Heart,
+  Share2,
+  Truck,
+  Shield,
+  RefreshCw,
+  Package,
+} from "lucide-react";
+import { TbCurrencyNaira } from "react-icons/tb";
+import API from "@/api/axios";
+import { formatPriceDisplay } from "@/lib/utils";
 
 function ProductDetailsPage() {
-  const { productId } = useParams()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { productDetails, isLoading } = useSelector(state => state.shopProducts)
-  const { user } = useSelector(state => state.auth)
-  const { items: cartItems = [] } = useSelector(state => state.shopCart ?? {})
+  const { productId } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { productDetails, isLoading } = useSelector(
+    (state) => state.shopProducts,
+  );
+  const { user } = useSelector((state) => state.auth);
+  const { items: cartItems = [] } = useSelector(
+    (state) => state.shopCart ?? {},
+  );
 
-  const [tab, setTab] = useState('description')
-  const [reviews, setReviews] = useState([])
-  const [reviewMessage, setReviewMessage] = useState('')
-  const [rating, setRating] = useState(5)
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false)
-  const [reviewError, setReviewError] = useState('')
-  const [quantity, setQuantity] = useState(1)
-  const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const [isWishlisted, setIsWishlisted] = useState(false)
-  const imageCarouselRef = useRef(null)
+  const [tab, setTab] = useState("description");
+  const [reviews, setReviews] = useState([]);
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [rating, setRating] = useState(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const imageCarouselRef = useRef(null);
 
   useEffect(() => {
     if (productId) {
-      dispatch(fetchProductDetails(productId))
+      dispatch(fetchProductDetails(productId));
     }
     return () => {
-      dispatch(setProductDetails())
-    }
-  }, [dispatch, productId])
+      dispatch(setProductDetails());
+    };
+  }, [dispatch, productId]);
 
   useEffect(() => {
-    setActiveImageIndex(0)
-    setQuantity(1)
-  }, [productDetails?._id])
+    setActiveImageIndex(0);
+    setQuantity(1);
+  }, [productDetails?._id]);
 
   useEffect(() => {
     async function fetchReviews() {
       if (!productDetails?._id) {
-        setReviews([])
-        return
+        setReviews([]);
+        return;
       }
       try {
-        const response = await API.get(`/api/shop/reviews/${productDetails._id}`)
+        const response = await API.get(
+          `/api/shop/reviews/${productDetails._id}`,
+        );
         if (response?.data?.success) {
-          setReviews(response.data.data || [])
+          setReviews(response.data.data || []);
         }
       } catch (error) {
-        console.error('Failed to load reviews:', error)
+        console.error("Failed to load reviews:", error);
       }
     }
-    fetchReviews()
-  }, [productDetails?._id])
+    fetchReviews();
+  }, [productDetails?._id]);
 
-  const availableStock = productDetails?.totalStock ?? 0
+  const availableStock = productDetails?.totalStock ?? 0;
   const currentCartQuantity = cartItems.reduce((sum, item) => {
-    return item.productId === productDetails?._id ? sum + item.quantity : sum
-  }, 0)
+    return item.productId === productDetails?._id ? sum + item.quantity : sum;
+  }, 0);
 
   const handleCarouselScroll = () => {
-    const container = imageCarouselRef.current
-    if (!container) return
+    const container = imageCarouselRef.current;
+    if (!container) return;
 
-    const scrollLeft = container.scrollLeft
-    const children = Array.from(container.children)
-    const widths = children.map(child => child.clientWidth)
+    const scrollLeft = container.scrollLeft;
+    const children = Array.from(container.children);
+    const widths = children.map((child) => child.clientWidth);
 
-    let accumulated = 0
+    let accumulated = 0;
     for (let idx = 0; idx < widths.length; idx += 1) {
-      accumulated += widths[idx]
+      accumulated += widths[idx];
       if (scrollLeft + container.clientWidth / 2 < accumulated) {
-        setActiveImageIndex(idx)
-        break
+        setActiveImageIndex(idx);
+        break;
       }
     }
-  }
+  };
 
   const scrollToImage = (index) => {
-    setActiveImageIndex(index)
-    const container = imageCarouselRef.current
-    if (!container) return
-    const target = container.children[index]
+    setActiveImageIndex(index);
+    const container = imageCarouselRef.current;
+    if (!container) return;
+    const target = container.children[index];
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth', inline: 'center' })
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
     }
-  }
+  };
 
   function handleAddToCart() {
     if (availableStock === 0) {
-      toast.error('Product is out of stock')
-      return
+      toast.error("Product is out of stock");
+      return;
     }
     if (currentCartQuantity + quantity > availableStock) {
-      toast.error('Cannot add more than available stock')
-      return
+      toast.error("Cannot add more than available stock");
+      return;
     }
 
     dispatch(
@@ -114,80 +140,147 @@ function ProductDetailsPage() {
         description: productDetails.description,
         name: productDetails.name,
         imageUrl: productDetails.images?.[0] || productDetails.image,
-        price: productDetails.salesPrice > 0 ? productDetails.salesPrice : productDetails.price,
-        vendorId: productDetails.vendorId
+        price:
+          productDetails.salesPrice > 0
+            ? productDetails.salesPrice
+            : productDetails.price,
+        vendorId: productDetails.vendorId,
       }),
-    ).then(data => {
-      if (data?.payload?.success) {
-        toast.success('Product added to cart successfully')
-        dispatch(fetchCartItems({ userId: user.id }))
-      }
-    }).catch(error => {
-      toast.error('An error occurred while adding to cart')
-      console.error(error)
-    })
+    )
+      .then((data) => {
+        if (data?.payload?.success) {
+          toast.success("Product added to cart successfully");
+          dispatch(fetchCartItems({ userId: user.id }));
+        }
+      })
+      .catch((error) => {
+        toast.error("An error occurred while adding to cart");
+        console.error(error);
+      });
   }
 
   async function handleSubmitReview() {
     if (!user?.id) {
-      setReviewError('Please log in to submit a review.')
-      return
+      setReviewError("Please log in to submit a review.");
+      return;
     }
     if (!reviewMessage.trim()) {
-      setReviewError('Please add your review text.')
-      return
+      setReviewError("Please add your review text.");
+      return;
     }
 
-    setIsSubmittingReview(true)
-    setReviewError('')
+    setIsSubmittingReview(true);
+    setReviewError("");
 
     try {
-      const response = await API.post('/api/shop/reviews/add', {
+      const response = await API.post("/api/shop/reviews/add", {
         productId: productDetails._id,
         userId: user.id,
         userName: user.userName,
         rating,
         reviewMessage,
-      })
+      });
 
       if (response?.data?.success) {
-        setReviews(current => [response.data.data, ...current])
-        setReviewMessage('')
-        setRating(5)
-        toast.success('Review submitted successfully')
+        setReviews((current) => [response.data.data, ...current]);
+        setReviewMessage("");
+        setRating(5);
+        toast.success("Review submitted successfully");
       }
     } catch (error) {
-      const message = error?.response?.data?.message || 'Failed to submit review.'
-      setReviewError(message)
+      const message =
+        error?.response?.data?.message || "Failed to submit review.";
+      setReviewError(message);
     } finally {
-      setIsSubmittingReview(false)
+      setIsSubmittingReview(false);
     }
   }
 
-  const normalizedSpecifications = Array.isArray(productDetails?.specifications) && productDetails.specifications.length > 0
-    ? productDetails.specifications.filter(specification => specification?.name?.trim() || specification?.value?.trim())
-    : Array.isArray(productDetails?.keyFeatures)
-      ? productDetails.keyFeatures.map((feature, idx) => ({ name: `Feature ${idx + 1}`, value: feature }))
-      : typeof productDetails?.keyFeatures === 'string'
-        ? productDetails.keyFeatures.split(/\r?\n/).map(item => item.trim()).filter(Boolean).map((feature, idx) => ({ name: `Feature ${idx + 1}`, value: feature }))
-        : []
+  const normalizedSpecifications =
+    Array.isArray(productDetails?.specifications) &&
+    productDetails.specifications.length > 0
+      ? productDetails.specifications.filter(
+          (specification) =>
+            specification?.name?.trim() || specification?.value?.trim(),
+        )
+      : Array.isArray(productDetails?.keyFeatures)
+        ? productDetails.keyFeatures.map((feature, idx) => ({
+            name: `Feature ${idx + 1}`,
+            value: feature,
+          }))
+        : typeof productDetails?.keyFeatures === "string"
+          ? productDetails.keyFeatures
+              .split(/\r?\n/)
+              .map((item) => item.trim())
+              .filter(Boolean)
+              .map((feature, idx) => ({
+                name: `Feature ${idx + 1}`,
+                value: feature,
+              }))
+          : [];
 
-  const descriptionParagraphs = typeof productDetails?.description === 'string'
-    ? productDetails.description.split(/\r?\n/).map(item => item.trim()).filter(Boolean)
-    : []
+  const productWeight =
+    productDetails?.weight != null && productDetails.weight !== ""
+      ? Number(productDetails.weight)
+      : null;
+  const productDimensions = productDetails?.dimensions;
+  const additionalSpecifications = [];
 
-  const isOutOfStock = availableStock === 0
-  const isMaxInCart = currentCartQuantity + quantity > availableStock
+  if (productWeight !== null) {
+    additionalSpecifications.push({
+      name: "Weight",
+      value: `${productWeight.toFixed(2)} kg`,
+    });
+  }
+
+  if (
+    productDimensions &&
+    (productDimensions.length ||
+      productDimensions.width ||
+      productDimensions.height)
+  ) {
+    const dims = [
+      productDimensions.length,
+      productDimensions.width,
+      productDimensions.height,
+    ].filter((value) => value !== undefined && value !== null && value !== "");
+
+    if (dims.length > 0) {
+      additionalSpecifications.push({
+        name: "Dimensions",
+        value: `${dims.map((value) => Number(value).toFixed(1)).join(" × ")} ${productDimensions.unit || "cm"}`,
+      });
+    }
+  }
+
+  const specificationList = [
+    ...additionalSpecifications,
+    ...normalizedSpecifications,
+  ];
+
+  const descriptionParagraphs =
+    typeof productDetails?.description === "string"
+      ? productDetails.description
+          .split(/\r?\n/)
+          .map((item) => item.trim())
+          .filter(Boolean)
+      : [];
+
+  const isOutOfStock = availableStock === 0;
+  const isMaxInCart = currentCartQuantity + quantity > availableStock;
 
   if (isLoading || !productDetails) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
       </div>
-    )
+    );
   }
 
-  const images = productDetails.images?.length > 0 ? productDetails.images : [productDetails.image]
+  const images =
+    productDetails.images?.length > 0
+      ? productDetails.images
+      : [productDetails.image];
 
   return (
     <div className="min-h-screen bg-white">
@@ -206,15 +299,20 @@ function ProductDetailsPage() {
               <button
                 onClick={() => setIsWishlisted(!isWishlisted)}
                 className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
-                  isWishlisted ? 'bg-red-50 text-red-600' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                  isWishlisted
+                    ? "bg-red-50 text-red-600"
+                    : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} />
+                <Heart
+                  size={18}
+                  fill={isWishlisted ? "currentColor" : "none"}
+                />
               </button>
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(window.location.href)
-                  toast.success('Link copied to clipboard')
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied to clipboard");
                 }}
                 className="w-9 h-9 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors"
               >
@@ -261,10 +359,16 @@ function ProductDetailsPage() {
                       type="button"
                       onClick={() => scrollToImage(idx)}
                       className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                        activeImageIndex === idx ? 'border-slate-900 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
+                        activeImageIndex === idx
+                          ? "border-slate-900 shadow-md"
+                          : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img src={image} alt="" className="w-full h-full object-cover" />
+                      <img
+                        src={image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
                     </button>
                   ))}
                 </div>
@@ -276,8 +380,12 @@ function ProductDetailsPage() {
           <div className="flex flex-col">
             {/* Category & Brand */}
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mb-3">
-              {productDetails.category && <span className="capitalize">{productDetails.category}</span>}
-              {productDetails.subcategory && <span>• {productDetails.subcategory}</span>}
+              {productDetails.category && (
+                <span className="capitalize">{productDetails.category}</span>
+              )}
+              {productDetails.subcategory && (
+                <span>• {productDetails.subcategory}</span>
+              )}
               {productDetails.brand && <span>• {productDetails.brand}</span>}
             </div>
 
@@ -287,7 +395,7 @@ function ProductDetailsPage() {
             </h1>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3 mb-6">
+            <div className="flex items-baseline gap-3 mb-4">
               {productDetails.salesPrice > 0 ? (
                 <>
                   <span className="text-3xl font-bold text-slate-900 flex items-center">
@@ -299,7 +407,13 @@ function ProductDetailsPage() {
                     {formatPriceDisplay(productDetails.price)}
                   </span>
                   <Badge className="bg-red-50 text-red-700 border-red-200">
-                    Save {Math.round(((productDetails.price - productDetails.salesPrice) / productDetails.price) * 100)}%
+                    Save{" "}
+                    {Math.round(
+                      ((productDetails.price - productDetails.salesPrice) /
+                        productDetails.price) *
+                        100,
+                    )}
+                    %
                   </Badge>
                 </>
               ) : (
@@ -310,19 +424,31 @@ function ProductDetailsPage() {
               )}
             </div>
 
+            {productWeight !== null && (
+              <div className="flex items-center gap-2 mb-6 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-800">
+                <Package size={16} />
+                <span>Weight: {productWeight.toFixed(2)} kg</span>
+              </div>
+            )}
+
             {/* Stock Status */}
             <div className="flex items-center gap-2 mb-6">
-              <div className={`w-2 h-2 rounded-full ${availableStock > 0 ? 'bg-emerald-500' : 'bg-red-500'}`} />
+              <div
+                className={`w-2 h-2 rounded-full ${availableStock > 0 ? "bg-emerald-500" : "bg-red-500"}`}
+              />
               <span className="text-sm text-slate-600">
                 {availableStock > 0 ? (
                   <>
                     In Stock ({availableStock} available)
                     {currentCartQuantity > 0 && (
-                      <span className="text-slate-400"> • {currentCartQuantity} in cart</span>
+                      <span className="text-slate-400">
+                        {" "}
+                        • {currentCartQuantity} in cart
+                      </span>
                     )}
                   </>
                 ) : (
-                  'Out of Stock'
+                  "Out of Stock"
                 )}
               </span>
             </div>
@@ -330,7 +456,9 @@ function ProductDetailsPage() {
             {/* Quantity Selector */}
             {!isOutOfStock && (
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-sm font-medium text-slate-700">Quantity</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Quantity
+                </span>
                 <div className="flex items-center gap-1 border border-slate-200 rounded-xl overflow-hidden">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -342,7 +470,14 @@ function ProductDetailsPage() {
                     {quantity}
                   </span>
                   <button
-                    onClick={() => setQuantity(Math.min(availableStock - currentCartQuantity, quantity + 1))}
+                    onClick={() =>
+                      setQuantity(
+                        Math.min(
+                          availableStock - currentCartQuantity,
+                          quantity + 1,
+                        ),
+                      )
+                    }
                     className="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition-colors"
                   >
                     <Plus size={16} />
@@ -358,12 +493,16 @@ function ProductDetailsPage() {
                 disabled={isOutOfStock || isMaxInCart}
                 className={`flex-1 h-12 rounded-xl font-semibold text-sm ${
                   isOutOfStock || isMaxInCart
-                    ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                    : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    ? "bg-slate-200 text-slate-500 cursor-not-allowed"
+                    : "bg-slate-900 hover:bg-slate-800 text-white"
                 }`}
               >
                 <ShoppingCart size={18} className="mr-2" />
-                {isOutOfStock ? 'Out of Stock' : isMaxInCart ? 'Max Quantity Reached' : 'Add to Cart'}
+                {isOutOfStock
+                  ? "Out of Stock"
+                  : isMaxInCart
+                    ? "Max Quantity Reached"
+                    : "Add to Cart"}
               </Button>
             </div>
 
@@ -371,38 +510,46 @@ function ProductDetailsPage() {
             <div className="grid grid-cols-3 gap-3 mb-8">
               <div className="flex flex-col items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                 <Truck className="text-slate-600" size={20} />
-                <span className="text-xs text-slate-600 text-center">Free Delivery</span>
+                <span className="text-xs text-slate-600 text-center">
+                  Free Delivery
+                </span>
               </div>
               <div className="flex flex-col items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                 <Shield className="text-slate-600" size={20} />
-                <span className="text-xs text-slate-600 text-center">Secure Payment</span>
+                <span className="text-xs text-slate-600 text-center">
+                  Secure Payment
+                </span>
               </div>
               <div className="flex flex-col items-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                 <RefreshCw className="text-slate-600" size={20} />
-                <span className="text-xs text-slate-600 text-center">Easy Returns</span>
+                <span className="text-xs text-slate-600 text-center">
+                  Easy Returns
+                </span>
               </div>
             </div>
 
             {/* Tabs */}
             <div className="border-t border-slate-100 pt-6">
               <div className="flex gap-1 mb-6 bg-slate-50 p-1 rounded-xl">
-                {['description', 'reviews', 'How to Use'].map(tabItem => (
+                {["description", "reviews", "How to Use"].map((tabItem) => (
                   <button
                     key={tabItem}
                     onClick={() => setTab(tabItem)}
                     className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
                       tab === tabItem
-                        ? 'bg-white text-slate-900 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? "bg-white text-slate-900 shadow-sm"
+                        : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
-                    {tabItem === 'How to Use' ? 'How to Use' : tabItem.charAt(0).toUpperCase() + tabItem.slice(1)}
+                    {tabItem === "How to Use"
+                      ? "How to Use"
+                      : tabItem.charAt(0).toUpperCase() + tabItem.slice(1)}
                   </button>
                 ))}
               </div>
 
               <div className="min-h-[200px]">
-                {tab === 'description' && (
+                {tab === "description" && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -410,31 +557,39 @@ function ProductDetailsPage() {
                   >
                     {descriptionParagraphs.length > 0 ? (
                       descriptionParagraphs.map((paragraph, idx) => (
-                        <p key={idx} className="text-sm text-slate-600 leading-7">
+                        <p
+                          key={idx}
+                          className="text-sm text-slate-600 leading-7"
+                        >
                           {paragraph}
                         </p>
                       ))
                     ) : (
-                      <p className="text-sm text-slate-600">No description available.</p>
+                      <p className="text-sm text-slate-600">
+                        No description available.
+                      </p>
                     )}
 
-                    {normalizedSpecifications.length > 0 && (
+                    {specificationList.length > 0 && (
                       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                         <div className="flex items-center gap-2 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-6 py-4">
                           <span className="h-4 w-1 rounded-full bg-slate-900" />
-                          <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900">Specifications</h3>
+                          <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-900">
+                            Specifications
+                          </h3>
                         </div>
                         <dl className="divide-y divide-slate-100">
-                          {normalizedSpecifications.map((specification, idx) => (
+                          {specificationList.map((specification, idx) => (
                             <div
                               key={idx}
                               className="group flex items-center justify-between gap-6 px-6 py-4 transition-colors hover:bg-slate-50/70"
                             >
                               <dt className="text-xs font-medium uppercase tracking-wide text-slate-400 group-hover:text-slate-500">
-                                {specification.name || `Specification ${idx + 1}`}
+                                {specification.name ||
+                                  `Specification ${idx + 1}`}
                               </dt>
                               <dd className="text-right text-sm font-semibold text-slate-900">
-                                {specification.value || '—'}
+                                {specification.value || "—"}
                               </dd>
                             </div>
                           ))}
@@ -444,7 +599,7 @@ function ProductDetailsPage() {
                   </motion.div>
                 )}
 
-                {tab === 'reviews' && (
+                {tab === "reviews" && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -454,17 +609,23 @@ function ProductDetailsPage() {
                     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
                       <div className="flex items-center justify-between gap-3 mb-4">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">Write a review</p>
-                          <p className="text-xs text-slate-500">Share your experience with this product.</p>
+                          <p className="text-sm font-semibold text-slate-900">
+                            Write a review
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            Share your experience with this product.
+                          </p>
                         </div>
                         <div className="flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map(star => (
+                          {[1, 2, 3, 4, 5].map((star) => (
                             <button
                               key={star}
                               type="button"
                               onClick={() => setRating(star)}
                               className={`rounded-full p-1 transition-colors ${
-                                star <= rating ? 'bg-slate-900 text-white' : 'bg-white text-slate-300 hover:text-slate-400'
+                                star <= rating
+                                  ? "bg-slate-900 text-white"
+                                  : "bg-white text-slate-300 hover:text-slate-400"
                               }`}
                             >
                               <StarIcon className="h-4 w-4" />
@@ -474,15 +635,21 @@ function ProductDetailsPage() {
                       </div>
                       <textarea
                         value={reviewMessage}
-                        onChange={e => setReviewMessage(e.target.value)}
+                        onChange={(e) => setReviewMessage(e.target.value)}
                         placeholder="Write what you liked or what we can improve..."
                         rows={4}
                         disabled={!user?.id}
                         className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 disabled:bg-slate-100 disabled:text-slate-500 resize-none"
                       />
-                      {reviewError && <p className="mt-2 text-xs text-red-600">{reviewError}</p>}
+                      {reviewError && (
+                        <p className="mt-2 text-xs text-red-600">
+                          {reviewError}
+                        </p>
+                      )}
                       {!user?.id && (
-                        <p className="mt-2 text-xs text-slate-500">Login to submit a review.</p>
+                        <p className="mt-2 text-xs text-slate-500">
+                          Login to submit a review.
+                        </p>
                       )}
                       <div className="mt-4 flex justify-end">
                         <Button
@@ -490,7 +657,9 @@ function ProductDetailsPage() {
                           disabled={isSubmittingReview || !user?.id}
                           className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-10 px-6 text-sm"
                         >
-                          {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                          {isSubmittingReview
+                            ? "Submitting..."
+                            : "Submit Review"}
                         </Button>
                       </div>
                     </div>
@@ -498,32 +667,48 @@ function ProductDetailsPage() {
                     {/* Reviews List */}
                     {reviews.length > 0 ? (
                       <div className="space-y-4">
-                        {reviews.map(review => (
-                          <div key={review._id} className="rounded-2xl border border-slate-200 bg-white p-6">
+                        {reviews.map((review) => (
+                          <div
+                            key={review._id}
+                            className="rounded-2xl border border-slate-200 bg-white p-6"
+                          >
                             <div className="flex items-center justify-between gap-2 mb-3">
                               <div>
-                                <p className="text-sm font-semibold text-slate-900">{review.userName || 'Anonymous'}</p>
-                                <p className="text-xs text-slate-500">{new Date(review.createdAt).toLocaleDateString()}</p>
+                                <p className="text-sm font-semibold text-slate-900">
+                                  {review.userName || "Anonymous"}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                  {new Date(
+                                    review.createdAt,
+                                  ).toLocaleDateString()}
+                                </p>
                               </div>
                               <div className="flex items-center gap-0.5 text-yellow-500">
                                 {Array.from({ length: 5 }).map((_, idx) => (
-                                  <StarIcon key={idx} className={`${idx < review.rating ? 'fill-current' : 'text-slate-200'} h-4 w-4`} />
+                                  <StarIcon
+                                    key={idx}
+                                    className={`${idx < review.rating ? "fill-current" : "text-slate-200"} h-4 w-4`}
+                                  />
                                 ))}
                               </div>
                             </div>
-                            <p className="text-sm leading-6 text-slate-700">{review.reviewMessage}</p>
+                            <p className="text-sm leading-6 text-slate-700">
+                              {review.reviewMessage}
+                            </p>
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
-                        <p className="text-sm text-slate-500">No reviews yet. Be the first to review this product.</p>
+                        <p className="text-sm text-slate-500">
+                          No reviews yet. Be the first to review this product.
+                        </p>
                       </div>
                     )}
                   </motion.div>
                 )}
 
-                {tab === 'How to Use' && (
+                {tab === "How to Use" && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -532,7 +717,9 @@ function ProductDetailsPage() {
                     <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center mb-4">
                       <RefreshCw className="text-slate-400" size={24} />
                     </div>
-                    <p className="text-sm text-slate-600">We are still working on this section... Coming soon</p>
+                    <p className="text-sm text-slate-600">
+                      We are still working on this section... Coming soon
+                    </p>
                   </motion.div>
                 )}
               </div>
@@ -541,7 +728,7 @@ function ProductDetailsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ProductDetailsPage
+export default ProductDetailsPage;

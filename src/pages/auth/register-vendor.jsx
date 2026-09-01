@@ -1,81 +1,147 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { registerVendor } from '@/store/auth-slice'
-import { toast } from 'sonner'
-import { Checkbox } from '@/components/ui/checkbox'
-import { ArrowRight, ArrowLeft, Store, Mail, Lock, Phone, CheckCircle2, Building2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerVendor } from "@/store/auth-slice";
+import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  ArrowRight,
+  ArrowLeft,
+  Store,
+  Mail,
+  Lock,
+  Phone,
+  CheckCircle2,
+  Building2,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useApiIsLoaded } from "@vis.gl/react-google-maps";
 
 function VendorAuthRegister() {
+  const isLoaded = useApiIsLoaded();
+
   const [formData, setFormData] = useState({
-    shopName: '',
-    email: '',
-    password: '',
-    phoneNumber: '',
-    shopDescription: '',
-    shopAddress: '',
+    shopName: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    shopDescription: "",
+    shopAddress: "",
+    nearestLandmark: {
+      name: "",
+      coordinates: [],
+    },
     bankDetails: {
-      accountNumber: '',
-      accountHolderName: '',
-      bankName: ''
-    }
-  })
-  const [step, setStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [termsAccepted, setTermsAccepted] = useState(false)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+      accountNumber: "",
+      accountHolderName: "",
+      bankName: "",
+    },
+  });
+  const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const addressRef = useRef(null);
 
   const validateStep1 = () => {
-    const required = ['shopName', 'email', 'password']
+    const required = ["shopName", "email", "password"];
     for (const field of required) {
       if (!formData[field]?.trim()) {
-        toast.error(`Please fill in ${field.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())}`)
-        return false
+        toast.error(
+          `Please fill in ${field.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}`,
+        );
+        return false;
       }
     }
     if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters')
-      return false
+      toast.error("Password must be at least 6 characters");
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const handleNext = () => {
     if (validateStep1()) {
-      setStep(2)
+      setStep(2);
     }
-  }
+  };
 
   const handleBack = () => {
-    setStep(1)
-  }
+    setStep(1);
+  };
 
   function onSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
     if (!termsAccepted) {
-      toast.error('Please accept the Terms of Service and Privacy Policy')
-      return
+      toast.error("Please accept the Terms of Service and Privacy Policy");
+      return;
     }
-    setIsSubmitting(true)
 
-    dispatch(registerVendor(formData)).then((data) => {
-      if (data?.payload?.success == true) {
-        toast.success('Registration successful!')
-        navigate('/auth/login-vendor')
-      } else {
-        toast.error(`${data?.payload?.message}`)
-      }
-    }).finally(() => {
-      setIsSubmitting(false)
-    })
+    if (!formData.nearestLandmark?.coordinates || formData.nearestLandmark.coordinates.length !== 2) {
+      toast.error("Nearest landmark could not be found", {
+        description: (
+          <span className="text-gray-600">
+            Please select a landmark from the Google Maps suggestions.
+          </span>
+        ),
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    dispatch(registerVendor(formData))
+      .then((data) => {
+        if (data?.payload?.success == true) {
+          toast.success("Registration successful!");
+          navigate("/auth/login-vendor");
+        } else {
+          toast.error(`${data?.payload?.message}`);
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   }
 
-  const inputClassName = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200"
+  const inputClassName =
+    "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200";
+
+  useEffect(() => {
+    if (!addressRef.current || !isLoaded || step !== 1) return;
+
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      addressRef.current,
+      {
+        componentRestrictions: { country: "ng" },
+      },
+    );
+
+    const listener = autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry || !place.geometry.location) {
+        return;
+      }
+
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      setFormData((prev) => ({
+        ...prev,
+        nearestLandmark: {
+          name: place.name || "",
+          coordinates: [lng, lat],
+        },
+      }));
+    });
+
+    return () => {
+      window.google.maps.event.removeListener(listener);
+    };
+  }, [isLoaded, step]);
 
   return (
     <div className="w-full">
@@ -85,30 +151,46 @@ function VendorAuthRegister() {
           <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
           Vendor Registration
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Create your vendor account</h1>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          Create your vendor account
+        </h1>
         <p className="text-slate-500">Set up your store and start selling</p>
       </div>
 
       {/* Step Indicator */}
       <div className="flex items-center gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-            step >= 1 ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-400'
-          }`}>
-            {step > 1 ? <CheckCircle2 size={16} /> : '1'}
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+              step >= 1
+                ? "bg-blue-500 text-white"
+                : "bg-slate-100 text-slate-400"
+            }`}
+          >
+            {step > 1 ? <CheckCircle2 size={16} /> : "1"}
           </div>
-          <span className={`text-sm font-medium transition-colors duration-300 ${step >= 1 ? 'text-slate-900' : 'text-slate-400'}`}>
+          <span
+            className={`text-sm font-medium transition-colors duration-300 ${step >= 1 ? "text-slate-900" : "text-slate-400"}`}
+          >
             Account
           </span>
         </div>
-        <div className={`flex-1 h-0.5 rounded-full transition-all duration-300 ${step >= 2 ? 'bg-blue-500' : 'bg-slate-200'}`} />
+        <div
+          className={`flex-1 h-0.5 rounded-full transition-all duration-300 ${step >= 2 ? "bg-blue-500" : "bg-slate-200"}`}
+        />
         <div className="flex items-center gap-3">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-            step >= 2 ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-400'
-          }`}>
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+              step >= 2
+                ? "bg-blue-500 text-white"
+                : "bg-slate-100 text-slate-400"
+            }`}
+          >
             2
           </div>
-          <span className={`text-sm font-medium transition-colors duration-300 ${step >= 2 ? 'text-slate-900' : 'text-slate-400'}`}>
+          <span
+            className={`text-sm font-medium transition-colors duration-300 ${step >= 2 ? "text-slate-900" : "text-slate-400"}`}
+          >
             Store Details
           </span>
         </div>
@@ -118,10 +200,12 @@ function VendorAuthRegister() {
         <div className="flex flex-col items-center justify-center py-12">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
             className="w-10 h-10 border-3 border-slate-200 border-t-blue-600 rounded-full mb-4"
           />
-          <p className="text-slate-500 text-sm font-medium">Creating your account...</p>
+          <p className="text-slate-500 text-sm font-medium">
+            Creating your account...
+          </p>
         </div>
       ) : (
         <form onSubmit={onSubmit} className="space-y-6">
@@ -141,20 +225,34 @@ function VendorAuthRegister() {
                       <Store className="text-blue-600" size={20} />
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-900">Store Information</h3>
-                      <p className="text-xs text-slate-500">Tell us about your shop</p>
+                      <h3 className="text-sm font-semibold text-slate-900">
+                        Store Information
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Tell us about your shop
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-slate-700">Shop Name *</Label>
+                      <Label className="text-xs font-medium text-slate-700">
+                        Shop Name *
+                      </Label>
                       <div className="relative">
-                        <Store className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Store
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          size={16}
+                        />
                         <input
                           type="text"
                           value={formData.shopName}
-                          onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              shopName: e.target.value,
+                            })
+                          }
                           placeholder="Your shop name"
                           className={inputClassName + " pl-10"}
                           required
@@ -163,13 +261,20 @@ function VendorAuthRegister() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-slate-700">Email *</Label>
+                      <Label className="text-xs font-medium text-slate-700">
+                        Email *
+                      </Label>
                       <div className="relative">
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Mail
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          size={16}
+                        />
                         <input
                           type="email"
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           placeholder="you@example.com"
                           className={inputClassName + " pl-10"}
                           required
@@ -178,20 +283,60 @@ function VendorAuthRegister() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-slate-700">Password *</Label>
+                      <Label className="text-xs font-medium text-slate-700">
+                        Password *
+                      </Label>
                       <div className="relative">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Lock
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          size={16}
+                        />
                         <input
                           type="password"
                           value={formData.password}
-                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              password: e.target.value,
+                            })
+                          }
                           placeholder="Create a strong password"
                           className={inputClassName + " pl-10"}
                           required
                           minLength={6}
                         />
                       </div>
-                      <p className="text-[10px] text-slate-400">Must be at least 6 characters</p>
+                      <p className="text-[10px] text-slate-400">
+                        Must be at least 6 characters
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-slate-700">
+                        Nearest Landmark
+                      </Label>
+                      <div className="relative">
+                        <Building2
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          size={16}
+                        />
+                        <input
+                          ref={addressRef}
+                          type="text"
+                          value={formData.nearestLandmark.name}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              nearestLandmark: {
+                                ...formData.nearestLandmark,
+                                name: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Where is the nearest landmark?"
+                          className={inputClassName + " pl-10"}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -222,20 +367,34 @@ function VendorAuthRegister() {
                       <Building2 className="text-blue-600" size={20} />
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-900">Store Details</h3>
-                      <p className="text-xs text-slate-500">Complete your store profile</p>
+                      <h3 className="text-sm font-semibold text-slate-900">
+                        Store Details
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Complete your store profile
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-slate-700">Phone Number</Label>
+                      <Label className="text-xs font-medium text-slate-700">
+                        Phone Number
+                      </Label>
                       <div className="relative">
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Phone
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          size={16}
+                        />
                         <input
                           type="tel"
                           value={formData.phoneNumber}
-                          onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              phoneNumber: e.target.value,
+                            })
+                          }
                           placeholder="+234 000 000 0000"
                           className={inputClassName + " pl-10"}
                         />
@@ -243,10 +402,17 @@ function VendorAuthRegister() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-slate-700">Shop Description</Label>
+                      <Label className="text-xs font-medium text-slate-700">
+                        Shop Description
+                      </Label>
                       <textarea
                         value={formData.shopDescription}
-                        onChange={(e) => setFormData({ ...formData, shopDescription: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            shopDescription: e.target.value,
+                          })
+                        }
                         placeholder="Describe your shop..."
                         rows={3}
                         className={inputClassName + " resize-none"}
@@ -254,13 +420,23 @@ function VendorAuthRegister() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-medium text-slate-700">Shop Address</Label>
+                      <Label className="text-xs font-medium text-slate-700">
+                        Shop Address
+                      </Label>
                       <div className="relative">
-                        <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Building2
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          size={16}
+                        />
                         <input
                           type="text"
                           value={formData.shopAddress}
-                          onChange={(e) => setFormData({ ...formData, shopAddress: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              shopAddress: e.target.value,
+                            })
+                          }
                           placeholder="Where is your shop located?"
                           className={inputClassName + " pl-10"}
                         />
@@ -274,11 +450,24 @@ function VendorAuthRegister() {
                         onCheckedChange={(checked) => setTermsAccepted(checked)}
                         className="mt-0.5"
                       />
-                      <label htmlFor="terms" className="text-xs text-slate-600 cursor-pointer leading-relaxed">
-                        I agree to the{' '}
-                        <Link to="#" className="text-blue-600 hover:text-blue-500 font-medium">Terms of Service</Link>
-                        {' '}and{' '}
-                        <Link to="#" className="text-blue-600 hover:text-blue-500 font-medium">Privacy Policy</Link>
+                      <label
+                        htmlFor="terms"
+                        className="text-xs text-slate-600 cursor-pointer leading-relaxed"
+                      >
+                        I agree to the{" "}
+                        <Link
+                          to="#"
+                          className="text-blue-600 hover:text-blue-500 font-medium"
+                        >
+                          Terms of Service
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                          to="#"
+                          className="text-blue-600 hover:text-blue-500 font-medium"
+                        >
+                          Privacy Policy
+                        </Link>
                       </label>
                     </div>
                   </div>
@@ -303,7 +492,11 @@ function VendorAuthRegister() {
                       <span className="flex items-center justify-center gap-2">
                         <motion.div
                           animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1,
+                            ease: "linear",
+                          }}
                           className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                         />
                         Creating...
@@ -321,15 +514,18 @@ function VendorAuthRegister() {
           </AnimatePresence>
 
           <p className="text-sm text-slate-600 text-center pt-2">
-            Already have an account?{' '}
-            <Link to="/auth/login-vendor" className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+            Already have an account?{" "}
+            <Link
+              to="/auth/login-vendor"
+              className="font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+            >
               Sign in
             </Link>
           </p>
         </form>
       )}
     </div>
-  )
+  );
 }
 
-export default VendorAuthRegister
+export default VendorAuthRegister;

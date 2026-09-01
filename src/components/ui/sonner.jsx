@@ -16,7 +16,7 @@ const Toaster = ({
   return (
     <Sonner
       theme={theme}
-      className="toaster group z-9990 bg-white "
+      className="toaster group z-9990"
       icons={{
         success: <CircleCheckIcon className="size-4 z-9999" />,
         info: <InfoIcon className="size-4" />,
@@ -26,9 +26,21 @@ const Toaster = ({
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
+          "--normal-bg": "#ffffff",
+          "--normal-text": "#0f172a",
+          "--normal-border": "#e2e8f0",
+          "--success-bg": "#ffffff",
+          "--success-text": "#0f172a",
+          "--success-border": "#e2e8f0",
+          "--error-bg": "#ffffff",
+          "--error-text": "#0f172a",
+          "--error-border": "#e2e8f0",
+          "--info-bg": "#ffffff",
+          "--info-text": "#0f172a",
+          "--info-border": "#e2e8f0",
+          "--warning-bg": "#ffffff",
+          "--warning-text": "#0f172a",
+          "--warning-border": "#e2e8f0",
           "--border-radius": "var(--radius)"
         }
       }
